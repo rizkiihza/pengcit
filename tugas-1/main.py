@@ -5,23 +5,22 @@ import pandas as pd
 from math import log
 
 img = Image.open('iron_man.jpg')
-img = img.convert('RGBA')
+pixels = img.convert('RGBA').load()
 h, w = img.size
 size = 16
+DIVISOR = 256 // size
 
 r = [0 for i in range(size)]
 g = [0 for i in range(size)]
 b = [0 for i in range(size)]
 gs = [0 for i in range(size)]
 
-DIVISOR = 16
-
 for i in range(h):
     for j in range(w):
-        pixel = img.getpixel((i, j))
-        r[pixel[0]//DIVISOR] += 1
-        g[pixel[1]//DIVISOR] += 1
-        b[pixel[2]//DIVISOR] += 1
+        pixel = pixels[i, j]
+        r[pixel[0] // DIVISOR] += 1
+        g[pixel[1] // DIVISOR] += 1
+        b[pixel[2] // DIVISOR] += 1
         gs[(pixel[0]+pixel[1]+pixel[2]) // 48] += 1
 
 # print
