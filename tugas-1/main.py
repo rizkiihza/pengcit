@@ -7,19 +7,20 @@ from math import log
 img = Image.open('logo_itb.png')
 img = img.convert('RGBA')
 h, w = img.size
+size = 16
 
-r = [0 for i in range(256)]
-g = [0 for i in range(256)]
-b = [0 for i in range(256)]
-gs = [0 for i in range(256)]
+r = [0 for i in range(size)]
+g = [0 for i in range(size)]
+b = [0 for i in range(size)]
+gs = [0 for i in range(size)]
 
 for i in range(h):
     for j in range(w):
         pixel = img.getpixel((i, j))
-        r[pixel[0]] += 1
-        g[pixel[1]] += 1
-        b[pixel[2]] += 1
-        gs[(pixel[0]+pixel[1]+pixel[2]) // 3] += 1
+        r[pixel[0]//16] += 1
+        g[pixel[1]//16] += 1
+        b[pixel[2]//16] += 1
+        gs[(pixel[0]+pixel[1]+pixel[2]) // 48] += 1
 
 # print
 def to_logarithm(colors):
