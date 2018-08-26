@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 import pandas as pd
 from math import log
 
-img = Image.open('logo_itb.png')
+img = Image.open('iron_man.jpg')
 img = img.convert('RGBA')
 h, w = img.size
 size = 16
@@ -14,15 +14,23 @@ g = [0 for i in range(size)]
 b = [0 for i in range(size)]
 gs = [0 for i in range(size)]
 
+DIVISOR = 16
+
 for i in range(h):
     for j in range(w):
         pixel = img.getpixel((i, j))
-        r[pixel[0]//16] += 1
-        g[pixel[1]//16] += 1
-        b[pixel[2]//16] += 1
+        r[pixel[0]//DIVISOR] += 1
+        g[pixel[1]//DIVISOR] += 1
+        b[pixel[2]//DIVISOR] += 1
         gs[(pixel[0]+pixel[1]+pixel[2]) // 48] += 1
 
 # print
+def get_label(inputs):
+      data = []
+      for unit in inputs:
+        data.append(str(DIVISOR*unit) + '-' + str(DIVISOR*(unit+1) - 1))
+      return data
+
 def to_logarithm(colors):
   data = []
   for unit in colors:
@@ -33,7 +41,7 @@ def to_logarithm(colors):
   return data
 
 def draw():
-  f, (ax1, ax2, ax3, ax4) = plt.subplots(4, 1, figsize=(7, 5), sharex=True)
+  f, (ax1, ax2, ax3, ax4) = plt.subplots(4, 1, figsize=(20, 10), sharex=True)
   
   r_log_data = to_logarithm(r)
   g_log_data = to_logarithm(g)
@@ -46,10 +54,13 @@ def draw():
                        'gs logarithm': gs_log_data
                       })
 
-  sns.barplot(y=df['r logarithm'], x=df.index.values, ax=ax1)
-  sns.barplot(y=df['g logarithm'], x=df.index.values, ax=ax2)
-  sns.barplot(y=df['b logarithm'], x=df.index.values, ax=ax3)
-  sns.barplot(y=df['gs logarithm'], x=df.index.values, ax=ax4)
+  index = get_label(df.index.values)
+  # for unit in index:
+  #     print(unit)
+  sns.barplot(y=df['r logarithm'], x=index, ax=ax1)
+  sns.barplot(y=df['g logarithm'], x=index, ax=ax2)
+  sns.barplot(y=df['b logarithm'], x=index, ax=ax3)
+  sns.barplot(y=df['gs logarithm'], x=index, ax=ax4)
   plt.show()
 
 
