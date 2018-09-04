@@ -7,6 +7,8 @@ Diakses 2 September 2018
 
 import android.Manifest;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
+import android.graphics.Matrix;
 import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.annotation.RequiresApi;
@@ -23,37 +25,7 @@ import android.widget.ImageView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
 
-/*private class ImageProcessor {
-    public int[][] transform_cumulative(int[][] pixels) {
-        int row = pixels.length;
-        int col = pixels[0].length;
-
-        int[] count_pixels = new int[256];
-        int[][] new_pixels = new int[row][col];
-
-        for (int i = 0; i < count_pixels.length; i += 1) {
-            count_pixels[i] = 0;
-        }
-
-        for (int[] row : pixels) {
-            for (int item : row) {
-                count_pixels[item] += 1;
-            }
-        }
-
-        for (int i = 1; i < count_pixels.length; i += 1) {
-            count_pixels[i] += count_pixels[i-1];
-        }
-
-        for (int i = 0; i < row; i+= 1) {
-            for (int j = 0; j < col; j += 1) {
-                new_pixels[i] = (255*count_pixels[pixels[i][j]]) / (row*col);
-            }
-        }
-
-        return new_pixels;
-    }
-}*/
+import transformer.transformer;
 
 public class MainActivity extends Activity {
     private static final int CAMERA_REQUEST = 1888;
@@ -61,11 +33,10 @@ public class MainActivity extends Activity {
     private ImageView imageView;
     private Bitmap rawBitmap;
     private Bitmap processedBitmap;
-    private static final String TAG = "MainActivity";
+    private transformer imageProcessor;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
-        Log.d(TAG, "Start everything");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         this.imageView = this.findViewById(R.id.imageView1);
@@ -74,30 +45,21 @@ public class MainActivity extends Activity {
         Button photoButton = this.findViewById(R.id.photoButton);
         photoButton.setOnClickListener(new View.OnClickListener() {
 
+            public static final String TAG = "debug";
+
             @RequiresApi(api = Build.VERSION_CODES.M)
             @Override
             public void onClick(View v) {
                 Log.d(TAG, "On Click Listener");
                 Log.d(TAG, checkSelfPermission(Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED ? "granted" : "not granted");
-                if (checkSelfPermission(Manifest.permission.CAMERA)
-                        != PackageManager.PERMISSION_GRANTED) {
-                    requestPermissions(new String[]{Manifest.permission.CAMERA},
-                            MY_CAMERA_PERMISSION_CODE);
-                } else {
-                    Log.d(TAG, "Initiate intent");
+                if (checkSelfPermission(Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED)
+                {
                     Intent cameraIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
-                    Log.d(TAG, "Start get package manager");
 
                     if (cameraIntent.resolveActivity(getPackageManager()) != null) {
-                        Log.d(TAG, "Start activity");
                         startActivityForResult(cameraIntent, CAMERA_REQUEST);
-                    } else {
-                        Log.d(TAG, "Null activity");
                     }
-
-                    Log.d(TAG, "Finish");
                 }
-                Log.d(TAG, "Really Finish");
             }
         });
 
@@ -131,15 +93,56 @@ public class MainActivity extends Activity {
 
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == CAMERA_REQUEST && resultCode == Activity.RESULT_OK) {
-            rawBitmap = (Bitmap) data.getExtras().get("data");
+            rawBitmap = adjustOrientation((Bitmap) data.getExtras().get("data"));
             processedBitmap = transformBitmap(rawBitmap);
 
             imageView.setImageBitmap(rawBitmap);
         }
     }
 
-    private Bitmap transformBitmap(Bitmap b) {
-        // do transformation here
+    private Bitmap adjustOrientation(Bitmap b) {
+        if (b == null) {
+            return null;
+        }
+        int w = b.getWidth();
+        int h = b.getHeight();
+        if (w>h) {
+            Matrix matrix = new Matrix();
+            matrix.postRotate(90);
+            return Bitmap.createBitmap(b, 0, 0, w, h, matrix, true);
+        }
         return b;
+    }
+
+    private Bitmap transformBitmap(Bitmap bitmap) {
+        // do transformation
+        int w = bitmap.getWidth();
+        int h = bitmap.getHeight();
+
+        int[][] r = new int[h][w];
+        int[][] g = new int[h][w];
+        int[][] b = new int[h][w];
+
+        for (int i = 0; i < h; i++) {
+            for (int j = 0; j < w; j++) {
+                int colour = bitmap.getPixel(j, i);
+                r[i][j] = Color.red(colour);
+                g[i][j] = Color.green(colour);
+                b[i][j] = Color.blue(colour);
+            }
+        }
+
+        r = this.imageProcessor.transform_cumulative(r);
+        g = this.imageProcessor.transform_cumulative(g);
+        b = this.imageProcessor.transform_cumulative(b);
+
+        for (int i = 0; i < h; i++) {
+            for (int j = 0; j < w; j++) {
+                int colour = Color.rgb(r[i][j], g[i][j], b[i][j]);
+                bitmap.setPixel(j, i, colour);
+            }
+        }
+
+        return bitmap;
     }
 }
