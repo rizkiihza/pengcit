@@ -77,26 +77,17 @@ public class MainActivity extends Activity {
             @RequiresApi(api = Build.VERSION_CODES.M)
             @Override
             public void onClick(View v) {
-                Log.d(TAG, "On Click Listener");
-                if (checkSelfPermission(Manifest.permission.CAMERA)
+                /*if (checkSelfPermission(Manifest.permission.CAMERA)
                         != PackageManager.PERMISSION_GRANTED) {
+                    Log.d(TAG, "Ask for permission");
                     requestPermissions(new String[]{Manifest.permission.CAMERA},
                             MY_CAMERA_PERMISSION_CODE);
-                } else {
-                    Log.d(TAG, "Initiate intent");
-                    Intent cameraIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
-                    Log.d(TAG, "Start get package manager");
+                }*/
+                Intent cameraIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
 
-                    if (cameraIntent.resolveActivity(getPackageManager()) != null) {
-                        Log.d(TAG, "Start activity");
-                        startActivityForResult(cameraIntent, CAMERA_REQUEST);
-                    } else {
-                        Log.d(TAG, "Null activity");
-                    }
-
-                    Log.d(TAG, "Finish");
+                if (cameraIntent.resolveActivity(getPackageManager()) != null) {
+                    startActivityForResult(cameraIntent, CAMERA_REQUEST);
                 }
-                Log.d(TAG, "Really Finish");
             }
         });
 
@@ -139,6 +130,6 @@ public class MainActivity extends Activity {
 
     private Bitmap transformBitmap(Bitmap b) {
         // do transformation here
-        return b;
+        return null;
     }
 }
