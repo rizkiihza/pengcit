@@ -1,4 +1,5 @@
 package com.example.martin.tugas2_pengcit;
+import java.util.*;
 
 /* Source :
 https://stackoverflow.com/questions/5991319/capture-image-from-camera-and-display-in-activity
@@ -22,17 +23,55 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+private class ImageProcessor {
+    public int[][] transform_cumulative(int[][] pixels) {
+        int row = pixels.length;
+        int col = pixels[0].length;
+
+        int[] count_pixels = new int[256];
+        int[][] new_pixels = new int[row][col];
+
+        for (int i = 0; i < count_pixels.length; i += 1) {
+            count_pixels[i] = 0;
+        }
+
+        for (int[] row : pixels) {
+            for (int item : row) {
+                count_pixels[item] += 1;
+            }
+        }
+
+        for (int i = 1; i < count_pixels.length; i += 1) {
+            count_pixels[i] += count_pixels[i-1];
+        }
+
+        for (int i = 0; i < row; i+= 1) {
+            for (int j = 0; j < col; j += 1) {
+                new_pixels[i] = (255*count_pixels[pixels[i][j]]) / (row*col);
+            }
+        }
+
+        return new_pixels;
+    }
+}
+
 public class MainActivity extends Activity {
     private static final int CAMERA_REQUEST = 1888;
-    private ImageView imageView;
     private static final int MY_CAMERA_PERMISSION_CODE = 100;
+    private ImageView imageView;
+    private Button photoButton;
+    private ToggleButton toggleButton;
+    private Bitmap rawBitmap;
+    private Bitmap processedBitmap;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         this.imageView = (ImageView)this.findViewById(R.id.imageView1);
-        Button photoButton = (Button) this.findViewById(R.id.photoButton);
+
+        // setup button
+        photoButton = (Button) this.findViewById(R.id.photoButton);
         photoButton.setOnClickListener(new View.OnClickListener() {
 
             @RequiresApi(api = Build.VERSION_CODES.M)
@@ -44,7 +83,21 @@ public class MainActivity extends Activity {
                             MY_CAMERA_PERMISSION_CODE);
                 } else {
                     Intent cameraIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
-                    startActivityForResult(cameraIntent, CAMERA_REQUEST);
+                    if (cameraIntent.resolveActivity(getPackageManager()) != null) {
+                        startActivityForResult(cameraIntent, CAMERA_REQUEST);
+                    }
+                }
+            }
+        });
+
+        // setup toggle
+        toggleButton = (ToggleButton) findViewById(R.id.toggleButton);
+        toggle.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (isChecked) {
+                    imageView.setImageBitmap(processedBitmap);
+                } else {
+                    imageView.setImageBitmap(rawBitmap);
                 }
             }
         });
@@ -67,8 +120,15 @@ public class MainActivity extends Activity {
 
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == CAMERA_REQUEST && resultCode == Activity.RESULT_OK) {
-            Bitmap photo = (Bitmap) data.getExtras().get("data");
-            imageView.setImageBitmap(photo);
+            Bitmap rawBitmap = (Bitmap) data.getExtras().get("data");
+            processedBitmap = transformBitmap(rawBitmap)
+
+            imageView.setImageBitmap(rawBitmap);
         }
+    }
+
+    private Bitnap transformBitmap(Bitmap b) {
+        // do transformation here
+
     }
 }
