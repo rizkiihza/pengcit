@@ -5,8 +5,8 @@ https://stackoverflow.com/questions/5991319/capture-image-from-camera-and-displa
 Diakses 2 September 2018
  */
 
-import android.Manifest;
 import android.content.pm.PackageManager;
+import android.graphics.Matrix;
 import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.annotation.RequiresApi;
@@ -15,7 +15,6 @@ import android.os.Bundle;
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CompoundButton;
@@ -61,11 +60,9 @@ public class MainActivity extends Activity {
     private ImageView imageView;
     private Bitmap rawBitmap;
     private Bitmap processedBitmap;
-    private static final String TAG = "MainActivity";
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
-        Log.d(TAG, "Start everything");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         this.imageView = this.findViewById(R.id.imageView1);
@@ -121,11 +118,25 @@ public class MainActivity extends Activity {
 
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == CAMERA_REQUEST && resultCode == Activity.RESULT_OK) {
-            rawBitmap = (Bitmap) data.getExtras().get("data");
+            rawBitmap = adjustOrientation((Bitmap) data.getExtras().get("data"));
             processedBitmap = transformBitmap(rawBitmap);
 
             imageView.setImageBitmap(rawBitmap);
         }
+    }
+
+    private Bitmap adjustOrientation(Bitmap b) {
+        if (b == null) {
+            return null;
+        }
+        int w = b.getWidth();
+        int h = b.getHeight();
+        if (w>h) {
+            Matrix matrix = new Matrix();
+            matrix.postRotate(90);
+            return Bitmap.createBitmap(b, 0, 0, w, h, matrix, true);
+        }
+        return b;
     }
 
     private Bitmap transformBitmap(Bitmap b) {
