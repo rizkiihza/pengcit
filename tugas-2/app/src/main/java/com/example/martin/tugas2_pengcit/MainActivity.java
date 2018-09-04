@@ -1,5 +1,4 @@
 package com.example.martin.tugas2_pengcit;
-import java.util.*;
 
 /* Source :
 https://stackoverflow.com/questions/5991319/capture-image-from-camera-and-display-in-activity
@@ -11,19 +10,20 @@ import android.content.pm.PackageManager;
 import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.annotation.RequiresApi;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.Toast;
+import android.widget.ToggleButton;
 
-private class ImageProcessor {
+/*private class ImageProcessor {
     public int[][] transform_cumulative(int[][] pixels) {
         int row = pixels.length;
         int col = pixels[0].length;
@@ -53,46 +53,56 @@ private class ImageProcessor {
 
         return new_pixels;
     }
-}
+}*/
 
 public class MainActivity extends Activity {
     private static final int CAMERA_REQUEST = 1888;
     private static final int MY_CAMERA_PERMISSION_CODE = 100;
     private ImageView imageView;
-    private Button photoButton;
-    private ToggleButton toggleButton;
     private Bitmap rawBitmap;
     private Bitmap processedBitmap;
+    private static final String TAG = "MainActivity";
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
+        Log.d(TAG, "Start everything");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        this.imageView = (ImageView)this.findViewById(R.id.imageView1);
+        this.imageView = this.findViewById(R.id.imageView1);
 
         // setup button
-        photoButton = (Button) this.findViewById(R.id.photoButton);
+        Button photoButton = this.findViewById(R.id.photoButton);
         photoButton.setOnClickListener(new View.OnClickListener() {
 
             @RequiresApi(api = Build.VERSION_CODES.M)
             @Override
             public void onClick(View v) {
+                Log.d(TAG, "On Click Listener");
                 if (checkSelfPermission(Manifest.permission.CAMERA)
                         != PackageManager.PERMISSION_GRANTED) {
                     requestPermissions(new String[]{Manifest.permission.CAMERA},
                             MY_CAMERA_PERMISSION_CODE);
                 } else {
+                    Log.d(TAG, "Initiate intent");
                     Intent cameraIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
+                    Log.d(TAG, "Start get package manager");
+
                     if (cameraIntent.resolveActivity(getPackageManager()) != null) {
+                        Log.d(TAG, "Start activity");
                         startActivityForResult(cameraIntent, CAMERA_REQUEST);
+                    } else {
+                        Log.d(TAG, "Null activity");
                     }
+
+                    Log.d(TAG, "Finish");
                 }
+                Log.d(TAG, "Really Finish");
             }
         });
 
         // setup toggle
-        toggleButton = (ToggleButton) findViewById(R.id.toggleButton);
-        toggle.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+        ToggleButton toggleButton = findViewById(R.id.toggleButton);
+        toggleButton.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (isChecked) {
                     imageView.setImageBitmap(processedBitmap);
@@ -120,15 +130,15 @@ public class MainActivity extends Activity {
 
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == CAMERA_REQUEST && resultCode == Activity.RESULT_OK) {
-            Bitmap rawBitmap = (Bitmap) data.getExtras().get("data");
-            processedBitmap = transformBitmap(rawBitmap)
+            rawBitmap = (Bitmap) data.getExtras().get("data");
+            processedBitmap = transformBitmap(rawBitmap);
 
             imageView.setImageBitmap(rawBitmap);
         }
     }
 
-    private Bitnap transformBitmap(Bitmap b) {
+    private Bitmap transformBitmap(Bitmap b) {
         // do transformation here
-
+        return b;
     }
 }
