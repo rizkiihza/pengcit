@@ -2,13 +2,14 @@ from PIL import Image
 import seaborn as sns
 import matplotlib.pyplot as plt
 import pandas as pd
+import sys
 from math import log
 
-img = Image.open('iron_man.jpg')
+img = Image.open(sys.argv[1])
 pixels = img.convert('RGBA').load()
 h, w = img.size
 
-K_SIZE = 16
+K_SIZE = 256
 K_DIVISOR = 256 // K_SIZE
 
 r = [0 for i in range(K_SIZE)]
@@ -22,7 +23,7 @@ for i in range(h):
         r[pixel[0] // K_DIVISOR] += 1
         g[pixel[1] // K_DIVISOR] += 1
         b[pixel[2] // K_DIVISOR] += 1
-        gs[(pixel[0]+pixel[1]+pixel[2]) // 48] += 1
+        gs[(pixel[0]+pixel[1]+pixel[2]) // 3 // K_DIVISOR] += 1
 
 # print
 def get_label(inputs):
@@ -48,10 +49,10 @@ def draw():
   b_log_data = to_logarithm(b)
   gs_log_data = to_logarithm(gs)
 
-  df = pd.DataFrame({'r logarithm': r_log_data,
-                       'g logarithm': g_log_data,
-                       'b logarithm': b_log_data,
-                       'gs logarithm': gs_log_data
+  df = pd.DataFrame({'r logarithm': r,
+                       'g logarithm': g,
+                       'b logarithm': b,
+                       'gs logarithm': gs
                       })
 
   index = get_label(df.index.values)
