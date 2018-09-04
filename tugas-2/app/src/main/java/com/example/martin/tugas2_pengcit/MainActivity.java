@@ -57,7 +57,7 @@ import android.widget.ToggleButton;
 
 public class MainActivity extends Activity {
     private static final int CAMERA_REQUEST = 1888;
-    private static final int MY_CAMERA_PERMISSION_CODE = 100;
+    private static final int MY_CAMERA_PERMISSION_CODE = 0;
     private ImageView imageView;
     private Bitmap rawBitmap;
     private Bitmap processedBitmap;
@@ -78,6 +78,7 @@ public class MainActivity extends Activity {
             @Override
             public void onClick(View v) {
                 Log.d(TAG, "On Click Listener");
+                Log.d(TAG, checkSelfPermission(Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED ? "granted" : "not granted");
                 if (checkSelfPermission(Manifest.permission.CAMERA)
                         != PackageManager.PERMISSION_GRANTED) {
                     requestPermissions(new String[]{Manifest.permission.CAMERA},
