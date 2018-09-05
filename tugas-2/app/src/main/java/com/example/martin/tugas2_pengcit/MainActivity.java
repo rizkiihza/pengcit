@@ -6,6 +6,7 @@ Diakses 2 September 2018
  */
 
 import android.Manifest;
+import android.content.Context;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.graphics.Matrix;
@@ -33,20 +34,22 @@ public class MainActivity extends Activity {
     private ImageView imageView;
     private Bitmap rawBitmap;
     private Bitmap processedBitmap;
-    private ImageProcessor.ImageProcessor imageProcessor;
+    private ImageProcessor imageProcessor;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         this.imageView = this.findViewById(R.id.imageView1);
-        imageProcessor = new ImageProcessor.ImageProcessor();
+        imageProcessor = new ImageProcessor();
 
-        // setup button
+        final Context ctx = this;
+
+        // setup photo button
         Button photoButton = this.findViewById(R.id.photoButton);
         photoButton.setOnClickListener(new View.OnClickListener() {
 
-            public static final String TAG = "debug";
+            private static final String TAG = "debug";
 
             @RequiresApi(api = Build.VERSION_CODES.M)
             @Override
@@ -60,6 +63,17 @@ public class MainActivity extends Activity {
                         startActivityForResult(cameraIntent, CAMERA_REQUEST);
                     }
                 }
+            }
+        });
+
+        // setup histogram button
+        Button histButton = this.findViewById(R.id.histButton);
+        histButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(ctx, HistogramActivity.class);
+                intent.putExtra("Image", rawBitmap);
+                startActivity(intent);
             }
         });
 
