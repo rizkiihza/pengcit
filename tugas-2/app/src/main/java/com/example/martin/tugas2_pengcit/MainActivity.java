@@ -25,7 +25,7 @@ import android.widget.ImageView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
 
-import transformer.transformer;
+import ImageProcessor.ImageProcessor;
 
 public class MainActivity extends Activity {
     private static final int CAMERA_REQUEST = 1888;
@@ -33,13 +33,14 @@ public class MainActivity extends Activity {
     private ImageView imageView;
     private Bitmap rawBitmap;
     private Bitmap processedBitmap;
-    private transformer imageProcessor;
+    private ImageProcessor.ImageProcessor imageProcessor;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         this.imageView = this.findViewById(R.id.imageView1);
+        imageProcessor = new ImageProcessor.ImageProcessor();
 
         // setup button
         Button photoButton = this.findViewById(R.id.photoButton);
@@ -51,7 +52,6 @@ public class MainActivity extends Activity {
             @Override
             public void onClick(View v) {
                 Log.d(TAG, "On Click Listener");
-                Log.d(TAG, checkSelfPermission(Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED ? "granted" : "not granted");
                 if (checkSelfPermission(Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED)
                 {
                     Intent cameraIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
@@ -116,8 +116,12 @@ public class MainActivity extends Activity {
 
     private Bitmap transformBitmap(Bitmap bitmap) {
         // do transformation
+
         int w = bitmap.getWidth();
         int h = bitmap.getHeight();
+
+        Log.d("debug", "w : " + Integer.toString(w));
+        Log.d("debug", "h : " + Integer.toString(h));
 
         int[][] r = new int[h][w];
         int[][] g = new int[h][w];
@@ -132,17 +136,20 @@ public class MainActivity extends Activity {
             }
         }
 
-        r = this.imageProcessor.transform_cumulative(r);
-        g = this.imageProcessor.transform_cumulative(g);
-        b = this.imageProcessor.transform_cumulative(b);
+        r = imageProcessor.transformCumulative(r, h, w);
+        g = imageProcessor.transformCumulative(g, h, w);
+        b = imageProcessor.transformCumulative(b, h, w);
+
+        Bitmap.Config config = Bitmap.Config.ARGB_8888;
+        Bitmap transformed_bitmap = Bitmap.createBitmap(w, h, config);
 
         for (int i = 0; i < h; i++) {
             for (int j = 0; j < w; j++) {
                 int colour = Color.rgb(r[i][j], g[i][j], b[i][j]);
-                bitmap.setPixel(j, i, colour);
+                transformed_bitmap.setPixel(j, i, colour);
             }
         }
 
-        return bitmap;
+        return transformed_bitmap;
     }
 }
