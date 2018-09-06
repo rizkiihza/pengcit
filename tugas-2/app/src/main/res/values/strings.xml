@@ -1,5 +1,7 @@
 <resources>
     <string name="app_name">Tugas2_Pengcit</string>
+    <string name="photo">Photo</string>
     <string name="take_photo">Take a photo</string>
-    <string name="transform">transform</string>
+    <string name="show_histogram">Show Histogram</string>
+    <string name="transform">Transform</string>
 </resources>

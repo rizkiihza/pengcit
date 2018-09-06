@@ -8,6 +8,7 @@
 
     <ImageView
         android:id="@+id/imageView1"
+        android:contentDescription="@string/photo"
         android:layout_width="263dp"
         android:layout_height="300dp"
         android:layout_marginEnd="8dp"
@@ -42,7 +43,7 @@
         android:layout_marginRight="8dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="12dp"
-        android:text="Show Histogram"
+        android:text="@string/show_histogram"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.502"
         app:layout_constraintStart_toStartOf="parent"

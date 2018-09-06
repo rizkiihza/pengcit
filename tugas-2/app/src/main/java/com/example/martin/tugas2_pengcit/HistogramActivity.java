@@ -5,22 +5,19 @@ import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 
 import com.jjoe64.graphview.GraphView;
 import com.jjoe64.graphview.series.BarGraphSeries;
 import com.jjoe64.graphview.series.DataPoint;
 
 public class HistogramActivity extends AppCompatActivity {
-    private Bitmap bitmap;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_histogram);
 
         Intent intent = getIntent();
-        bitmap = intent.getParcelableExtra("Image");
+        Bitmap bitmap = intent.getParcelableExtra("Image");
 
         int w = bitmap.getWidth();
         int h = bitmap.getHeight();

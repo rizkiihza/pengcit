@@ -1,14 +1,8 @@
 package com.example.martin.tugas2_pengcit;
 
-/* Source :
-https://stackoverflow.com/questions/5991319/capture-image-from-camera-and-display-in-activity
-Diakses 2 September 2018
- */
-
 import android.Manifest;
 import android.content.Context;
 import android.content.pm.PackageManager;
-import android.graphics.Color;
 import android.graphics.Matrix;
 import android.os.Build;
 import android.support.annotation.NonNull;
@@ -18,16 +12,10 @@ import android.os.Bundle;
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.util.Log;
 import android.view.View;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.CompoundButton;
 import android.widget.ImageView;
-import android.widget.Spinner;
 import android.widget.Toast;
-import android.widget.ToggleButton;
 
 public class MainActivity extends Activity {
     private static final int CAMERA_REQUEST = 1888;

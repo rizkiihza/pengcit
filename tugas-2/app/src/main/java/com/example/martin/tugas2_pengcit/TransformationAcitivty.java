@@ -10,10 +10,8 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.Spinner;
-import android.widget.ToggleButton;
 
 public class TransformationAcitivty extends AppCompatActivity {
     private Bitmap rawBitmap;
@@ -26,11 +24,11 @@ public class TransformationAcitivty extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_transformation);
-        transformImageView = (ImageView) findViewById(R.id.transformedImageView);
+        transformImageView = findViewById(R.id.transformedImageView);
         imageProcessor = new ImageProcessor();
 
         Intent intent = getIntent();
-        rawBitmap = (Bitmap) intent.getParcelableExtra("Image");
+        rawBitmap = intent.getParcelableExtra("Image");
         transformImageView.setImageBitmap(rawBitmap);
 
         // setup spinner
