@@ -11,8 +11,6 @@ import com.jjoe64.graphview.GraphView;
 import com.jjoe64.graphview.series.BarGraphSeries;
 import com.jjoe64.graphview.series.DataPoint;
 
-import ImageProcessor.ImageProcessor;
-
 public class HistogramActivity extends AppCompatActivity {
     private Bitmap bitmap;
 

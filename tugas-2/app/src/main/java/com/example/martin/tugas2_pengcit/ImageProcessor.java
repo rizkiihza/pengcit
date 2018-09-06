@@ -2,6 +2,21 @@ package com.example.martin.tugas2_pengcit;
 
 public class ImageProcessor {
 
+    public int[] countPixels(int [][] pixels) {
+        int result[] = new int[256];
+        for (int i = 0; i < result.length; i++) {
+            result[i] = 0;
+        }
+
+        for (int i = 0; i < pixels.length; i++) {
+            for (int j = 0; j < pixels[i].length; j++) {
+                result[pixels[i][j]] += 1;
+            }
+        }
+
+        return result;
+    }
+
     public int[][] linearStretching(int[][] pixels, int h, int w) {
         int minimumPixel = 256;
         int maximumPixel = -1;
@@ -22,7 +37,7 @@ public class ImageProcessor {
 
         int difference = maximumPixel - minimumPixel;
         for (int i = 0; i < difference; i++) {
-            bins[minimumPixel+i] = i * 255 / difference;
+            bins[minimumPixel+i] = (i * 255) / difference;
         }
 
         for (int i = 0; i < h; i++) {
