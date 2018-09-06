@@ -20,21 +20,24 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.ImageView;
+import android.widget.Spinner;
 import android.widget.Toast;
 import android.widget.ToggleButton;
-
-import ImageProcessor.ImageProcessor;
 
 public class MainActivity extends Activity {
     private static final int CAMERA_REQUEST = 1888;
     private static final int MY_CAMERA_PERMISSION_CODE = 0;
     private ImageView imageView;
     private Bitmap rawBitmap;
-    private Bitmap processedBitmap;
     private ImageProcessor imageProcessor;
+    private Spinner algoSpinner;
+    private String[] algoChoice;
+    private String algoSelected;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -44,6 +47,26 @@ public class MainActivity extends Activity {
         imageProcessor = new ImageProcessor();
 
         final Context ctx = this;
+
+        // setup spinner
+        algoSelected = "ALU";
+        algoSpinner = this.findViewById(R.id.algorithmSpinner);
+
+        algoChoice = new String[] {"ALU", "Linear Stretching"};
+        final ArrayAdapter<String> algorithmList = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, algoChoice);
+        algoSpinner.setAdapter(algorithmList);
+        algoSpinner.setSelection(0);
+        algoSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                algoSelected = algoChoice[i];
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+
+            }
+        });
 
         // setup photo button
         Button photoButton = this.findViewById(R.id.photoButton);
@@ -82,7 +105,7 @@ public class MainActivity extends Activity {
         toggleButton.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (isChecked) {
-                    imageView.setImageBitmap(processedBitmap);
+                    imageView.setImageBitmap(transformBitmap(rawBitmap, algoSelected));
                 } else {
                     imageView.setImageBitmap(rawBitmap);
                 }
@@ -108,7 +131,6 @@ public class MainActivity extends Activity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == CAMERA_REQUEST && resultCode == Activity.RESULT_OK) {
             rawBitmap = adjustOrientation((Bitmap) data.getExtras().get("data"));
-            processedBitmap = transformBitmap(rawBitmap);
 
             imageView.setImageBitmap(rawBitmap);
         }
@@ -128,7 +150,7 @@ public class MainActivity extends Activity {
         return b;
     }
 
-    private Bitmap transformBitmap(Bitmap bitmap) {
+    private Bitmap transformBitmap(Bitmap bitmap, String algoName) {
         // do transformation
 
         int w = bitmap.getWidth();
@@ -150,9 +172,17 @@ public class MainActivity extends Activity {
             }
         }
 
-        r = imageProcessor.transformCumulative(r, h, w);
-        g = imageProcessor.transformCumulative(g, h, w);
-        b = imageProcessor.transformCumulative(b, h, w);
+        if (algoName.equals("ALU")) {
+            r = imageProcessor.transformCumulative(r, h, w);
+            g = imageProcessor.transformCumulative(g, h, w);
+            b = imageProcessor.transformCumulative(b, h, w);
+            Log.d("debug", "algo used: ALU");
+        } else if( algoName.equals("Linear Stretching")) {
+            r = imageProcessor.linearStretching(r, h, w);
+            g = imageProcessor.linearStretching(g, h, w);
+            b = imageProcessor.linearStretching(b, h, w);
+            Log.d("debug", "algo used Linear Stretching");
+        }
 
         Bitmap.Config config = Bitmap.Config.ARGB_8888;
         Bitmap transformed_bitmap = Bitmap.createBitmap(w, h, config);
