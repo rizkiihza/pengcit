@@ -47,33 +47,20 @@
         app:layout_constraintHorizontal_bias="0.502"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/photoButton" />
-
-    <Spinner
-        android:id="@+id/algorithmSpinner"
-        android:layout_width="100dp"
-        android:layout_height="48dp"
-        app:layout_constraintBottom_toTopOf="@id/toggleButton"
-        app:layout_constraintTop_toBottomOf="@id/histButton"
-        app:layout_constraintHorizontal_bias="0.501"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        ></Spinner>
     
-    <ToggleButton
-        android:id="@+id/toggleButton"
+    <Button
+        android:id="@+id/transButton"
         android:layout_width="wrap_content"
         android:layout_height="43dp"
         android:layout_marginEnd="8dp"
         android:layout_marginLeft="8dp"
         android:layout_marginRight="8dp"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="1dp"
-        android:text="Transform"
-        android:textOff="Transform !"
-        android:textOn="Default"
+        android:layout_marginTop="12dp"
+        android:text="@string/transform"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.501"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/algorithmSpinner" />
+        app:layout_constraintTop_toBottomOf="@+id/histButton" />
 
 </android.support.constraint.ConstraintLayout>

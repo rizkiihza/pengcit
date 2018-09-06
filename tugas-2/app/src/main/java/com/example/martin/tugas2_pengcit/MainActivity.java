@@ -32,52 +32,25 @@ import android.widget.ToggleButton;
 public class MainActivity extends Activity {
     private static final int CAMERA_REQUEST = 1888;
     private static final int MY_CAMERA_PERMISSION_CODE = 0;
-    private ImageView imageView;
     private Bitmap rawBitmap;
-    private ImageProcessor imageProcessor;
-    private Spinner algoSpinner;
-    private String[] algoChoice;
-    private String algoSelected;
+    private ImageView imageView;
+
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        this.imageView = this.findViewById(R.id.imageView1);
-        imageProcessor = new ImageProcessor();
+        imageView = this.findViewById(R.id.imageView1);
 
         final Context ctx = this;
-
-        // setup spinner
-        algoSelected = "ALU";
-        algoSpinner = this.findViewById(R.id.algorithmSpinner);
-
-        algoChoice = new String[] {"ALU", "Linear Stretching"};
-        final ArrayAdapter<String> algorithmList = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, algoChoice);
-        algoSpinner.setAdapter(algorithmList);
-        algoSpinner.setSelection(0);
-        algoSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-                algoSelected = algoChoice[i];
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> adapterView) {
-
-            }
-        });
 
         // setup photo button
         Button photoButton = this.findViewById(R.id.photoButton);
         photoButton.setOnClickListener(new View.OnClickListener() {
 
-            private static final String TAG = "debug";
-
             @RequiresApi(api = Build.VERSION_CODES.M)
             @Override
             public void onClick(View v) {
-                Log.d(TAG, "On Click Listener");
                 if (checkSelfPermission(Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED)
                 {
                     Intent cameraIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
@@ -100,17 +73,17 @@ public class MainActivity extends Activity {
             }
         });
 
-        // setup toggle
-        ToggleButton toggleButton = findViewById(R.id.toggleButton);
-        toggleButton.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if (isChecked) {
-                    imageView.setImageBitmap(transformBitmap(rawBitmap, algoSelected));
-                } else {
-                    imageView.setImageBitmap(rawBitmap);
-                }
+        // setup transform button
+        Button transButton = this.findViewById(R.id.transButton);
+        transButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(ctx, TransformationAcitivty.class);
+                intent.putExtra("Image", rawBitmap);
+                startActivity(intent);
             }
         });
+
     }
 
     @Override
@@ -148,52 +121,5 @@ public class MainActivity extends Activity {
             return Bitmap.createBitmap(b, 0, 0, w, h, matrix, true);
         }
         return b;
-    }
-
-    private Bitmap transformBitmap(Bitmap bitmap, String algoName) {
-        // do transformation
-
-        int w = bitmap.getWidth();
-        int h = bitmap.getHeight();
-
-        Log.d("debug", "w : " + Integer.toString(w));
-        Log.d("debug", "h : " + Integer.toString(h));
-
-        int[][] r = new int[h][w];
-        int[][] g = new int[h][w];
-        int[][] b = new int[h][w];
-
-        for (int i = 0; i < h; i++) {
-            for (int j = 0; j < w; j++) {
-                int colour = bitmap.getPixel(j, i);
-                r[i][j] = Color.red(colour);
-                g[i][j] = Color.green(colour);
-                b[i][j] = Color.blue(colour);
-            }
-        }
-
-        if (algoName.equals("ALU")) {
-            r = imageProcessor.transformCumulative(r, h, w);
-            g = imageProcessor.transformCumulative(g, h, w);
-            b = imageProcessor.transformCumulative(b, h, w);
-            Log.d("debug", "algo used: ALU");
-        } else if( algoName.equals("Linear Stretching")) {
-            r = imageProcessor.linearStretching(r, h, w);
-            g = imageProcessor.linearStretching(g, h, w);
-            b = imageProcessor.linearStretching(b, h, w);
-            Log.d("debug", "algo used Linear Stretching");
-        }
-
-        Bitmap.Config config = Bitmap.Config.ARGB_8888;
-        Bitmap transformed_bitmap = Bitmap.createBitmap(w, h, config);
-
-        for (int i = 0; i < h; i++) {
-            for (int j = 0; j < w; j++) {
-                int colour = Color.rgb(r[i][j], g[i][j], b[i][j]);
-                transformed_bitmap.setPixel(j, i, colour);
-            }
-        }
-
-        return transformed_bitmap;
     }
 }

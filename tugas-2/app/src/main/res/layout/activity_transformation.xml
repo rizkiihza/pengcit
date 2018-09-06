@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:orientation="vertical"
+    tools:context=".TransformationAcitivty">
+
+    <ImageView
+        android:id="@+id/transformedImageView"
+        android:layout_width="263dp"
+        android:layout_height="300dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:src="@drawable/ic_launcher_background"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Spinner
+        android:id="@+id/algorithmSpinner"
+        android:layout_width="100dp"
+        android:layout_height="48dp"
+        app:layout_constraintBottom_toTopOf="@id/transformButton"
+        app:layout_constraintTop_toBottomOf="@id/transformedImageView"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        ></Spinner>
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="48dp"
+        android:text="@string/transform"
+        android:id="@+id/transformButton"
+        app:layout_constraintTop_toBottomOf="@id/algorithmSpinner"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"/>
+
+</android.support.constraint.ConstraintLayout>
