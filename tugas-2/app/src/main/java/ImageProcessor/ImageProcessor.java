@@ -3,7 +3,7 @@ package ImageProcessor;
 public class ImageProcessor {
     private static final int LENGTH = 256;
 
-    public int[] countPixels(int [][]pixels, int h, int w) {
+    public int[] countPixels(int [][]pixels) {
         int [] count_pixels = new int[LENGTH];
 
         for (int i = 0; i < LENGTH; i++) {
@@ -20,7 +20,7 @@ public class ImageProcessor {
     }
 
     public int[][] transformCumulative(int[][] pixels, int h, int w) {
-        int[] count_pixels = countPixels(pixels, h, w);
+        int[] count_pixels = countPixels(pixels);
         int[][] new_pixels = new int[h][w];
 
         for (int i = 0; i < h; i++) {
