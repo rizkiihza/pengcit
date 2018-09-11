@@ -72,6 +72,17 @@ public class MainActivity extends Activity {
             }
         });
 
+        // setup specification button
+        Button specButton = findViewById(R.id.specifyButton);
+        specButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(ctx, SpecificationActivity.class);
+                intent.putExtra("Image", rawBitmap);
+                startActivity(intent);
+            }
+        });
+
     }
 
     @Override

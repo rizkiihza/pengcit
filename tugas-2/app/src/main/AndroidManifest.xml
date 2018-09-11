@@ -17,7 +17,8 @@
             </intent-filter>
         </activity>
         <activity android:name=".HistogramActivity" />
-        <activity android:name=".TransformationAcitivty"></activity>
+        <activity android:name=".TransformationAcitivty" />
+        <activity android:name=".SpecificationActivity"></activity>
     </application>
 
 </manifest>
