@@ -17,6 +17,33 @@ public class ImageProcessor {
         return result;
     }
 
+    public int[][] bezierTransform(int[][] pixels, int h, int w, int c) {
+        int[][] newPixels = new int[h][w];
+        int[] pixelCount = new int[256];
+
+        for(int i = 0; i < 256; i++) {
+            pixelCount[i] = 0;
+        }
+
+        for (int i = 0; i < h; i++) {
+            for (int j = 0; j < w; j++) {
+                pixelCount[pixels[i][j]] += 1;
+            }
+        }
+
+        for (int i = 1; i < 256; i++) {
+            pixelCount[i] += pixelCount[i - 1];
+        }
+
+        for (int i = 0; i < h; i++) {
+            for (int j = 0; j < w; j++) {
+                newPixels[i][j] = c * pixelCount[pixels[i][j]] * 255 / (w*h);
+            }
+        }
+
+        return newPixels;
+    }
+
     public int[][] linearStretching(int[][] pixels, int h, int w) {
         int minimumPixel = 256;
         int maximumPixel = -1;
