@@ -15,6 +15,7 @@ import android.os.Bundle;
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -25,6 +26,7 @@ import android.widget.Toast;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.InputStream;
 import java.lang.reflect.Array;
 
 public class MainActivity extends Activity {
@@ -51,6 +53,8 @@ public class MainActivity extends Activity {
             public void onClick(View view) {
                 Intent intent = new Intent(Intent.ACTION_PICK,
                         MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                intent.setType("image/*");
+                intent.putExtra("return-data", true);
                 startActivityForResult(intent, 200);
             }
         });
@@ -98,6 +102,7 @@ public class MainActivity extends Activity {
         choiceButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Log.d("Bitmap_Size", Integer.toString(rawBitmap.getByteCount()));
                 Intent intent;
                 if (buttonSelected.equals("Histogram")) {
                     intent = new Intent(ctx, HistogramActivity.class);
@@ -138,9 +143,11 @@ public class MainActivity extends Activity {
         }
 
         else if (requestCode == 200 && resultCode == RESULT_OK) {
-            Uri targetUri = data.getData();
+            Uri uri = data.getData();
             try {
-                rawBitmap = BitmapFactory.decodeStream(getContentResolver().openInputStream(targetUri));
+                InputStream stream = getContentResolver().openInputStream(uri);
+                rawBitmap = BitmapFactory.decodeStream(stream);
+                rawBitmap = Bitmap.createScaledBitmap(rawBitmap, 300, 400, false);
                 imageView.setImageBitmap(rawBitmap);
             } catch (FileNotFoundException e) {
                 e.printStackTrace();
