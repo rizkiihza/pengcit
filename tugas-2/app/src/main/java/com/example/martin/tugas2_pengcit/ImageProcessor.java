@@ -2,6 +2,7 @@ package com.example.martin.tugas2_pengcit;
 
 import android.util.Log;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 
@@ -10,22 +11,23 @@ import static java.lang.Math.min;
 
 public class ImageProcessor {
 
-    public int editDistance(String a, String b) {
-        int length_a = a.length();
-        int length_b = b.length();
-        int[][] dp = new int[length_a][length_b];
+    public int editDistance(ArrayList<Integer> a, ArrayList<Integer> b) {
+        int length_a = a.size();
+        int length_b = b.size();
+        int[][] dp = new int[length_a+1][length_b+1];
 
-        for (int i = 0; i < length_a; i++) {
-            for (int j = 0; j < length_b; j ++) {
+        for (int i = 0; i <= length_a; i++) {
+            for (int j = 0; j <= length_b; j ++) {
                 if (i == 0 || j == 0) {
                     dp[i][j] = max(i, j);
+                    continue;
                 }
 
                 int insert = 1 + dp[i][j-1];
                 int delete = 1 + dp[i-1][j];
                 int replace = 1 + dp[i-1][j-1];
 
-                if (a.charAt(i) == b.charAt(j)) {
+                if (a.get(i-1) == b.get(j-1)) {
                     --replace;
                 }
 
@@ -33,10 +35,16 @@ public class ImageProcessor {
             }
         }
 
-        return dp[length_a - 1][length_b - 1];
+        return dp[length_a][length_b];
     }
 
-
+    public double errorSum(double[] a, double[] b) {
+        double result = 0;
+        for (int i = 0; i < 8; i++) {
+            result += (a[i]-b[i])*(a[i]-b[i]);
+        }
+        return result;
+    }
 
     public int[] countPixels(int [][] pixels) {
         int result[] = new int[256];
@@ -70,12 +78,8 @@ public class ImageProcessor {
         return result;
     }
 
-    public int[] getChainCode(int[][] pixels, int w, int h) {
-        int[] result = new int[10];
-
-        for (int i = 0; i < 10; i++) {
-            result[i] = 0;
-        }
+    public ArrayList<Integer> getChainCode(int[][] pixels, int w, int h) {
+        ArrayList<Integer> result = new ArrayList<>();
 
         int startx = -1, starty = -1;
         for (int i = 0; i < w; i++) {
@@ -94,17 +98,15 @@ public class ImageProcessor {
         int[] dx = {1, 1, 0, -1, -1, -1, 0, 1};
         int[] dy = {0, 1, 1, 1, 0, -1, -1, -1};
         int nowx = startx, nowy = starty;
-        Log.d("START_CHAIN", Integer.toString(nowx) + ' ' + Integer.toString(nowy));
         int dir = 0;
         boolean start = false;
         while (nowx != startx || nowy != starty || !start) {
-            Log.d("CHAIN", Integer.toString(nowx) + ' ' + Integer.toString(nowy));
             boolean done = false;
             int firstDir = (dir + 5) % 8;
             for (int i = firstDir; i != firstDir || !done; i = (i + 1) % 8) {
                 if (nowx + dx[i] < w && nowx + dx[i] >= 0 && nowy + dy[i] < h && nowy + dy[i] >= 0) {
                     if (pixels[nowx + dx[i]][nowy + dy[i]] == 0) {
-                        result[i]++;
+                        result.add(i);
                         nowx += dx[i];
                         nowy += dy[i];
                         dir = i;
@@ -114,6 +116,54 @@ public class ImageProcessor {
                 done = true;
             }
             start = true;
+        }
+
+        return result;
+    }
+
+    public double[] getChainFrequency(int[][] pixels, int w, int h) {
+        double[] result = new double[8];
+
+        int startx = -1, starty = -1;
+        for (int i = 0; i < w; i++) {
+            for (int j = 0; j < h; j++) {
+                if (pixels[i][j] == 0) {
+                    startx = i;
+                    starty = j;
+                    break;
+                }
+            }
+            if (startx >= 0) {
+                break;
+            }
+        }
+
+        int[] dx = {1, 1, 0, -1, -1, -1, 0, 1};
+        int[] dy = {0, 1, 1, 1, 0, -1, -1, -1};
+        int nowx = startx, nowy = starty;
+        int dir = 0, sum = 0;
+        boolean start = false;
+        while (nowx != startx || nowy != starty || !start) {
+            boolean done = false;
+            int firstDir = (dir + 5) % 8;
+            for (int i = firstDir; i != firstDir || !done; i = (i + 1) % 8) {
+                if (nowx + dx[i] < w && nowx + dx[i] >= 0 && nowy + dy[i] < h && nowy + dy[i] >= 0) {
+                    if (pixels[nowx + dx[i]][nowy + dy[i]] == 0) {
+                        result[i] += 1;
+                        nowx += dx[i];
+                        nowy += dy[i];
+                        dir = i;
+                        sum += i;
+                        break;
+                    }
+                }
+                done = true;
+            }
+            start = true;
+        }
+
+        for (int i = 0; i < 8; i++) {
+            result[i] /= sum;
         }
 
         return result;

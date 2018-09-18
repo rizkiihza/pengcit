@@ -6,9 +6,14 @@ import android.graphics.Color;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.TextView;
+
+import java.util.ArrayList;
+import java.util.Arrays;
 
 public class ChainActivity extends AppCompatActivity {
     private Bitmap rawBitmap;
@@ -46,27 +51,26 @@ public class ChainActivity extends AppCompatActivity {
         }
         final int[][] bw = imageProcessor.convertToBW(r, g, b, w, h);
 
-        // setup button
+        final ChainCodeDigit digits = new ChainCodeDigit();
+
+        // setup button and result textview
+        final TextView resultText = findViewById(R.id.resultText);
         Button button = findViewById(R.id.getNumberButton);
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                for (int i = 0; i < w; i++) {
-                    for (int j = 0; j < h; j++) {
-                        if (bw[i][j] == 0) {
-                            rawBitmap.setPixel(i, j, Color.rgb(0, 0, 0));
-                        } else {
-                            rawBitmap.setPixel(i, j, Color.rgb(255, 255, 255));
-                        }
+                double[] freqRatio = imageProcessor.getChainFrequency(bw, w, h);
+                double[] distance = new double[10];
+                int minDistanceIdx = -1;
+                for (int i = 0; i < 10; i++) {
+                    distance[i] = imageProcessor.errorSum(freqRatio, digits.ratio[i]);
+                    if (minDistanceIdx < 0 || distance[i] < distance[minDistanceIdx]) {
+                        minDistanceIdx = i;
                     }
                 }
-                imageView.setImageBitmap(rawBitmap);
-                int[] chain = imageProcessor.getChainCode(bw, w, h);
-                Log.d("CHAIN", "START");
-                for (int i = 0; i < 10; i++) {
-                    Log.d("CHAIN", Integer.toString(i) + ' ' + Integer.toString(chain[i]));
-                }
-                Log.d("CHAIN", "DONE");
+                resultText.setText(Integer.toString(minDistanceIdx));
+                resultText.setTextSize(TypedValue.COMPLEX_UNIT_SP, 90f);
+                resultText.setTextColor(Color.BLACK);
             }
         });
     }
