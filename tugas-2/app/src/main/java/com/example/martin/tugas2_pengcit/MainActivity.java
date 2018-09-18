@@ -3,8 +3,11 @@ package com.example.martin.tugas2_pengcit;
 import android.Manifest;
 import android.content.Context;
 import android.content.pm.PackageManager;
+import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
+import android.net.Uri;
 import android.os.Build;
+import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.annotation.RequiresApi;
 import android.os.Bundle;
@@ -20,6 +23,8 @@ import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.Toast;
 
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.lang.reflect.Array;
 
 public class MainActivity extends Activity {
@@ -38,6 +43,17 @@ public class MainActivity extends Activity {
         imageView = this.findViewById(R.id.imageView1);
 
         final Context ctx = this;
+
+        // setup gallery
+        Button galleryButton = this.findViewById(R.id.galleryButton);
+        galleryButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(Intent.ACTION_PICK,
+                        MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                startActivityForResult(intent, 200);
+            }
+        });
 
         // setup photo button
         Button photoButton = this.findViewById(R.id.photoButton);
@@ -119,6 +135,16 @@ public class MainActivity extends Activity {
             rawBitmap = adjustOrientation((Bitmap) data.getExtras().get("data"));
 
             imageView.setImageBitmap(rawBitmap);
+        }
+
+        else if (requestCode == 200 && resultCode == RESULT_OK) {
+            Uri targetUri = data.getData();
+            try {
+                rawBitmap = BitmapFactory.decodeStream(getContentResolver().openInputStream(targetUri));
+                imageView.setImageBitmap(rawBitmap);
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            }
         }
     }
 
