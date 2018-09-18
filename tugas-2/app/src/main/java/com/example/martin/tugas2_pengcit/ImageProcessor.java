@@ -23,7 +23,7 @@ public class ImageProcessor {
     }
 
     public int[][] convertToBW(int[][] red, int[][] green, int[][] blue, int w, int h) {
-        int result[][] = new int[h][w];
+        int result[][] = new int[w][h];
 
         for (int i = 0; i < w; i++) {
             for (int j = 0; j < h; j++) {
@@ -34,6 +34,47 @@ public class ImageProcessor {
                     result[i][j] = 0;
                 }
             }
+        }
+
+        return result;
+    }
+
+    public int[] getChainCode(int[][] pixels, int w, int h) {
+        int[] result = new int[10];
+
+        for (int i = 0; i < 10; i++) {
+            result[i] = 0;
+        }
+
+        int startx = -1, starty = -1;
+        for (int i = 0; i < w; i++) {
+            for (int j = 0; j < h; j++) {
+                if (pixels[i][j] == 0) {
+                    startx = i;
+                    starty = j;
+                    break;
+                }
+            }
+            if (startx >= 0) {
+                break;
+            }
+        }
+
+        int[] dx = {1, 1, 0, -1, -1, -1, 0, 1};
+        int[] dy = {0, -1, -1, -1, 0, 1, 1, 1};
+        int nowx = startx, nowy = starty;
+        boolean start = false;
+        while (nowx != startx || nowy != starty || !start) {
+            for (int i = 0; i < 8; i++) {
+                if (nowx + dx[i] < w && nowx + dx[i] >= 0 && nowy + dy[i] < h && nowy + dy[i] >= 0) {
+                    if (pixels[nowx + dx[i]][nowy + dy[i]] == 0) {
+                        result[i]++;
+                        nowx += dx[i];
+                        nowy += dy[i];
+                    }
+                }
+            }
+            start = true;
         }
 
         return result;

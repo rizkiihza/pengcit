@@ -2,6 +2,7 @@ package com.example.martin.tugas2_pengcit;
 
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -27,12 +28,43 @@ public class ChainActivity extends AppCompatActivity {
         rawBitmap = intent.getParcelableExtra("Image");
         imageView.setImageBitmap(rawBitmap);
 
+        // process bitmap
+        final int w = rawBitmap.getWidth();
+        final int h = rawBitmap.getHeight();
+
+        int[][] r = new int[w][h];
+        int[][] g = new int[w][h];
+        int[][] b = new int[w][h];
+
+        for (int i = 0; i < w; i++) {
+            for (int j = 0; j < h; j++) {
+                int colour = rawBitmap.getPixel(i, j);
+                r[i][j] = Color.red(colour);
+                g[i][j] = Color.green(colour);
+                b[i][j] = Color.blue(colour);
+            }
+        }
+        final int[][] bw = imageProcessor.convertToBW(r, g, b, w, h);
+
         // setup button
         Button button = findViewById(R.id.getNumberButton);
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                for (int i = 0; i < w; i++) {
+                    for (int j = 0; j < h; j++) {
+                        if (bw[i][j] == 0) {
+                            rawBitmap.setPixel(i, j, Color.rgb(0, 0, 0));
+                        } else {
+                            rawBitmap.setPixel(i, j, Color.rgb(255, 255, 255));
+                        }
+                    }
+                }
+                imageView.setImageBitmap(rawBitmap);
+                /*int[] chain = imageProcessor.getChainCode(bw, w, h);
+                for (int i = 0; i < 10; i++) {
+                    Log.d("CHAIN_CODE", Integer.toString(i) + ' ' + Integer.toString(chain[i]));
+                }*/
             }
         });
     }
