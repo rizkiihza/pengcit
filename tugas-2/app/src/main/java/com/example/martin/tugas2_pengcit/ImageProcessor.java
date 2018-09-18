@@ -63,13 +63,14 @@ public class ImageProcessor {
         int[] dx = {1, 1, 0, -1, -1, -1, 0, 1};
         int[] dy = {0, 1, 1, 1, 0, -1, -1, -1};
         int nowx = startx, nowy = starty;
-        Log.d("START CHAIN CODE", Integer.toString(nowx) + ' ' + Integer.toString(nowy));
+        Log.d("START_CHAIN", Integer.toString(nowx) + ' ' + Integer.toString(nowy));
         int dir = 0;
         boolean start = false;
         while (nowx != startx || nowy != starty || !start) {
-            Log.d("CHAIN CODE", Integer.toString(nowx) + ' ' + Integer.toString(nowy));
+            Log.d("CHAIN", Integer.toString(nowx) + ' ' + Integer.toString(nowy));
             boolean done = false;
-            for (int i = (dir + 5) % 8; i != dir || !done; i = (i + 1) % 8) {
+            int firstDir = (dir + 5) % 8;
+            for (int i = firstDir; i != firstDir || !done; i = (i + 1) % 8) {
                 if (nowx + dx[i] < w && nowx + dx[i] >= 0 && nowy + dy[i] < h && nowy + dy[i] >= 0) {
                     if (pixels[nowx + dx[i]][nowy + dy[i]] == 0) {
                         result[i]++;

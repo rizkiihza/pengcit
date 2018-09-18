@@ -62,9 +62,11 @@ public class ChainActivity extends AppCompatActivity {
                 }
                 imageView.setImageBitmap(rawBitmap);
                 int[] chain = imageProcessor.getChainCode(bw, w, h);
+                Log.d("CHAIN", "START");
                 for (int i = 0; i < 10; i++) {
-                    Log.d("CHAIN CODE", Integer.toString(i) + ' ' + Integer.toString(chain[i]));
+                    Log.d("CHAIN", Integer.toString(i) + ' ' + Integer.toString(chain[i]));
                 }
+                Log.d("CHAIN", "DONE");
             }
         });
     }
