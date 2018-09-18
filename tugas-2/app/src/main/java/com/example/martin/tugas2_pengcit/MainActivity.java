@@ -13,15 +13,22 @@ import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.Spinner;
 import android.widget.Toast;
+
+import java.lang.reflect.Array;
 
 public class MainActivity extends Activity {
     private static final int CAMERA_REQUEST = 1888;
     private static final int MY_CAMERA_PERMISSION_CODE = 0;
     private Bitmap rawBitmap;
     private ImageView imageView;
+    private String buttonSelected;
+    private String[] buttonChoice;
 
 
     @Override
@@ -50,49 +57,46 @@ public class MainActivity extends Activity {
             }
         });
 
+        buttonSelected = "Histogram";
+        Spinner choiceSpinner = findViewById(R.id.choiceSpinner);
+
+        buttonChoice = new String[] {"Histogram", "Transform", "Specification", "Number"};
+        final ArrayAdapter<String> choiceList = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, buttonChoice);
+        choiceSpinner.setAdapter(choiceList);
+        choiceSpinner.setSelection(0);
+        choiceSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                buttonSelected = buttonChoice[i];
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+
+            }
+        });
+
+
         // setup histogram button
-        Button histButton = this.findViewById(R.id.histButton);
-        histButton.setOnClickListener(new View.OnClickListener() {
+        Button choiceButton = this.findViewById(R.id.choiceButton);
+        choiceButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(ctx, HistogramActivity.class);
+                Intent intent;
+                if (buttonSelected.equals("Histogram")) {
+                    intent = new Intent(ctx, HistogramActivity.class);
+                } else if (buttonSelected.equals("Transform")) {
+                    intent = new Intent(ctx, TransformationAcitivty.class);
+                } else if (buttonSelected.equals("Specification")) {
+                    intent = new Intent(ctx, SpecificationActivity.class);
+                } else {
+                    intent = new Intent(ctx, ChainActivity.class);
+                }
+
                 intent.putExtra("Image", rawBitmap);
                 startActivity(intent);
             }
         });
-
-        // setup transform button
-        Button transButton = this.findViewById(R.id.transButton);
-        transButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(ctx, TransformationAcitivty.class);
-                intent.putExtra("Image", rawBitmap);
-                startActivity(intent);
-            }
-        });
-
-        // setup specification button
-        Button specButton = findViewById(R.id.specifyButton);
-        specButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(ctx, SpecificationActivity.class);
-                intent.putExtra("Image", rawBitmap);
-                startActivity(intent);
-            }
-        });
-
-        Button chainButton = findViewById(R.id.chainButton);
-        chainButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(ctx, ChainActivity.class);
-                intent.putExtra("Image", rawBitmap);
-                startActivity(intent);
-            }
-        });
-
     }
 
     @Override
