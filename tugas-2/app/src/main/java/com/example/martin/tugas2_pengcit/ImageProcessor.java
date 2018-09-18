@@ -5,7 +5,38 @@ import android.util.Log;
 import java.util.Arrays;
 import java.util.Comparator;
 
+import static java.lang.Math.max;
+import static java.lang.Math.min;
+
 public class ImageProcessor {
+
+    public int editDistance(String a, String b) {
+        int length_a = a.length();
+        int length_b = b.length();
+        int[][] dp = new int[length_a][length_b];
+
+        for (int i = 0; i < length_a; i++) {
+            for (int j = 0; j < length_b; j ++) {
+                if (i == 0 || j == 0) {
+                    dp[i][j] = max(i, j);
+                }
+
+                int insert = 1 + dp[i][j-1];
+                int delete = 1 + dp[i-1][j];
+                int replace = 1 + dp[i-1][j-1];
+
+                if (a.charAt(i) == b.charAt(j)) {
+                    --replace;
+                }
+
+                dp[i][j] = min(min(insert, delete), replace);
+            }
+        }
+
+        return dp[length_a - 1][length_b - 1];
+    }
+
+
 
     public int[] countPixels(int [][] pixels) {
         int result[] = new int[256];
