@@ -18,7 +18,8 @@
         </activity>
         <activity android:name=".HistogramActivity" />
         <activity android:name=".TransformationAcitivty" />
-        <activity android:name=".SpecificationActivity"></activity>
+        <activity android:name=".SpecificationActivity" />
+        <activity android:name=".ChainActivity"></activity>
     </application>
 
 </manifest>

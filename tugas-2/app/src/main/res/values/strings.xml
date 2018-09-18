@@ -4,4 +4,6 @@
     <string name="take_photo">Take a photo</string>
     <string name="show_histogram">Show Histogram</string>
     <string name="transform">Transform</string>
+    <string name="get_number">Get Number</string>
+    <string name="specify_histogram">Specify Histogram</string>
 </resources>

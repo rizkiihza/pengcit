@@ -83,6 +83,16 @@ public class MainActivity extends Activity {
             }
         });
 
+        Button chainButton = findViewById(R.id.chainButton);
+        chainButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(ctx, ChainActivity.class);
+                intent.putExtra("Image", rawBitmap);
+                startActivity(intent);
+            }
+        });
+
     }
 
     @Override
