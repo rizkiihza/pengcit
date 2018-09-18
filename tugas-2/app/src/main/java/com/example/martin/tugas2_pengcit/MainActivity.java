@@ -102,6 +102,7 @@ public class MainActivity extends Activity {
         choiceButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Log.d("Bitmap_Size", Integer.toString(rawBitmap.getByteCount()));
                 Intent intent;
                 if (buttonSelected.equals("Histogram")) {
                     intent = new Intent(ctx, HistogramActivity.class);
@@ -146,6 +147,7 @@ public class MainActivity extends Activity {
             try {
                 InputStream stream = getContentResolver().openInputStream(uri);
                 rawBitmap = BitmapFactory.decodeStream(stream);
+                rawBitmap = Bitmap.createScaledBitmap(rawBitmap, 300, 400, false);
                 imageView.setImageBitmap(rawBitmap);
             } catch (FileNotFoundException e) {
                 e.printStackTrace();
