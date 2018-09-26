@@ -60,6 +60,7 @@ public class ChainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 double[] freqRatio = imageProcessor.getChainFrequency(bw, w, h);
+                Log.d("CHAIN", Arrays.toString(freqRatio));
                 double[] distance = new double[10];
                 int minDistanceIdx = -1;
                 for (int i = 0; i < 10; i++) {

@@ -153,7 +153,7 @@ public class ImageProcessor {
                         nowx += dx[i];
                         nowy += dy[i];
                         dir = i;
-                        sum += i;
+                        sum += 1;
                         break;
                     }
                 }
