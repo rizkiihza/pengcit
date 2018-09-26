@@ -12,13 +12,13 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 
 public class ChainActivity extends AppCompatActivity {
     private Bitmap rawBitmap;
     private ImageView imageView;
     private ImageProcessor imageProcessor;
+    private ThinningProcessor thinningProcessor;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,6 +27,7 @@ public class ChainActivity extends AppCompatActivity {
 
         imageView = findViewById(R.id.numberView);
         imageProcessor = new ImageProcessor();
+        thinningProcessor = new ThinningProcessor();
 
         // get raw bitmap from intent
         Intent intent = getIntent();
@@ -53,10 +54,40 @@ public class ChainActivity extends AppCompatActivity {
 
         final ChainCodeDigit digits = new ChainCodeDigit();
 
-        // setup button and result textview
+        // setup thinning
+        Button thinningButton = findViewById(R.id.thinningButton);
+        thinningButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                int[][] bw_transpose = new int[h][w];
+
+                for (int i = 0; i < h; i++) {
+                    for (int j = 0; j < w; j++) {
+                        bw_transpose[i][j] = bw[j][i];
+                    }
+                }
+
+                int[][] thin_bitmap = thinningProcessor.thinning(bw_transpose, w, h);
+
+                Bitmap.Config config = Bitmap.Config.ARGB_8888;
+                Bitmap transformed_bitmap = Bitmap.createBitmap(w, h, config);
+
+
+                for (int i = 0; i < h; i++) {
+                    for (int j = 0; j < w; j++) {
+                        int colour = Color.rgb(thin_bitmap[i][j], thin_bitmap[i][j], thin_bitmap[i][j]);
+                        transformed_bitmap.setPixel(j, i, colour);
+                    }
+                }
+
+                imageView.setImageBitmap(transformed_bitmap);
+            }
+        });
+
+        // setup get number button and result textview
         final TextView resultText = findViewById(R.id.resultText);
-        Button button = findViewById(R.id.getNumberButton);
-        button.setOnClickListener(new View.OnClickListener() {
+        Button getNumberButton = findViewById(R.id.getNumberButton);
+        getNumberButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 double[] freqRatio = imageProcessor.getChainFrequency(bw, w, h);

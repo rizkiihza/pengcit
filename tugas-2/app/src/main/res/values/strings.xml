@@ -8,4 +8,5 @@
     <string name="specify_histogram">Specify Histogram</string>
     <string name="go">Go</string>
     <string name="galleryString">search gallery</string>
+    <string name="thinning">thinning</string>
 </resources>

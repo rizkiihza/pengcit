@@ -68,7 +68,7 @@ public class ImageProcessor {
             for (int j = 0; j < h; j++) {
                 int gray = (red[i][j] + green[i][j] + blue[i][j]) / 3;
                 if (gray >= 128) {
-                    result[i][j] = 1;
+                    result[i][j] = 255;
                 } else {
                     result[i][j] = 0;
                 }
