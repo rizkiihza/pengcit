@@ -134,14 +134,41 @@ public class ThinningProcessor {
     }
 
     private int getB(int[][] binaryImage, int y, int x) {
-        return binaryImage[y - 1][x] +
-                binaryImage[y - 1][x + 1] +
-                binaryImage[y][x + 1] +
-                binaryImage[y + 1][x + 1] +
-                binaryImage[y + 1][x] +
-                binaryImage[y + 1][x - 1] +
-                binaryImage[y][x - 1] +
-                binaryImage[y - 1][x - 1];
+        int count = 0;
+
+        if (binaryImage[y - 1][x] == 1) {
+            count++;
+        }
+
+        if (binaryImage[y - 1][x + 1] == 1) {
+            count++;
+        }
+
+        if (binaryImage[y][x + 1] == 1) {
+            count++;
+        }
+
+        if (binaryImage[y + 1][x + 1] == 1) {
+            count++;
+        }
+
+        if (binaryImage[y + 1][x] == 1) {
+            count++;
+        }
+
+        if (binaryImage[y + 1][x - 1] == 1) {
+            count++;
+        }
+
+        if (binaryImage[y][x - 1] == 1) {
+            count++;
+        }
+
+        if (binaryImage[y - 1][x - 1] == 1) {
+            count++;
+        }
+
+        return count;
     }
 }
 
