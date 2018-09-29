@@ -1,7 +1,12 @@
 package com.example.martin.tugas2_pengcit;
 
+import android.util.Log;
+
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Queue;
 
 
 public class ThinningProcessor {
@@ -13,11 +18,19 @@ public class ThinningProcessor {
             this.x = x;
             this.y = y;
         }
+
+        @Override
+        public String toString() {
+            return "{" + x + ", " + y + "}";
+        }
     }
 
     public int[][] thinning(final int[][] givenImage, int w, int h) {
         int[][] binaryImage = new int[h][w];
         int[][] resultImage = new int[h][w];
+
+        Queue<Point> blackPoints = new LinkedList<>();
+        Queue<Point> temp = new LinkedList<>();
 
         for(int i = 0; i < h; i++) {
             for (int j = 0; j < w; j++) {
@@ -26,60 +39,64 @@ public class ThinningProcessor {
                 }
                 else if (givenImage[i][j] == 0) {
                     binaryImage[i][j] = 1;
+                    if (i>0 && i+1<h && j>0 && j+1<w) {
+                        blackPoints.add(new Point(i, j));
+                    }
                 }
             }
         }
 
         int a, b;
-        List<Point> pointsToChange = new LinkedList();
+        Queue<Point> pointsToChange = new LinkedList<>();
         boolean hasChange;
+        Point p;
         do {
             // step 1
             hasChange = false;
-            for (int y = 1; y + 1 < binaryImage.length; y++) {
-                for (int x = 1; x + 1 < binaryImage[y].length; x++) {
-                    a = getA(binaryImage, y, x);
-                    b = getB(binaryImage, y, x);
+            while (!blackPoints.isEmpty()) {
+                p = blackPoints.remove();
+                a = getA(binaryImage, p.x, p.y);
+                b = getB(binaryImage, p.x, p.y);
 
-                    boolean c1, c2, c3, c4, c5;
-                    c1 = binaryImage[y][x] == 1;
-                    c2 = 2 <= b && b <= 6;
-                    c3 = a == 1;
-                    c4 = binaryImage[y - 1][x] * binaryImage[y][x + 1] * binaryImage[y + 1][x] == 0;
-                    c5 = (binaryImage[y][x + 1] * binaryImage[y + 1][x] * binaryImage[y][x - 1] == 0);
-                    if ( c1 && c2 && c3 && c4 && c5) {
-                        pointsToChange.add(new Point(x, y));
-                        hasChange = true;
-                    }
+                boolean c2, c3, c4, c5;
+                c2 = 2 <= b && b <= 6;
+                c3 = a == 1;
+                c4 = binaryImage[p.x - 1][p.y] * binaryImage[p.x][p.y + 1] * binaryImage[p.x + 1][p.y] == 0;
+                c5 = (binaryImage[p.x][p.y + 1] * binaryImage[p.x + 1][p.y] * binaryImage[p.x][p.y - 1] == 0);
+                if (c2 && c3 && c4 && c5) {
+                    pointsToChange.add(p);
+                    hasChange = true;
+                } else {
+                    temp.add(p);
                 }
             }
-            for (Point point : pointsToChange) {
-                binaryImage[point.y][point.x] = 0;
+            while (!pointsToChange.isEmpty()) {
+                p = pointsToChange.remove();
+                binaryImage[p.x][p.y] = 0;
             }
-            pointsToChange.clear();
 
             // step 2
-            for (int y = 1; y + 1 < binaryImage.length; y++) {
-                for (int x = 1; x + 1 < binaryImage[y].length; x++) {
-                    a = getA(binaryImage, y, x);
-                    b = getB(binaryImage, y, x);
+            while (!temp.isEmpty()) {
+                p = temp.remove();
+                a = getA(binaryImage, p.x, p.y);
+                b = getB(binaryImage, p.x, p.y);
 
-                    boolean c1, c2, c3, c4, c5;
-                    c1 = binaryImage[y][x] == 1;
-                    c2 = 2 <= b && b <= 6;
-                    c3 = a == 1;
-                    c4 = (binaryImage[y - 1][x] * binaryImage[y][x + 1] * binaryImage[y][x - 1] == 0);
-                    c5 = (binaryImage[y - 1][x] * binaryImage[y + 1][x] * binaryImage[y][x - 1] == 0);
-                    if ( c1 && c2 && c3 && c4 && c5) {
-                        pointsToChange.add(new Point(x, y));
-                        hasChange = true;
-                    }
+                boolean c2, c3, c4, c5;
+                c2 = 2 <= b && b <= 6;
+                c3 = a == 1;
+                c4 = binaryImage[p.x - 1][p.y] * binaryImage[p.x][p.y + 1] * binaryImage[p.x][p.y - 1] == 0;
+                c5 = (binaryImage[p.x - 1][p.y] * binaryImage[p.x + 1][p.y] * binaryImage[p.x][p.y - 1] == 0);
+                if (c2 && c3 && c4 && c5) {
+                    pointsToChange.add(p);
+                    hasChange = true;
+                } else {
+                    blackPoints.add(p);
                 }
             }
-            for (Point point : pointsToChange) {
-                binaryImage[point.y][point.x] = 0;
+            while (!pointsToChange.isEmpty()) {
+                p = pointsToChange.remove();
+                binaryImage[p.x][p.y] = 0;
             }
-            pointsToChange.clear();
         } while (hasChange);
 
 
