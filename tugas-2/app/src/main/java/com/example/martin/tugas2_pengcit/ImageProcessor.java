@@ -68,9 +68,9 @@ public class ImageProcessor {
             for (int j = 0; j < h; j++) {
                 int gray = (red[i][j] + green[i][j] + blue[i][j]) / 3;
                 if (gray >= th) {
-                    result[i][j] = 255;
-                } else {
                     result[i][j] = 0;
+                } else {
+                    result[i][j] = 1;
                 }
             }
         }
@@ -127,7 +127,7 @@ public class ImageProcessor {
         int startx = -1, starty = -1;
         for (int i = 0; i < w; i++) {
             for (int j = 0; j < h; j++) {
-                if (pixels[i][j] == 0) {
+                if (pixels[i][j] > 0) {
                     startx = i;
                     starty = j;
                     break;
@@ -148,7 +148,7 @@ public class ImageProcessor {
             int firstDir = (dir + 5) % 8;
             for (int i = firstDir; i != firstDir || !done; i = (i + 1) % 8) {
                 if (nowx + dx[i] < w && nowx + dx[i] >= 0 && nowy + dy[i] < h && nowy + dy[i] >= 0) {
-                    if (pixels[nowx + dx[i]][nowy + dy[i]] == 0) {
+                    if (pixels[nowx + dx[i]][nowy + dy[i]] > 0) {
                         result[i] += 1;
                         nowx += dx[i];
                         nowy += dy[i];

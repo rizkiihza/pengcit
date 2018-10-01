@@ -27,19 +27,15 @@ public class ThinningProcessor {
         }
     }
 
-    public Bitmap thinning(final int[][] givenImage, int w, int h) {
-        int[][] binaryImage = new int[h][w];
+    public int[][] thinning(final int[][] givenImage, int w, int h) {
+        int[][] binaryImage = givenImage;
 
         Queue<Point> blackPoints = new LinkedList<>();
         Queue<Point> temp = new LinkedList<>();
 
         for(int i = 0; i < h; i++) {
             for (int j = 0; j < w; j++) {
-                if (givenImage[i][j] == 255) {
-                    binaryImage[i][j] = 0;
-                }
-                else if (givenImage[i][j] == 0) {
-                    binaryImage[i][j] = 1;
+                if (givenImage[i][j] > 0) {
                     if (i>0 && i+1<h && j>0 && j+1<w) {
                         blackPoints.add(new Point(i, j));
                     }
@@ -67,7 +63,7 @@ public class ThinningProcessor {
                 if (c2 && c3 && c4 && c5) {
                     pointsToChange.add(p);
                     hasChange = true;
-                } else {
+                } else if (b > 0) {
                     temp.add(p);
                 }
             }
@@ -90,7 +86,7 @@ public class ThinningProcessor {
                 if (c2 && c3 && c4 && c5) {
                     pointsToChange.add(p);
                     hasChange = true;
-                } else {
+                } else if (b > 0) {
                     blackPoints.add(p);
                 }
             }
@@ -100,15 +96,14 @@ public class ThinningProcessor {
             }
         } while (hasChange);
 
-        Bitmap.Config config = Bitmap.Config.ARGB_8888;
-        Bitmap transformed_bitmap = Bitmap.createBitmap(w, h, config);
+        int[][] resultImage = new int[w][h];
 
         while (!blackPoints.isEmpty()) {
             p = blackPoints.remove();
-            transformed_bitmap.setPixel(p.y, p.x, Color.BLACK);
+            resultImage[p.y][p.x] = 1;
         }
 
-        return transformed_bitmap;
+        return resultImage;
     }
 
     private int getA(int[][] binaryImage, int y, int x) {

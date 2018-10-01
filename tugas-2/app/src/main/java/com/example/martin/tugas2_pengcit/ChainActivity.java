@@ -24,12 +24,14 @@ public class ChainActivity extends AppCompatActivity {
     private int[][] b;
     private int[][] bw;
     private int[][] bw_transpose;
+    private int[][] processed;
     private ImageView imageView;
     private ImageProcessor imageProcessor;
     private ThinningProcessor thinningProcessor;
     private TextView resultText;
     private SeekBar threshold;
     private ChainCodeDigit digits;
+    private boolean thinned = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,6 +75,7 @@ public class ChainActivity extends AppCompatActivity {
         // convert to black and white
         bw = imageProcessor.convertToBW(r, g, b, w, h, 128);
         bw_transpose = new int[h][w];
+        processed = bw;
 
         for (int i = 0; i < h; i++) {
             for (int j = 0; j < w; j++) {
@@ -85,7 +88,7 @@ public class ChainActivity extends AppCompatActivity {
 
         for (int i = 0; i < w; i++) {
             for (int j = 0; j < h; j++) {
-                if (bw[i][j] == 0) transformed_bitmap.setPixel(i, j, Color.BLACK);
+                if (bw[i][j] > 0) transformed_bitmap.setPixel(i, j, Color.BLACK);
                 else transformed_bitmap.setPixel(i, j, Color.WHITE);
             }
         }
@@ -111,7 +114,7 @@ public class ChainActivity extends AppCompatActivity {
 
         for (int i = 0; i < w; i++) {
             for (int j = 0; j < h; j++) {
-                if (bw[i][j] == 0) transformed_bitmap.setPixel(i, j, Color.BLACK);
+                if (bw[i][j] > 0) transformed_bitmap.setPixel(i, j, Color.BLACK);
                 else transformed_bitmap.setPixel(i, j, Color.WHITE);
             }
         }
@@ -123,11 +126,25 @@ public class ChainActivity extends AppCompatActivity {
         int h = bw[0].length;
         int w = bw.length;
 
-        imageView.setImageBitmap(thinningProcessor.thinning(bw_transpose, w, h));
+        thinned = true;
+        processed = thinningProcessor.thinning(bw_transpose, w, h);
+
+        Bitmap.Config config = Bitmap.Config.ARGB_8888;
+        Bitmap transformed_bitmap = Bitmap.createBitmap(w, h, config);
+
+        for (int i = 0; i < w; i++) {
+            for (int j = 0; j < h; j++) {
+                if (processed[i][j] > 0) transformed_bitmap.setPixel(i, j, Color.BLACK);
+                else transformed_bitmap.setPixel(i, j, Color.WHITE);
+            }
+        }
+
+        imageView.setImageBitmap(transformed_bitmap);
     }
 
     public void getNumber(View target) {
-        double[] freqRatio = imageProcessor.getChainFrequency(bw, bw.length, bw[0].length);
+        double[] freqRatio = imageProcessor.getChainFrequency(processed,
+                processed.length, processed[0].length);
         Log.d("CHAIN", Arrays.toString(freqRatio));
         double[] distance = new double[10];
         int minDistanceIdx = -1;
