@@ -20,25 +20,50 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="48dp"
-        android:text="@string/thinning"
-        android:id="@+id/thinningButton"
-        android:layout_marginTop="8dp"
-        app:layout_constraintTop_toBottomOf="@id/numberView"
+    <SeekBar
+        android:id="@+id/threshold"
+        android:layout_width="match_parent"
+        android:layout_height="24dp"
+        app:layout_constraintBottom_toTopOf="@id/bwButton"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"/>
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/numberView"
+        app:layout_constraintVertical_bias="0.2" />
 
     <Button
         android:layout_width="wrap_content"
-        android:layout_height="48dp"
-        android:text="@string/get_number"
-        android:id="@+id/getNumberButton"
-        android:layout_marginTop="8dp"
-        app:layout_constraintTop_toBottomOf="@id/thinningButton"
+        android:layout_height="36dp"
+        android:text="Convert"
+        android:id="@+id/bwButton"
+        android:layout_marginTop="4dp"
+        app:layout_constraintTop_toBottomOf="@id/threshold"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"/>
+        app:layout_constraintStart_toStartOf="parent"
+        android:onClick="convertBW"/>
+
+    <Button
+        android:id="@+id/thinningButton"
+        android:layout_width="wrap_content"
+        android:layout_height="36dp"
+        android:layout_marginTop="4dp"
+        android:onClick="thinningView"
+        android:text="@string/thinning"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.309"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/bwButton" />
+
+    <Button
+        android:id="@+id/getNumberButton"
+        android:layout_width="wrap_content"
+        android:layout_height="36dp"
+        android:layout_marginLeft="20dp"
+        android:onClick="getNumber"
+        android:text="@string/get_number"
+        app:layout_constraintLeft_toRightOf="@id/thinningButton"
+        app:layout_constraintTop_toBottomOf="@id/bwButton"
+        tools:layout_editor_absoluteY="376dp" />
 
     <TextView
         android:layout_width="wrap_content"

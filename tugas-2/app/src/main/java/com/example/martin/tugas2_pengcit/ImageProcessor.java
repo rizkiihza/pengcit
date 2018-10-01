@@ -61,13 +61,13 @@ public class ImageProcessor {
         return result;
     }
 
-    public int[][] convertToBW(int[][] red, int[][] green, int[][] blue, int w, int h) {
+    public int[][] convertToBW(int[][] red, int[][] green, int[][] blue, int w, int h, int th) {
         int result[][] = new int[w][h];
 
         for (int i = 0; i < w; i++) {
             for (int j = 0; j < h; j++) {
                 int gray = (red[i][j] + green[i][j] + blue[i][j]) / 3;
-                if (gray >= 128) {
+                if (gray >= th) {
                     result[i][j] = 255;
                 } else {
                     result[i][j] = 0;
