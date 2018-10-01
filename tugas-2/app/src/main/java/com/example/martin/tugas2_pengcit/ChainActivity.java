@@ -15,6 +15,8 @@ import android.widget.TextView;
 
 import java.util.Arrays;
 
+import uk.co.senab.photoview.PhotoViewAttacher;
+
 public class ChainActivity extends AppCompatActivity {
     private Bitmap rawBitmap;
     private int[][] r;
@@ -41,6 +43,10 @@ public class ChainActivity extends AppCompatActivity {
         thinningProcessor = new ThinningProcessor();
         threshold = findViewById(R.id.threshold);
         threshold.setMax(255);
+
+        // set zoomable image view
+        PhotoViewAttacher photoViewAttacher = new PhotoViewAttacher(imageView);
+        photoViewAttacher.update();
 
         // get raw bitmap from intent
         Intent intent = getIntent();
