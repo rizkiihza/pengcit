@@ -1,5 +1,7 @@
 package com.example.martin.tugas2_pengcit;
 
+import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.util.Log;
 
 import java.util.ArrayList;
@@ -25,9 +27,8 @@ public class ThinningProcessor {
         }
     }
 
-    public int[][] thinning(final int[][] givenImage, int w, int h) {
+    public Bitmap thinning(final int[][] givenImage, int w, int h) {
         int[][] binaryImage = new int[h][w];
-        int[][] resultImage = new int[h][w];
 
         Queue<Point> blackPoints = new LinkedList<>();
         Queue<Point> temp = new LinkedList<>();
@@ -99,18 +100,15 @@ public class ThinningProcessor {
             }
         } while (hasChange);
 
+        Bitmap.Config config = Bitmap.Config.ARGB_8888;
+        Bitmap transformed_bitmap = Bitmap.createBitmap(w, h, config);
 
-        for (int i = 0; i < h; i++) {
-            for (int j = 0; j < w; j++) {
-                if (binaryImage[i][j] == 0) {
-                    resultImage[i][j] = 255;
-                } else if (binaryImage[i][j] == 1) {
-                    resultImage[i][j] = 0;
-                }
-            }
+        while (!blackPoints.isEmpty()) {
+            p = blackPoints.remove();
+            transformed_bitmap.setPixel(p.y, p.x, Color.BLACK);
         }
 
-        return resultImage;
+        return transformed_bitmap;
     }
 
     private int getA(int[][] binaryImage, int y, int x) {

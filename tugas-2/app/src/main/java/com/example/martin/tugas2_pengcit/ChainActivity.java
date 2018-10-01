@@ -55,7 +55,7 @@ public class ChainActivity extends AppCompatActivity {
         final ChainCodeDigit digits = new ChainCodeDigit();
 
         // setup thinning
-        Button thinningButton = findViewById(R.id.thinningButton);
+        final Button thinningButton = findViewById(R.id.thinningButton);
         thinningButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -67,20 +67,7 @@ public class ChainActivity extends AppCompatActivity {
                     }
                 }
 
-                int[][] thin_bitmap = thinningProcessor.thinning(bw_transpose, w, h);
-
-                Bitmap.Config config = Bitmap.Config.ARGB_8888;
-                Bitmap transformed_bitmap = Bitmap.createBitmap(w, h, config);
-
-
-                for (int i = 0; i < h; i++) {
-                    for (int j = 0; j < w; j++) {
-                        int colour = Color.rgb(thin_bitmap[i][j], thin_bitmap[i][j], thin_bitmap[i][j]);
-                        transformed_bitmap.setPixel(j, i, colour);
-                    }
-                }
-
-                imageView.setImageBitmap(transformed_bitmap);
+                imageView.setImageBitmap(thinningProcessor.thinning(bw_transpose, w, h));
             }
         });
 
