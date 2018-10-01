@@ -77,8 +77,8 @@ public class ChainActivity extends AppCompatActivity {
         Bitmap.Config config = Bitmap.Config.ARGB_8888;
         Bitmap transformed_bitmap = Bitmap.createBitmap(w, h, config);
 
-        for (int i = 0; i < h; i++) {
-            for (int j = 0; j < w; j++) {
+        for (int i = 0; i < w; i++) {
+            for (int j = 0; j < h; j++) {
                 if (bw[i][j] == 0) transformed_bitmap.setPixel(i, j, Color.BLACK);
                 else transformed_bitmap.setPixel(i, j, Color.WHITE);
             }
@@ -103,8 +103,8 @@ public class ChainActivity extends AppCompatActivity {
         Bitmap.Config config = Bitmap.Config.ARGB_8888;
         Bitmap transformed_bitmap = Bitmap.createBitmap(w, h, config);
 
-        for (int i = 0; i < h; i++) {
-            for (int j = 0; j < w; j++) {
+        for (int i = 0; i < w; i++) {
+            for (int j = 0; j < h; j++) {
                 if (bw[i][j] == 0) transformed_bitmap.setPixel(i, j, Color.BLACK);
                 else transformed_bitmap.setPixel(i, j, Color.WHITE);
             }
