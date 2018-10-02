@@ -128,6 +128,7 @@ public class ChainActivity extends AppCompatActivity {
 
         thinned = true;
         processed = thinningProcessor.thinning(bw_transpose, w, h);
+        processed = thinningProcessor.removeNoise(processed, w, h);
 
         Bitmap.Config config = Bitmap.Config.ARGB_8888;
         Bitmap transformed_bitmap = Bitmap.createBitmap(w, h, config);

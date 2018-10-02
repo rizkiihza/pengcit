@@ -106,6 +106,84 @@ public class ThinningProcessor {
         return resultImage;
     }
 
+    private boolean[][] visited;
+
+
+    public int[][] removeNoise(int[][] givenImage, int w, int h) {
+        int[][] replicateGivenImage = new int[w][h];
+        for (int i = 0; i < w; i++) {
+            for (int j = 0; j < h; j++) {
+                replicateGivenImage[i][j] = givenImage[i][j];
+            }
+        }
+        int startx = -1, starty = -1;
+        int total = 0;
+        visited = new boolean[w][h];
+        for (int i = 0; i < h; i++) {
+            for (int j = 0; j < w; j++) {
+                if (replicateGivenImage[j][i] > 0) {
+                    if (startx < 0) {
+                        startx = j;
+                        starty = i;
+                    }
+                    total += 1;
+                }
+                visited[j][i] = false;
+            }
+        }
+
+        dfs(replicateGivenImage, total, w, h, startx, starty);
+        return  replicateGivenImage;
+    }
+
+    private int dfs(int[][] givenImage, int total, int w, int h, int x, int y) {
+        int[] dx = {1, 1, 0, -1, -1, -1, 0, 1};
+        int[] dy = {0, 1, 1, 1, 0, -1, -1, -1};
+        int totalLen = 1, cnt = 0, mins = -1;
+        ArrayList<Integer> arrLen = new ArrayList<>();
+        visited[x][y] = true;
+        for (int k = 0; k < dx.length; k++) {
+            if (givenImage[x + dx[k]][y + dy[k]] > 0 && !visited[x + dx[k]][y + dy[k]]) {
+                int len = dfs(givenImage, total, w, h, x+dx[k], y+dy[k]);
+                if (len < mins || mins < 0) {
+                    mins = len;
+                }
+                totalLen += len;
+                arrLen.add(len);
+                cnt += 1;
+            }
+        }
+        if (cnt > 1) {
+            int now = 0;
+            for (int k = 0; k < dx.length; k++) {
+                if (givenImage[x + dx[k]][y + dy[k]] > 0 && !visited[x + dx[k]][y + dy[k]]) {
+                    int len = arrLen.get(now);
+                    now += 1;
+                    if (len == mins && len < 0.075*total) {
+                        dfsRemove(givenImage, w, h, x+dx[k], y+dy[k]);
+                        totalLen -= len;
+                        break;
+                    }
+                }
+            }
+        }
+        visited[x][y] = false;
+        return totalLen;
+    }
+
+    private void dfsRemove(int[][] givenImage, int w, int h, int x, int y) {
+        int[] dx = {1, 1, 0, -1, -1, -1, 0, 1};
+        int[] dy = {0, 1, 1, 1, 0, -1, -1, -1};
+        visited[x][y] = true;
+        givenImage[x][y] = 0;
+        for (int k = 0; k < dx.length; k++) {
+            if (givenImage[x + dx[k]][y + dy[k]] > 0 && !visited[x + dx[k]][y + dy[k]]) {
+                dfsRemove(givenImage, w, h, x+dx[k], y+dy[k]);
+            }
+        }
+        visited[x][y] = false;
+    }
+
     private int getA(int[][] binaryImage, int y, int x) {
         int count = 0;
 
