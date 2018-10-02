@@ -184,6 +184,102 @@ public class ThinningProcessor {
         visited[x][y] = false;
     }
 
+    private Point getFirstBlack(int[][] givenImage, int w, int h) {
+        int startx = -1, starty = -1;
+        for (int y = 0; y < h; y++) {
+            for (int x = 0; x < w; x++) {
+                if (givenImage[x][y] > 0) {
+                    startx = x;
+                    starty = y;
+                    break;
+                }
+            }
+        }
+        return new Point(startx, starty);
+    }
+
+    public int[] countNeighbors(int[][] givenImage, int w, int h) {
+        Point start = getFirstBlack(givenImage, w, h);
+        int startx = start.x, starty = start.y;
+
+        visited = new boolean[w][h];
+        for (int i = 0; i < w; i++) {
+            for (int j = 0; j < h; j++) {
+                visited[i][j] = false;
+            }
+        }
+        return dfsNeighbors(givenImage, w, h, startx, starty);
+    }
+
+    private int[] dfsNeighbors(int[][] givenImage, int w, int h, int x, int y) {
+        int[] dx = {1, 1, 0, -1, -1, -1, 0, 1};
+        int[] dy = {0, 1, 1, 1, 0, -1, -1, -1};
+        visited[x][y] = true;
+        int count = 0;
+        int[] total = new int[8];
+        for (int k = 0; k < dx.length; k++) {
+            if (givenImage[x + dx[k]][y+dy[k]] > 0) {
+                count += 1;
+                if (!visited[x+dx[k]][y+dy[k]]) {
+                    int[] temp = dfsNeighbors(givenImage, w, h, x+dx[k], y+dy[k]);
+                    for (int l = 0; l < total.length; l++) {
+                        total[l] += temp[l];
+                    }
+                }
+            }
+        }
+
+        total[count] += 1;
+        Log.d("hitung", Integer.toString(x) + ' ' + Integer.toString(y) + ": " + Arrays.toString(total));
+
+        return total;
+    }
+
+    public int countLoop(int[][] givenImage, int w, int h) {
+        Point start = getFirstBlack(givenImage, w, h);
+        int startx = start.x, starty = start.y;
+
+        visited = new boolean[w][h];
+        for (int i = 0; i < w; i++) {
+            for (int j = 0; j < h; j++) {
+                visited[i][j] = false;
+            }
+        }
+        return dfsLoop(givenImage, w, h, startx, starty);
+    }
+
+    private int dfsLoop(int[][] givenImage, int w, int h, int x, int y) {
+        int[] dx = {1, 1, 0, -1, -1, -1, 0, 1};
+        int[] dy = {0, 1, 1, 1, 0, -1, -1, -1};
+        visited[x][y] = true;
+        int count = 0;
+        int count_unvisited = 0;
+        int total_loop = 0;
+        for (int k = 0; k < dx.length; k++) {
+            if (givenImage[x + dx[k]][y+dy[k]] > 0) {
+                count += 1;
+                if (!visited[x+dx[k]][y+dy[k]]) {
+                    count_unvisited += 1;
+                }
+            }
+        }
+
+        // check if this point is a loop
+        if (count >= 2 && count_unvisited == 0) {
+            total_loop += 1;
+        }
+
+        for (int k = 0; k < dx.length; k++) {
+            if (givenImage[x + dx[k]][y+dy[k]] > 0) {
+                if (!visited[x+dx[k]][y+dy[k]]) {
+                    total_loop += dfsLoop(givenImage, w, h, x+dx[k], y+dy[k]);
+                }
+            }
+        }
+
+        return total_loop;
+    }
+
     private int getA(int[][] binaryImage, int y, int x) {
         int count = 0;
 

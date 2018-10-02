@@ -144,19 +144,24 @@ public class ChainActivity extends AppCompatActivity {
     }
 
     public void getNumber(View target) {
-        double[] freqRatio = imageProcessor.getChainFrequency(processed,
-                processed.length, processed[0].length);
-        Log.d("CHAIN", Arrays.toString(freqRatio));
-        double[] distance = new double[10];
-        int minDistanceIdx = -1;
-        for (int i = 0; i < 10; i++) {
-            distance[i] = imageProcessor.errorSum(freqRatio, digits.ratio[i]);
-            if (minDistanceIdx < 0 || distance[i] < distance[minDistanceIdx]) {
-                minDistanceIdx = i;
+        if (!thinned) {
+            double[] freqRatio = imageProcessor.getChainFrequency(processed,
+                    processed.length, processed[0].length);
+            Log.d("CHAIN", Arrays.toString(freqRatio));
+            double[] distance = new double[10];
+            int minDistanceIdx = -1;
+            for (int i = 0; i < 10; i++) {
+                distance[i] = imageProcessor.errorSum(freqRatio, digits.ratio[i]);
+                if (minDistanceIdx < 0 || distance[i] < distance[minDistanceIdx]) {
+                    minDistanceIdx = i;
+                }
             }
+            resultText.setText(Integer.toString(minDistanceIdx));
+            resultText.setTextSize(TypedValue.COMPLEX_UNIT_SP, 90f);
+            resultText.setTextColor(Color.BLACK);
+        } else {
+            int loop_count = thinningProcessor.countLoop(processed, processed.length, processed[0].length);
+            int[] neighbor_count = thinningProcessor.countNeighbors(processed, processed.length, processed[0].length);
         }
-        resultText.setText(Integer.toString(minDistanceIdx));
-        resultText.setTextSize(TypedValue.COMPLEX_UNIT_SP, 90f);
-        resultText.setTextColor(Color.BLACK);
     }
 }
