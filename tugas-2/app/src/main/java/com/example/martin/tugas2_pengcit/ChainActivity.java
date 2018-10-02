@@ -13,6 +13,7 @@ import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 
 import uk.co.senab.photoview.PhotoViewAttacher;
@@ -162,6 +163,12 @@ public class ChainActivity extends AppCompatActivity {
         } else {
             int loop_count = thinningProcessor.countLoop(processed, processed.length, processed[0].length);
             int[] neighbor_count = thinningProcessor.countNeighbors(processed, processed.length, processed[0].length);
+            resultText.setText("Jumlah Loop: " + Integer.toString(loop_count) + "\n" +
+                    "Jumlah ujung: " + Integer.toString(neighbor_count[1]) + "\n" +
+                    "Jumlah pertigaan: " + Integer.toString(neighbor_count[3]) + "\n" +
+                    "Jumlah perempatan: " + Integer.toString(neighbor_count[4]) + "\n");
+            resultText.setTextSize(TypedValue.COMPLEX_UNIT_SP, 20f);
+            resultText.setTextColor(Color.BLACK);
         }
     }
 }

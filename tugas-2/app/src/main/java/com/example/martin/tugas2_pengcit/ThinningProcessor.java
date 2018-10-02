@@ -132,7 +132,33 @@ public class ThinningProcessor {
             }
         }
 
-        dfs(replicateGivenImage, total, w, h, startx, starty);
+        int lastx = -1, lasty = -1;
+        for (int i = h-1; i >= 0; i--) {
+            for (int j = w-1; j >= 0; j--) {
+                if (replicateGivenImage[j][i] > 0) {
+                    lastx = j;
+                    lasty = i;
+                    break;
+                }
+            }
+            if (lastx >= 0) {
+                break;
+            }
+        }
+
+        int midx = (startx + lastx) / 2, midy = (starty + lasty) / 2;
+        for (int i = 0; midy - i >= 0 || midy + i < h; i++) {
+            if (midy - i >= 0 && replicateGivenImage[midx][midy - i] > 0) {
+                midy -= i;
+                break;
+            }
+            if (midy + i < h && replicateGivenImage[midx][midy + i] > 0) {
+                midy += i;
+                break;
+            }
+        }
+
+        dfs(replicateGivenImage, total, w, h, midx, midy);
         return  replicateGivenImage;
     }
 
