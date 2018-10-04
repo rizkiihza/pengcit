@@ -32,6 +32,8 @@ import java.lang.reflect.Array;
 public class MainActivity extends Activity {
     private static final int CAMERA_REQUEST = 1888;
     private static final int MY_CAMERA_PERMISSION_CODE = 0;
+    private static final int SPECIFICATION_REQUEST = 1;
+    private static final int TRANSFORMATION_REQUEST = 2;
     private Bitmap rawBitmap;
     private ImageView imageView;
     private String buttonSelected;
@@ -104,18 +106,21 @@ public class MainActivity extends Activity {
             public void onClick(View v) {
                 Log.d("Bitmap_Size", Integer.toString(rawBitmap.getByteCount()));
                 Intent intent;
+                int request = 0;
                 if (buttonSelected.equals("Histogram")) {
                     intent = new Intent(ctx, HistogramActivity.class);
                 } else if (buttonSelected.equals("Transform")) {
                     intent = new Intent(ctx, TransformationAcitivty.class);
+                    request = TRANSFORMATION_REQUEST;
                 } else if (buttonSelected.equals("Specification")) {
                     intent = new Intent(ctx, SpecificationActivity.class);
+                    request = SPECIFICATION_REQUEST;
                 } else {
                     intent = new Intent(ctx, ChainActivity.class);
                 }
 
                 intent.putExtra("Image", rawBitmap);
-                startActivity(intent);
+                startActivityForResult(intent, request);
             }
         });
     }
@@ -152,6 +157,16 @@ public class MainActivity extends Activity {
             } catch (FileNotFoundException e) {
                 e.printStackTrace();
             }
+        }
+
+        else if (requestCode == SPECIFICATION_REQUEST && resultCode == RESULT_OK) {
+            rawBitmap = data.getParcelableExtra("Image");
+            imageView.setImageBitmap(rawBitmap);
+        }
+
+        else if (requestCode == TRANSFORMATION_REQUEST && resultCode == RESULT_OK) {
+            rawBitmap = data.getParcelableExtra("Image");
+            imageView.setImageBitmap(rawBitmap);
         }
     }
 

@@ -1,5 +1,6 @@
 package com.example.martin.tugas2_pengcit;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Color;
@@ -14,6 +15,7 @@ import android.widget.SeekBar;
 public class SpecificationActivity extends AppCompatActivity {
     private static final int N_PARAMETER = 3;
     private Bitmap rawBitmap;
+    private Bitmap curBitmap;
     private ImageView imageView;
     private ImageProcessor imageProcessor;
     private SeekBar[] seekbars;
@@ -35,6 +37,7 @@ public class SpecificationActivity extends AppCompatActivity {
         // get raw bitmap from intent
         Intent intent = getIntent();
         rawBitmap = intent.getParcelableExtra("Image");
+        curBitmap = rawBitmap;
         imageView.setImageBitmap(rawBitmap);
 
         // setup seekbars
@@ -43,7 +46,7 @@ public class SpecificationActivity extends AppCompatActivity {
         }
 
         // setup transform button
-        Button transformButton = findViewById(R.id.specificationButton);
+        final Button transformButton = findViewById(R.id.specificationButton);
         transformButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -53,8 +56,21 @@ public class SpecificationActivity extends AppCompatActivity {
                     frequency[i] = getSeekBarValue(seekbars[i].getProgress());
                     Log.d("FREQUENCY", Double.toString(frequency[i]));
                 }
-                imageView.setImageBitmap(transformHistogram(rawBitmap, h, w, frequency));
+                curBitmap = transformHistogram(rawBitmap, h, w, frequency);
+                imageView.setImageBitmap(curBitmap);
                 Log.d("FREQUENCY", "DONE");
+            }
+        });
+
+        // setup back button
+        Button backButton = findViewById(R.id.backSpecificationButton);
+        backButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent resIntent = new Intent();
+                resIntent.putExtra("Image", curBitmap);
+                setResult(Activity.RESULT_OK, resIntent);
+                finish();
             }
         });
     }

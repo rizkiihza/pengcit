@@ -1,5 +1,6 @@
 package com.example.martin.tugas2_pengcit;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Color;
@@ -15,6 +16,7 @@ import android.widget.Spinner;
 
 public class TransformationAcitivty extends AppCompatActivity {
     private Bitmap rawBitmap;
+    private Bitmap curBitmap;
     private ImageView transformImageView;
     private ImageProcessor imageProcessor;
     private String[] algoChoice;
@@ -29,6 +31,7 @@ public class TransformationAcitivty extends AppCompatActivity {
 
         Intent intent = getIntent();
         rawBitmap = intent.getParcelableExtra("Image");
+        curBitmap = rawBitmap;
         transformImageView.setImageBitmap(rawBitmap);
 
         // setup spinner
@@ -51,12 +54,25 @@ public class TransformationAcitivty extends AppCompatActivity {
             }
         });
 
-        // setup button
+        // setup transform button
         Button transformButton = findViewById(R.id.transformButton);
         transformButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                transformImageView.setImageBitmap(transformBitmap(rawBitmap, algoSelected));
+                curBitmap = transformBitmap(rawBitmap, algoSelected);
+                transformImageView.setImageBitmap(curBitmap);
+            }
+        });
+
+        // setup back button
+        Button backButton = findViewById(R.id.backTransformButton);
+        backButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent resIntent = new Intent();
+                resIntent.putExtra("Image", curBitmap);
+                setResult(Activity.RESULT_OK, resIntent);
+                finish();
             }
         });
     }
