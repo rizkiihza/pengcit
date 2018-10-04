@@ -10,6 +10,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
 
+import uk.co.senab.photoview.PhotoViewAttacher;
+
 
 public class ThinningProcessor {
     public class Point {
@@ -224,6 +226,58 @@ public class ThinningProcessor {
         return new Point(startx, starty);
     }
 
+    private Point getLastBlack(int[][] givenImage, int w, int h) {
+        int lastx = -1, lasty = -1;
+        for (int y = h-1; y >= 0; y--) {
+            for (int x = w-1; x >= 0; x--) {
+                if (givenImage[x][y] > 0) {
+                    lastx = x;
+                    lasty = y;
+                    break;
+                }
+            }
+        }
+        return new Point(lastx, lasty);
+    }
+
+    public ArrayList<Point> getEndpoint(int[][] givenImage, int w, int h) {
+        Point start = getFirstBlack(givenImage, w, h);
+        int startx = start.x, starty = start.y;
+
+        visited = new boolean[w][h];
+        for (int i = 0; i < w; i++) {
+            for (int j = 0; j < h; j++) {
+                visited[i][j] = false;
+            }
+        }
+        return dfsEndpoint(givenImage, w, h, startx, starty);
+    }
+
+    private ArrayList<Point> dfsEndpoint(int[][] givenImage, int w, int h, int x, int y) {
+        int[] dx = {1, 1, 0, -1, -1, -1, 0, 1};
+        int[] dy = {0, 1, 1, 1, 0, -1, -1, -1};
+        visited[x][y] = true;
+        int count = 0;
+        ArrayList<Point> result = new ArrayList();
+        for (int k = 0; k < dx.length; k++) {
+            if (givenImage[x + dx[k]][y+dy[k]] > 0) {
+                count += 1;
+                if (!visited[x+dx[k]][y+dy[k]]) {
+                    ArrayList<Point> temp = dfsEndpoint(givenImage, w, h, x+dx[k], y+dy[k]);
+                    for (Point p : temp) {
+                        result.add(p);
+                    }
+                }
+            }
+        }
+
+        if (count == 1) {
+            result.add(new Point(x, y));
+        }
+
+        return result;
+    }
+
     public int[] countNeighbors(int[][] givenImage, int w, int h) {
         Point start = getFirstBlack(givenImage, w, h);
         int startx = start.x, starty = start.y;
@@ -256,7 +310,6 @@ public class ThinningProcessor {
         }
 
         total[count] += 1;
-        Log.d("hitung", Integer.toString(x) + ' ' + Integer.toString(y) + ": " + Arrays.toString(total));
 
         return total;
     }
@@ -304,6 +357,91 @@ public class ThinningProcessor {
         }
 
         return total_loop;
+    }
+
+    public int predict(int[][] givenImage, int w, int h) {
+        int loop = countLoop(givenImage, w, h);
+        int[] neighbors = countNeighbors(givenImage, w, h);
+        ArrayList<Point> endpoints = getEndpoint(givenImage, w, h);
+        int startx = -1, starty = -1;
+        int lastx = -1, lasty = -1;
+        for (int y = 0; y < h; y++) {
+            for (int x = 0; x < w; x++) {
+                if (givenImage[x][y] > 0) {
+                    if (startx < 0) {
+                        startx = x;
+                        starty = y;
+                    }
+                    lastx = x;
+                    lasty = y;
+                }
+            }
+        }
+        Point start = new Point(startx, starty);
+        Point last = new Point(lastx, lasty);
+        Log.d("hitung", "Loop: " + Integer.toString(loop));
+        Log.d("hitung", "neighbors: " + Arrays.toString(neighbors));
+        Log.d("hitung", "Endpoints: " + Arrays.toString(endpoints.toArray()));
+        Log.d("hitung", "Start: " + Integer.toString(start.x) + ' ' + Integer.toString(start.y));
+        Log.d("hitung", "Last: " + Integer.toString(last.x) + ' ' + Integer.toString(last.y));
+
+        if (loop>=2) {
+            return 8;
+        } else if (loop==0) {
+            // 1,2,3,5,7
+            if (neighbors[1] >= 3) {
+                if (neighbors[3] >= 1) {
+                    // 1,3
+                    Point p = new Point(0, 0);
+                    for (Point q : endpoints) {
+                        if (q.x > p.x) {
+                            p = q;
+                        }
+                    }
+                    if (Math.abs(p.x-last.x) <= 0.1*(last.x-start.x)) {
+                        return 1;
+                    } else {
+                        return 3;
+                    }
+                } else {
+                    return 7;
+                }
+            } else {
+                // 2,5,7
+                Point p = endpoints.get(0);
+                Point q = endpoints.get(1);
+                if (p.y > q.y) {
+                    p = endpoints.get(1);
+                    q = endpoints.get(0);
+                }
+                if (p.x > q.x) {
+                    return 5;
+                } else {
+                    if (Math.abs(q.x-last.x) <= 0.1*(last.x-start.x)) {
+                        return 2;
+                    } else {
+                        return 7;
+                    }
+                }
+            }
+        } else {
+            // 0,4,6,9
+            if (neighbors[1] == 0) {
+                return 0;
+            } else if (neighbors[1] >= 2) {
+                return 4;
+            } else {
+                // 4,6,9
+                Point p = endpoints.get(0);
+                if (last.x == p.x && last.y == p.y) {
+                    return 4;
+                } else if (last.y - p.y < p.y - start.y) {
+                    return 9;
+                } else {
+                    return 6;
+                }
+            }
+        }
     }
 
     private int getA(int[][] binaryImage, int y, int x) {

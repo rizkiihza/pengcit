@@ -158,16 +158,14 @@ public class ChainActivity extends AppCompatActivity {
                 }
             }
             resultText.setText(Integer.toString(minDistanceIdx));
-            resultText.setTextSize(TypedValue.COMPLEX_UNIT_SP, 90f);
+            resultText.setTextSize(TypedValue.COMPLEX_UNIT_SP, 60f);
             resultText.setTextColor(Color.BLACK);
         } else {
-            int loop_count = thinningProcessor.countLoop(processed, processed.length, processed[0].length);
-            int[] neighbor_count = thinningProcessor.countNeighbors(processed, processed.length, processed[0].length);
-            resultText.setText("Jumlah Loop: " + Integer.toString(loop_count) + "\n" +
-                    "Jumlah ujung: " + Integer.toString(neighbor_count[1]) + "\n" +
-                    "Jumlah pertigaan: " + Integer.toString(neighbor_count[3]) + "\n" +
-                    "Jumlah perempatan: " + Integer.toString(neighbor_count[4]) + "\n");
-            resultText.setTextSize(TypedValue.COMPLEX_UNIT_SP, 20f);
+            int w = processed.length;
+            int h = processed[0].length;
+            int number = thinningProcessor.predict(processed, w, h);
+            resultText.setText(Integer.toString(number));
+            resultText.setTextSize(TypedValue.COMPLEX_UNIT_SP, 60f);
             resultText.setTextColor(Color.BLACK);
         }
     }
