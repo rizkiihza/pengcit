@@ -84,7 +84,7 @@ public class ImageProcessor {
         int startx = -1, starty = -1;
         for (int i = 0; i < w; i++) {
             for (int j = 0; j < h; j++) {
-                if (pixels[i][j] == 0) {
+                if (pixels[i][j] > 0) {
                     startx = i;
                     starty = j;
                     break;
@@ -105,7 +105,7 @@ public class ImageProcessor {
             int firstDir = (dir + 5) % 8;
             for (int i = firstDir; i != firstDir || !done; i = (i + 1) % 8) {
                 if (nowx + dx[i] < w && nowx + dx[i] >= 0 && nowy + dy[i] < h && nowy + dy[i] >= 0) {
-                    if (pixels[nowx + dx[i]][nowy + dy[i]] == 0) {
+                    if (pixels[nowx + dx[i]][nowy + dy[i]] > 0) {
                         result.add(i);
                         nowx += dx[i];
                         nowy += dy[i];
@@ -164,6 +164,20 @@ public class ImageProcessor {
 
         for (int i = 0; i < 8; i++) {
             result[i] /= sum;
+        }
+
+        return result;
+    }
+
+    public double[] getChainFrequencyDouble(ArrayList<Integer> chainCode) {
+        double[] result = new double[64];
+
+        for (int i = 1; i < chainCode.size(); i++) {
+            result[chainCode.get(i-1)*8 + chainCode.get(i)] += 1.0;
+        }
+
+        for (int i = 0; i < result.length; i++) {
+            result[i] /= chainCode.size();
         }
 
         return result;

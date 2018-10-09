@@ -12,6 +12,7 @@ import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 
 import uk.co.senab.photoview.PhotoViewAttacher;
@@ -31,6 +32,7 @@ public class asciiActivity extends AppCompatActivity {
     private TextView resultText;
     private SeekBar threshold;
     private ChainCodeDigit digits;
+    private AsciiCode ascii;
     private boolean thinned = false;
     private int thinningState = 0;
 
@@ -42,6 +44,7 @@ public class asciiActivity extends AppCompatActivity {
         imageView = findViewById(R.id.asciiView);
         imageProcessor = new ImageProcessor();
         digits = new ChainCodeDigit();
+        ascii = new AsciiCode();
         resultText = findViewById(R.id.asciiResultText);
         thinningProcessor = new ThinningProcessor();
         threshold = findViewById(R.id.asciiThreshold);
@@ -149,7 +152,44 @@ public class asciiActivity extends AppCompatActivity {
     }
 
     public void getAscii(View target) {
-        if (!thinned) {
+        ArrayList<Double> features = new ArrayList<>();
+        int w = processed.length;
+        int h = processed[0].length;
+        int loop = thinningProcessor.countLoop(processed, w, h);
+        int[] neighbors = thinningProcessor.countNeighbors(processed, w, h);
+        ArrayList<Integer> chainCode = imageProcessor.getChainCode(processed, w, h);
+        double[] chainFrequencyDouble = imageProcessor.getChainFrequencyDouble(chainCode);
+
+        features.add((double)loop);
+        for(int i = 1; i < 5; i++) {
+            if (i != 2) features.add((double) neighbors[i]);
+        }
+
+        for (int i = 0; i < chainFrequencyDouble.length; i++) {
+            features.add(chainFrequencyDouble[i]);
+        }
+
+//        Log.d("Features", Arrays.toString(features.toArray()));
+        double err, minError = -1;
+        int minIndex = -1;
+
+        for (int i = 0; i < ascii.code.length; i++) {
+            err = 0;
+            for (int j = 0; j < features.size(); j++) {
+                err += (features.get(j) - ascii.code[i][j])*(features.get(j) - ascii.code[i][j]);
+            }
+            if (minIndex < 0 || err < minError) {
+                minError = err;
+                minIndex = i;
+            }
+        }
+
+        Log.d("answer", Character.toString(ascii.label[minIndex]));
+
+
+
+
+        /*if (!thinned) {
             double[] freqRatio = imageProcessor.getChainFrequency(processed,
                     processed.length, processed[0].length);
             Log.d("CHAIN", Arrays.toString(freqRatio));
@@ -171,6 +211,6 @@ public class asciiActivity extends AppCompatActivity {
             resultText.setText(Integer.toString(number));
             resultText.setTextSize(TypedValue.COMPLEX_UNIT_SP, 60f);
             resultText.setTextColor(Color.BLACK);
-        }
+        }*/
     }
 }

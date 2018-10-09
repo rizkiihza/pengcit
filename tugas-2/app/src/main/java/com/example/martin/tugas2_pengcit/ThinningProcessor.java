@@ -179,13 +179,11 @@ public class ThinningProcessor {
         }
 
         int midx = (startx + lastx) / 2, midy = (starty + lasty) / 2;
-        Log.d("debug", Integer.toString(midx) + ' ' + Integer.toString(midy));
         for (int i = 0; midy - i >= 0 || midy + i < h; i++) {
             if (midy - i >= 0 && replicateGivenImage[midx][midy - i] > 0) {
                 midy -= i;
                 break;
             }
-            Log.d("debug", Integer.toString(midx) + ' ' + Integer.toString(midy + i));
             if (midy + i < h && replicateGivenImage[midx][midy + i] > 0) {
                 midy += i;
                 break;
@@ -365,9 +363,6 @@ public class ThinningProcessor {
         }
 
         total[count] += 1;
-        if (count == 3) {
-            Log.d("cabang", Integer.toString(x) + ' ' + Integer.toString(y));
-        }
 
         return total;
     }
