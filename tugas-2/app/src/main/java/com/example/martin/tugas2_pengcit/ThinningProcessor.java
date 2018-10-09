@@ -105,6 +105,36 @@ public class ThinningProcessor {
             resultImage[p.y][p.x] = 1;
         }
 
+        for(int i = 1; i + 1 < w; i++) {
+            for (int j = 1; j + 1 < h; j++) {
+                if (resultImage[i][j] > 0) {
+                    if (resultImage[i + 1][j] + resultImage[i][j - 1] == 2) {
+                        if (resultImage[i + 1][j - 1] + resultImage[i - 1][j + 1] == 0) {
+                            resultImage[i][j] = 0;
+                            continue;
+                        }
+                    }
+                    if (resultImage[i - 1][j] + resultImage[i][j - 1] == 2) {
+                        if (resultImage[i - 1][j - 1] + resultImage[i + 1][j + 1] == 0) {
+                            resultImage[i][j] = 0;
+                            continue;
+                        }
+                    }
+                    if (resultImage[i - 1][j] + resultImage[i][j + 1] == 2) {
+                        if (resultImage[i - 1][j + 1] + resultImage[i + 1][j - 1] == 0) {
+                            resultImage[i][j] = 0;
+                            continue;
+                        }
+                    }
+                    if (resultImage[i + 1][j] + resultImage[i][j + 1] == 2) {
+                        if (resultImage[i + 1][j + 1] + resultImage[i - 1][j - 1] == 0) {
+                            resultImage[i][j] = 0;
+                        }
+                    }
+                }
+            }
+        }
+
         return resultImage;
     }
 
@@ -149,11 +179,13 @@ public class ThinningProcessor {
         }
 
         int midx = (startx + lastx) / 2, midy = (starty + lasty) / 2;
+        Log.d("debug", Integer.toString(midx) + ' ' + Integer.toString(midy));
         for (int i = 0; midy - i >= 0 || midy + i < h; i++) {
             if (midy - i >= 0 && replicateGivenImage[midx][midy - i] > 0) {
                 midy -= i;
                 break;
             }
+            Log.d("debug", Integer.toString(midx) + ' ' + Integer.toString(midy + i));
             if (midy + i < h && replicateGivenImage[midx][midy + i] > 0) {
                 midy += i;
                 break;
@@ -187,7 +219,7 @@ public class ThinningProcessor {
                 if (givenImage[x + dx[k]][y + dy[k]] > 0 && !visited[x + dx[k]][y + dy[k]]) {
                     int len = arrLen.get(now);
                     now += 1;
-                    if (len == mins && len < 0.075*total) {
+                    if (len == mins && len < 0.1*total) {
                         dfsRemove(givenImage, w, h, x+dx[k], y+dy[k]);
                         totalLen -= len;
                         break;
@@ -363,6 +395,9 @@ public class ThinningProcessor {
         int loop = countLoop(givenImage, w, h);
         int[] neighbors = countNeighbors(givenImage, w, h);
         ArrayList<Point> endpoints = getEndpoint(givenImage, w, h);
+        Log.d("hitung", "Loop: " + Integer.toString(loop));
+        Log.d("hitung", "Neighbor: " + Arrays.toString(neighbors));
+        Log.d("hitung", "Endpoint: " + Arrays.toString(endpoints.toArray()));
         int startx = -1, starty = -1;
         int lastx = -1, lasty = -1;
         for (int y = 0; y < h; y++) {
@@ -379,11 +414,24 @@ public class ThinningProcessor {
         }
         Point start = new Point(startx, starty);
         Point last = new Point(lastx, lasty);
-        Log.d("hitung", "Loop: " + Integer.toString(loop));
-        Log.d("hitung", "neighbors: " + Arrays.toString(neighbors));
-        Log.d("hitung", "Endpoints: " + Arrays.toString(endpoints.toArray()));
-        Log.d("hitung", "Start: " + Integer.toString(start.x) + ' ' + Integer.toString(start.y));
-        Log.d("hitung", "Last: " + Integer.toString(last.x) + ' ' + Integer.toString(last.y));
+
+        int rightx = -1, righty = -1;
+        int leftx = -1, lefty = -1;
+        for (int x = 0; x < w; x++) {
+            for (int y = 0; y < h; y++) {
+                if (givenImage[x][y] > 0) {
+                    if (leftx < 0) {
+                        leftx = x;
+                        lefty = y;
+                    }
+                    rightx = x;
+                    righty = y;
+                }
+            }
+        }
+        Point left = new Point(leftx, lefty);
+        Point right = new Point(rightx, righty);
+
 
         if (loop>=2) {
             return 8;
@@ -417,7 +465,7 @@ public class ThinningProcessor {
                 if (p.x > q.x) {
                     return 5;
                 } else {
-                    if (Math.abs(q.x-last.x) <= 0.1*(last.x-start.x)) {
+                    if (right.x == q.x) {
                         return 2;
                     } else {
                         return 7;

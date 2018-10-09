@@ -86,9 +86,6 @@ public class TransformationAcitivty extends AppCompatActivity {
         int w = bitmap.getWidth();
         int h = bitmap.getHeight();
 
-        Log.d("debug", "w : " + Integer.toString(w));
-        Log.d("debug", "h : " + Integer.toString(h));
-
         int[][] r = new int[h][w];
         int[][] g = new int[h][w];
         int[][] b = new int[h][w];
@@ -106,12 +103,10 @@ public class TransformationAcitivty extends AppCompatActivity {
             r = imageProcessor.transformCumulative(r, h, w);
             g = imageProcessor.transformCumulative(g, h, w);
             b = imageProcessor.transformCumulative(b, h, w);
-            Log.d("debug", "algo used: ALU");
         } else if( algoName.equals("Linear Stretching")) {
             r = imageProcessor.linearStretching(r, h, w);
             g = imageProcessor.linearStretching(g, h, w);
             b = imageProcessor.linearStretching(b, h, w);
-            Log.d("debug", "algo used Linear Stretching");
         }
 
         Bitmap.Config config = Bitmap.Config.ARGB_8888;
