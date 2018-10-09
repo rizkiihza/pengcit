@@ -203,14 +203,16 @@ public class ThinningProcessor {
         ArrayList<Integer> arrLen = new ArrayList<>();
         visited[x][y] = true;
         for (int k = 0; k < dx.length; k++) {
-            if (givenImage[x + dx[k]][y + dy[k]] > 0 && !visited[x + dx[k]][y + dy[k]]) {
-                int len = dfs(givenImage, total, w, h, x+dx[k], y+dy[k]);
-                if (len < mins || mins < 0) {
-                    mins = len;
+            if (givenImage[x + dx[k]][y + dy[k]] > 0) {
+                if (!visited[x + dx[k]][y + dy[k]]) {
+                    int len = dfs(givenImage, total, w, h, x+dx[k], y+dy[k]);
+                    if (len < mins || mins < 0) {
+                        mins = len;
+                    }
+                    totalLen += len;
+                    arrLen.add(len);
+                    cnt += 1;
                 }
-                totalLen += len;
-                arrLen.add(len);
-                cnt += 1;
             }
         }
         if (cnt > 1) {
@@ -220,7 +222,9 @@ public class ThinningProcessor {
                     int len = arrLen.get(now);
                     now += 1;
                     if (len == mins && len < 0.1*total) {
-                        dfsRemove(givenImage, w, h, x+dx[k], y+dy[k]);
+                        if (checkRemove(givenImage, w, h, x+dx[k], y+dy[k])) {
+                            dfsRemove(givenImage, w, h, x+dx[k], y+dy[k]);
+                        }
                         totalLen -= len;
                         break;
                     }
@@ -229,6 +233,26 @@ public class ThinningProcessor {
         }
         visited[x][y] = false;
         return totalLen;
+    }
+
+    private boolean checkRemove(int[][] givenImage, int w, int h, int x, int y) {
+        int[] dx = {1, 1, 0, -1, -1, -1, 0, 1};
+        int[] dy = {0, 1, 1, 1, 0, -1, -1, -1};
+        visited[x][y] = true;
+        int cnt = 0;
+        for (int k = 0; k < dx.length; k++) {
+            if (givenImage[x + dx[k]][y + dy[k]] > 0) {
+                if (!visited[x + dx[k]][y + dy[k]]) {
+                    if (checkRemove(givenImage, w, h, x+dx[k], y+dy[k])) {
+                        visited[x][y] = false;
+                        return true;
+                    }
+                }
+                cnt += 1;
+            }
+        }
+        visited[x][y] = false;
+        return (cnt == 1);
     }
 
     private void dfsRemove(int[][] givenImage, int w, int h, int x, int y) {
@@ -241,7 +265,6 @@ public class ThinningProcessor {
                 dfsRemove(givenImage, w, h, x+dx[k], y+dy[k]);
             }
         }
-        visited[x][y] = false;
     }
 
     private Point getFirstBlack(int[][] givenImage, int w, int h) {
@@ -342,6 +365,9 @@ public class ThinningProcessor {
         }
 
         total[count] += 1;
+        if (count == 3) {
+            Log.d("cabang", Integer.toString(x) + ' ' + Integer.toString(y));
+        }
 
         return total;
     }

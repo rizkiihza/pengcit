@@ -5,10 +5,14 @@ import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
+import android.util.TypedValue;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.TextView;
+
+import java.util.Arrays;
 
 import uk.co.senab.photoview.PhotoViewAttacher;
 
@@ -142,5 +146,31 @@ public class asciiActivity extends AppCompatActivity {
         }
 
         imageView.setImageBitmap(transformed_bitmap);
+    }
+
+    public void getAscii(View target) {
+        if (!thinned) {
+            double[] freqRatio = imageProcessor.getChainFrequency(processed,
+                    processed.length, processed[0].length);
+            Log.d("CHAIN", Arrays.toString(freqRatio));
+            double[] distance = new double[10];
+            int minDistanceIdx = -1;
+            for (int i = 0; i < 10; i++) {
+                distance[i] = imageProcessor.errorSum(freqRatio, digits.ratio[i]);
+                if (minDistanceIdx < 0 || distance[i] < distance[minDistanceIdx]) {
+                    minDistanceIdx = i;
+                }
+            }
+            resultText.setText(Integer.toString(minDistanceIdx));
+            resultText.setTextSize(TypedValue.COMPLEX_UNIT_SP, 60f);
+            resultText.setTextColor(Color.BLACK);
+        } else {
+            int w = processed.length;
+            int h = processed[0].length;
+            int number = thinningProcessor.predict(processed, w, h);
+            resultText.setText(Integer.toString(number));
+            resultText.setTextSize(TypedValue.COMPLEX_UNIT_SP, 60f);
+            resultText.setTextColor(Color.BLACK);
+        }
     }
 }
