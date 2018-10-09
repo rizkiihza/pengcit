@@ -22,7 +22,8 @@
         <activity android:name=".HistogramActivity" />
         <activity android:name=".TransformationAcitivty" />
         <activity android:name=".SpecificationActivity" />
-        <activity android:name=".ChainActivity"></activity>
+        <activity android:name=".ChainActivity" />
+        <activity android:name=".asciiActivity"></activity>
     </application>
 
 </manifest>

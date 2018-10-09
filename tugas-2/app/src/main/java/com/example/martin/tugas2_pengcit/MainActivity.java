@@ -39,7 +39,6 @@ public class MainActivity extends Activity {
     private String buttonSelected;
     private String[] buttonChoice;
 
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -82,7 +81,7 @@ public class MainActivity extends Activity {
         buttonSelected = "Histogram";
         Spinner choiceSpinner = findViewById(R.id.choiceSpinner);
 
-        buttonChoice = new String[] {"Histogram", "Transform", "Specification", "Number"};
+        buttonChoice = new String[] {"Histogram", "Transform", "Specification", "Number", "ASCII"};
         final ArrayAdapter<String> choiceList = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, buttonChoice);
         choiceSpinner.setAdapter(choiceList);
         choiceSpinner.setSelection(0);
@@ -115,8 +114,10 @@ public class MainActivity extends Activity {
                 } else if (buttonSelected.equals("Specification")) {
                     intent = new Intent(ctx, SpecificationActivity.class);
                     request = SPECIFICATION_REQUEST;
-                } else {
+                } else if (buttonSelected.equals("Number")){
                     intent = new Intent(ctx, ChainActivity.class);
+                } else {
+                    intent = new Intent(ctx, asciiActivity.class);
                 }
 
                 intent.putExtra("Image", rawBitmap);
