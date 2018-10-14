@@ -316,13 +316,27 @@ public class ThinningProcessor {
         Point start = getFirstBlack(givenImage, w, h);
         int startx = start.x, starty = start.y;
 
+        int[] total_neighbor = new int[8];
+        used = new boolean[w][h];
         visited = new boolean[w][h];
         for (int i = 0; i < w; i++) {
             for (int j = 0; j < h; j++) {
                 visited[i][j] = false;
+                used[i][j] = false;
             }
         }
-        return dfsNeighbors(givenImage, w, h, startx, starty);
+
+        for (int i = 0; i < w; i++) {
+            for (int j = 0; j < h; j++) {
+                if (givenImage[i][j] > 0 && !used[i][j]) {
+                    int[] neighbor = dfsNeighbors(givenImage, w, h, startx, starty);
+                    for (int n = 0; n < neighbor.length; i++) {
+                        total_neighbor[n] += neighbor[n];
+                    }
+                }
+            }
+        }
+        return total_neighbor;
     }
 
     private int[] dfsNeighbors(int[][] givenImage, int w, int h, int x, int y) {
