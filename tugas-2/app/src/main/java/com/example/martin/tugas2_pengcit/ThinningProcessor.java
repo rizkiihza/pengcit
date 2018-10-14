@@ -156,6 +156,9 @@ public class ThinningProcessor {
 
         for (int i = 0; i < h; i++) {
             for (int j = 0; j < w; j++) {
+                if (replicateGivenImage[i][j] > 0) {
+                    total += 1;
+                }
                 used[i][j] = false;
                 visited[i][j] = false;
             }
