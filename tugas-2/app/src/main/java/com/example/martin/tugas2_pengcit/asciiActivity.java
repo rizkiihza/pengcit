@@ -156,6 +156,7 @@ public class asciiActivity extends AppCompatActivity {
         int w = processed.length;
         int h = processed[0].length;
         int loop = thinningProcessor.countLoop(processed, w, h);
+        int component = thinningProcessor.getDifferentPart(processed, w, h);
         int[] neighbors = thinningProcessor.countNeighbors(processed, w, h);
         ArrayList<Integer> chainCode = imageProcessor.getChainCode(processed, w, h);
         double[] chainFrequencyDouble = imageProcessor.getChainFrequencyDouble(chainCode);
@@ -169,14 +170,23 @@ public class asciiActivity extends AppCompatActivity {
             features.add(chainFrequencyDouble[i]);
         }
 
+        double[][] code;
+        if (component == 1) {
+            code = ascii.code;
+        } else if (component == 2) {
+            code = ascii.codeTwo;
+        } else {
+            Log.d("answer", Character.toString('%'));
+        }
+
 //        Log.d("Features", Arrays.toString(features.toArray()));
         double err, minError = -1;
         int minIndex = -1;
 
-        for (int i = 0; i < ascii.code.length; i++) {
+        for (int i = 0; i < code.length; i++) {
             err = 0;
             for (int j = 0; j < features.size(); j++) {
-                err += (features.get(j) - ascii.code[i][j])*(features.get(j) - ascii.code[i][j]);
+                err += (features.get(j) - code[i][j])*(features.get(j) - code[i][j]);
             }
             if (minIndex < 0 || err < minError) {
                 minError = err;
