@@ -138,6 +138,7 @@ public class ThinningProcessor {
         return resultImage;
     }
 
+    private boolean[][] used;
     private boolean[][] visited;
 
 
@@ -161,6 +162,7 @@ public class ThinningProcessor {
                     total += 1;
                 }
                 visited[j][i] = false;
+                used[i][j] = false;
             }
         }
 
