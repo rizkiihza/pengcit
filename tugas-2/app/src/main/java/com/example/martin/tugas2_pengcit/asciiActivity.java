@@ -171,15 +171,19 @@ public class asciiActivity extends AppCompatActivity {
         }
 
         double[][] code;
+        char[] label;
         if (component == 1) {
             code = ascii.code;
+            label = ascii.label;
         } else if (component == 2) {
             code = ascii.codeTwo;
+            label = ascii.labelTwo;
         } else {
             Log.d("answer", Character.toString('%'));
+            return;
         }
 
-//        Log.d("Features", Arrays.toString(features.toArray()));
+        //Log.d("Features", Arrays.toString(features.toArray()));
         double err, minError = -1;
         int minIndex = -1;
 
@@ -194,6 +198,6 @@ public class asciiActivity extends AppCompatActivity {
             }
         }
 
-        Log.d("answer", Character.toString(ascii.label[minIndex]));
+        Log.d("answer", Character.toString(label[minIndex]));
     }
 }
