@@ -154,8 +154,8 @@ public class ThinningProcessor {
         used = new boolean[w][h];
         visited = new boolean[w][h];
 
-        for (int i = 0; i < h; i++) {
-            for (int j = 0; j < w; j++) {
+        for (int i = 0; i < w; i++) {
+            for (int j = 0; j < h; j++) {
                 if (replicateGivenImage[i][j] > 0) {
                     total += 1;
                 }
@@ -164,8 +164,8 @@ public class ThinningProcessor {
             }
         }
 
-        for(int i = 0; i < h; i++) {
-            for (int j = 0; j < w; j++) {
+        for(int i = 0; i < w; i++) {
+            for (int j = 0; j < h; j++) {
                 if (replicateGivenImage[i][j] > 0 && !used[i][j]) {
                     dfs(replicateGivenImage, total, w, h, i, j);
                 }

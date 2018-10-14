@@ -5,6 +5,8 @@ import android.util.Log;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.LinkedList;
+import java.util.Queue;
 
 import static java.lang.Math.max;
 import static java.lang.Math.min;
@@ -83,10 +85,12 @@ public class ImageProcessor {
 
         boolean[][] visited = new boolean[w][h];
         int startx = 0, starty = 0;
+        int nowx, nowy;
         boolean finished = false;
         int[] dx = {1, 1, 0, -1, -1, -1, 0, 1};
         int[] dy = {0, 1, 1, 1, 0, -1, -1, -1};
-        
+        Queue<Integer> temp = new LinkedList<>();
+
         while (!finished) {
             for (int j = starty; j < h; j++) {
                 if (pixels[startx][j] > 0 && !visited[startx][j]) {
@@ -114,21 +118,22 @@ public class ImageProcessor {
                 }
             }
 
-            if (startx >= w) {
+            if (startx >= w || visited[startx][starty]) {
                 finished = true;
             }
 
             if (!finished) {
-                int nowx = startx, nowy = starty;
+                nowx = startx; nowy = starty;
                 int dir = 0;
                 boolean start = false;
                 while (nowx != startx || nowy != starty || !start) {
-                    visited[nowx][nowy] = true;
+                    temp.add(nowx);
+                    temp.add(nowy);
                     boolean done = false;
                     int firstDir = (dir + 5) % 8;
                     for (int i = firstDir; i != firstDir || !done; i = (i + 1) % 8) {
                         if (nowx + dx[i] < w && nowx + dx[i] >= 0 && nowy + dy[i] < h && nowy + dy[i] >= 0) {
-                            if (pixels[nowx + dx[i]][nowy + dy[i]] > 0 && !visited[nowx + dx[i]][nowy + dy[i]]) {
+                            if (pixels[nowx + dx[i]][nowy + dy[i]] > 0) {
                                 result.add(i);
                                 nowx += dx[i];
                                 nowy += dy[i];
@@ -140,6 +145,12 @@ public class ImageProcessor {
                     }
                     start = true;
                 }
+            }
+
+            while (!temp.isEmpty()) {
+                nowx = temp.remove();
+                nowy = temp.remove();
+                visited[nowx][nowy] = true;
             }
         }
         return result;
