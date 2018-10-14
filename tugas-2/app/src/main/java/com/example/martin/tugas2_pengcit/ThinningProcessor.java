@@ -344,7 +344,7 @@ public class ThinningProcessor {
             for (int j = 0; j < h; j++) {
                 if (givenImage[i][j] > 0 && !used[i][j]) {
                     int[] neighbor = dfsNeighbors(givenImage, w, h, startx, starty);
-                    for (int n = 0; n < neighbor.length; i++) {
+                    for (int n = 0; n < neighbor.length; n++) {
                         total_neighbor[n] += neighbor[n];
                     }
                 }
