@@ -81,43 +81,67 @@ public class ImageProcessor {
     public ArrayList<Integer> getChainCode(int[][] pixels, int w, int h) {
         ArrayList<Integer> result = new ArrayList<>();
 
-        int startx = -1, starty = -1;
-        for (int i = 0; i < w; i++) {
-            for (int j = 0; j < h; j++) {
-                if (pixels[i][j] > 0) {
-                    startx = i;
+        boolean[][] visited = new boolean[w][h];
+        int startx = 0, starty = 0;
+        boolean finished = false;
+        int[] dx = {1, 1, 0, -1, -1, -1, 0, 1};
+        int[] dy = {0, 1, 1, 1, 0, -1, -1, -1};
+        
+        while (!finished) {
+            for (int j = starty; j < h; j++) {
+                if (pixels[startx][j] > 0 && !visited[startx][j]) {
                     starty = j;
                     break;
                 }
+                visited[startx][j] = true;
             }
-            if (startx >= 0) {
-                break;
+            if (starty == h) {
+                starty = 0;
+                startx += 1;
             }
-        }
-
-        int[] dx = {1, 1, 0, -1, -1, -1, 0, 1};
-        int[] dy = {0, 1, 1, 1, 0, -1, -1, -1};
-        int nowx = startx, nowy = starty;
-        int dir = 0;
-        boolean start = false;
-        while (nowx != startx || nowy != starty || !start) {
-            boolean done = false;
-            int firstDir = (dir + 5) % 8;
-            for (int i = firstDir; i != firstDir || !done; i = (i + 1) % 8) {
-                if (nowx + dx[i] < w && nowx + dx[i] >= 0 && nowy + dy[i] < h && nowy + dy[i] >= 0) {
-                    if (pixels[nowx + dx[i]][nowy + dy[i]] > 0) {
-                        result.add(i);
-                        nowx += dx[i];
-                        nowy += dy[i];
-                        dir = i;
-                        break;
+            if (startx >= w) {
+                finished = true;
+            } else if (pixels[startx][starty] == 0 || visited[startx][starty]) {
+                boolean changed = false;
+                for (int i = startx; i < w && !changed; i++) {
+                    for (int j = 0; j < h && !changed; j++) {
+                        if (pixels[i][j] > 0 && !visited[i][j]) {
+                            startx = i;
+                            starty = j;
+                            changed = true;
+                        }
                     }
                 }
-                done = true;
             }
-            start = true;
-        }
 
+            if (startx >= w) {
+                finished = true;
+            }
+
+            if (!finished) {
+                int nowx = startx, nowy = starty;
+                int dir = 0;
+                boolean start = false;
+                while (nowx != startx || nowy != starty || !start) {
+                    visited[nowx][nowy] = true;
+                    boolean done = false;
+                    int firstDir = (dir + 5) % 8;
+                    for (int i = firstDir; i != firstDir || !done; i = (i + 1) % 8) {
+                        if (nowx + dx[i] < w && nowx + dx[i] >= 0 && nowy + dy[i] < h && nowy + dy[i] >= 0) {
+                            if (pixels[nowx + dx[i]][nowy + dy[i]] > 0 && !visited[nowx + dx[i]][nowy + dy[i]]) {
+                                result.add(i);
+                                nowx += dx[i];
+                                nowy += dy[i];
+                                dir = i;
+                                break;
+                            }
+                        }
+                        done = true;
+                    }
+                    start = true;
+                }
+            }
+        }
         return result;
     }
 
