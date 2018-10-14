@@ -149,50 +149,25 @@ public class ThinningProcessor {
                 replicateGivenImage[i][j] = givenImage[i][j];
             }
         }
-        int startx = -1, starty = -1;
+
         int total = 0;
+        used = new boolean[w][h];
         visited = new boolean[w][h];
+
         for (int i = 0; i < h; i++) {
             for (int j = 0; j < w; j++) {
-                if (replicateGivenImage[j][i] > 0) {
-                    if (startx < 0) {
-                        startx = j;
-                        starty = i;
-                    }
-                    total += 1;
-                }
-                visited[j][i] = false;
                 used[i][j] = false;
+                visited[i][j] = false;
             }
         }
 
-        int lastx = -1, lasty = -1;
-        for (int i = h-1; i >= 0; i--) {
-            for (int j = w-1; j >= 0; j--) {
-                if (replicateGivenImage[j][i] > 0) {
-                    lastx = j;
-                    lasty = i;
-                    break;
+        for(int i = 0; i < h; i++) {
+            for (int j = 0; j < w; j++) {
+                if (replicateGivenImage[i][j] > 0 && !used[i][j]) {
+                    dfs(replicateGivenImage, total, w, h, i, j);
                 }
             }
-            if (lastx >= 0) {
-                break;
-            }
         }
-
-        int midx = (startx + lastx) / 2, midy = (starty + lasty) / 2;
-        for (int i = 0; midy - i >= 0 || midy + i < h; i++) {
-            if (midy - i >= 0 && replicateGivenImage[midx][midy - i] > 0) {
-                midy -= i;
-                break;
-            }
-            if (midy + i < h && replicateGivenImage[midx][midy + i] > 0) {
-                midy += i;
-                break;
-            }
-        }
-
-        dfs(replicateGivenImage, total, w, h, midx, midy);
         return  replicateGivenImage;
     }
 
@@ -202,6 +177,7 @@ public class ThinningProcessor {
         int totalLen = 1, cnt = 0, mins = -1;
         ArrayList<Integer> arrLen = new ArrayList<>();
         visited[x][y] = true;
+        used[x][y] = true;
         for (int k = 0; k < dx.length; k++) {
             if (givenImage[x + dx[k]][y + dy[k]] > 0) {
                 if (!visited[x + dx[k]][y + dy[k]]) {
