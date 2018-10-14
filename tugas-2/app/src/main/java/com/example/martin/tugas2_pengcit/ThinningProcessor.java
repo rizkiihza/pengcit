@@ -343,6 +343,7 @@ public class ThinningProcessor {
         int[] dx = {1, 1, 0, -1, -1, -1, 0, 1};
         int[] dy = {0, 1, 1, 1, 0, -1, -1, -1};
         visited[x][y] = true;
+        used[x][y] = true;
         int count = 0;
         int[] total = new int[8];
         for (int k = 0; k < dx.length; k++) {
