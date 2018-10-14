@@ -300,6 +300,39 @@ public class ThinningProcessor {
         return result;
     }
 
+    public int getDifferentPart(int[][] givenImage, int w, int h) {
+        used = new boolean[w][h];
+        for (int i = 0; i < w; i++) {
+            for (int j = 0; j < h; j++) {
+                used[i][j] = false;
+            }
+        }
+
+        int total_part = 0;
+        for(int i = 0; i < w; i++) {
+            for (int j = 0; j < h; j++) {
+                if (givenImage[i][j] > 0 && !used[i][j]) {
+                    total_part += 1;
+                    dfsPart(givenImage, w, h, i, j);
+                }
+            }
+        }
+        return total_part;
+    }
+
+    private void dfsPart(int[][] givenImage, int w, int h, int x, int y) {
+        int[] dx = {1, 1, 0, -1, -1, -1, 0, 1};
+        int[] dy = {0, 1, 1, 1, 0, -1, -1, -1};
+        used[x][y] = true;
+        for (int k = 0; k < dx.length; k++) {
+            if (givenImage[x + dx[k]][y+dy[k]] > 0) {
+                if (!visited[x+dx[k]][y+dy[k]]) {
+                    dfsPart(givenImage, w, h, x+dx[k], y+dy[k]);
+                }
+            }
+        }
+    }
+
     private ArrayList<Point> dfsEndpoint(int[][] givenImage, int w, int h, int x, int y) {
         int[] dx = {1, 1, 0, -1, -1, -1, 0, 1};
         int[] dy = {0, 1, 1, 1, 0, -1, -1, -1};
