@@ -197,7 +197,9 @@ public class asciiActivity extends AppCompatActivity {
                 minIndex = i;
             }
         }
-
-        Log.d("answer", Character.toString(label[minIndex]));
+        
+        resultText.setText(Character.toString(label[minIndex]));
+        resultText.setTextSize(TypedValue.COMPLEX_UNIT_SP, 60f);
+        resultText.setTextColor(Color.BLACK);
     }
 }
