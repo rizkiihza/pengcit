@@ -179,11 +179,13 @@ public class asciiActivity extends AppCompatActivity {
             code = ascii.codeTwo;
             label = ascii.labelTwo;
         } else {
-            Log.d("answer", Character.toString('%'));
+            resultText.setText(Character.toString('%'));
+            resultText.setTextSize(TypedValue.COMPLEX_UNIT_SP, 60f);
+            resultText.setTextColor(Color.BLACK);
             return;
         }
 
-        //Log.d("Features", Arrays.toString(features.toArray()));
+        Log.d("Features", Arrays.toString(features.toArray()));
         double err, minError = -1;
         int minIndex = -1;
 
@@ -197,7 +199,7 @@ public class asciiActivity extends AppCompatActivity {
                 minIndex = i;
             }
         }
-        
+
         resultText.setText(Character.toString(label[minIndex]));
         resultText.setTextSize(TypedValue.COMPLEX_UNIT_SP, 60f);
         resultText.setTextColor(Color.BLACK);

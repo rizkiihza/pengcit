@@ -140,7 +140,7 @@ public class ThinningProcessor {
 
     private boolean[][] used;
     private boolean[][] visited;
-
+    Point last;
 
     public int[][] removeNoise(int[][] givenImage, int w, int h) {
         int[][] replicateGivenImage = new int[w][h];
@@ -164,10 +164,16 @@ public class ThinningProcessor {
             }
         }
 
+
+
         for(int i = 0; i < w; i++) {
             for (int j = 0; j < h; j++) {
                 if (replicateGivenImage[i][j] > 0 && !used[i][j]) {
+                    last = new Point(-1, -1);
                     dfs(replicateGivenImage, total, w, h, i, j);
+                    if (last.x != -1 && last.y != -1) {
+                        dfs(replicateGivenImage, total, w, h, last.x, last.y);
+                    }
                 }
             }
         }
@@ -177,7 +183,7 @@ public class ThinningProcessor {
     private int dfs(int[][] givenImage, int total, int w, int h, int x, int y) {
         int[] dx = {1, 1, 0, -1, -1, -1, 0, 1};
         int[] dy = {0, 1, 1, 1, 0, -1, -1, -1};
-        int totalLen = 1, cnt = 0, mins = -1;
+        int totalLen = 1, cnt = 0, mins = -1, totalNeighbour = 0;
         ArrayList<Integer> arrLen = new ArrayList<>();
         visited[x][y] = true;
         used[x][y] = true;
@@ -192,9 +198,11 @@ public class ThinningProcessor {
                     arrLen.add(len);
                     cnt += 1;
                 }
+                totalNeighbour += 1;
             }
         }
-        if (cnt > 1) {
+
+        if (cnt > 1 && totalNeighbour >= 3) {
             int now = 0;
             for (int k = 0; k < dx.length; k++) {
                 if (givenImage[x + dx[k]][y + dy[k]] > 0 && !visited[x + dx[k]][y + dy[k]]) {
@@ -203,13 +211,20 @@ public class ThinningProcessor {
                     if (len == mins && len < 0.1*total) {
                         if (checkRemove(givenImage, w, h, x+dx[k], y+dy[k])) {
                             dfsRemove(givenImage, w, h, x+dx[k], y+dy[k]);
+                            totalLen -= len;
+                            totalNeighbour -= 1;
+                            break;
                         }
-                        totalLen -= len;
-                        break;
                     }
                 }
             }
         }
+
+        if (totalNeighbour <= 1) {
+            last.x = x;
+            last.y = y;
+        }
+
         visited[x][y] = false;
         return totalLen;
     }
