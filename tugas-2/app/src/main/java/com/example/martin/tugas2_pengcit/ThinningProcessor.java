@@ -374,6 +374,71 @@ public class ThinningProcessor {
         return result;
     }
 
+    public ArrayList<Point> getSimpang(int [][]givenImage, int w, int h) {
+        ArrayList<Point> simpang = new ArrayList<>();
+        used = new boolean[w][h];
+        visited = new boolean[w][h];
+        for (int i = 0; i < w; i++) {
+            for (int j = 0; j < h; j++) {
+                visited[i][j] = false;
+                used[i][j] = false;
+            }
+        }
+
+        for (int i = 0; i < w; i++) {
+            for (int j = 0; j < h; j++) {
+                if (givenImage[i][j] > 0 && !used[i][j]) {
+                    ArrayList<Point> temp = dfsSimpang(givenImage, w, h, i, j);
+                    for (Point p : temp) {
+                        simpang.add(p);
+                    }
+                }
+            }
+        }
+
+        ArrayList<Point> ans = new ArrayList<>();
+        for (Point p : simpang) {
+            boolean ins = true;
+            for (Point q : ans) {
+                if (Math.abs(p.x-q.x)+Math.abs(p.y-q.y) <= 5) {
+                    ins = false;
+                    break;
+                }
+            }
+            if (ins) {
+                ans.add(p);
+            }
+        }
+
+        return ans;
+    }
+
+    private ArrayList<Point> dfsSimpang(int[][] givenImage, int w, int h, int x, int y) {
+        int[] dx = {1, 1, 0, -1, -1, -1, 0, 1};
+        int[] dy = {0, 1, 1, 1, 0, -1, -1, -1};
+        visited[x][y] = true;
+        used[x][y] = true;
+        int count = 0;
+        ArrayList<Point> simpang = new ArrayList<>();
+        for (int k = 0; k < dx.length; k++) {
+            if (givenImage[x + dx[k]][y+dy[k]] > 0) {
+                count += 1;
+                if (!visited[x+dx[k]][y+dy[k]]) {
+                    ArrayList<Point> temp = dfsSimpang(givenImage, w, h, x+dx[k], y+dy[k]);
+                    for (Point p : temp) {
+                        simpang.add(p);
+                    }
+                }
+            }
+        }
+
+        if (count > 2) {
+            simpang.add(new Point(x, y));
+        }
+
+        return simpang;
+    }
+
     public int[] countNeighbors(int[][] givenImage, int w, int h) {
         int[] total_neighbor = new int[8];
         used = new boolean[w][h];
