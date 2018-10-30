@@ -26,6 +26,7 @@ public class asciiActivity extends AppCompatActivity {
     private int[][] bw;
     private int[][] bw_transpose;
     private int[][] processed;
+    private int[][] processed_transpose;
     private ImageView imageView;
     private ImageProcessor imageProcessor;
     private ThinningProcessor thinningProcessor;
@@ -79,6 +80,7 @@ public class asciiActivity extends AppCompatActivity {
         // convert to black and white
         bw = imageProcessor.convertToBW(r, g, b, w, h, 128);
         bw_transpose = new int[h][w];
+        processed_transpose = new int[h][w];
         processed = bw;
 
         for (int i = 0; i < h; i++) {
@@ -136,6 +138,12 @@ public class asciiActivity extends AppCompatActivity {
             thinningState = (thinningState + 1) % 2;
         } else {
             processed = thinningProcessor.removeNoise(processed, w, h);
+            for (int i = 0; i < h; i++) {
+                for (int j = 0; j < w; j++) {
+                    processed_transpose[i][j] = processed[j][i];
+                }
+            }
+            processed = thinningProcessor.thinning(processed_transpose, w, h);
             thinningState = (thinningState + 1) % 2;
         }
         Bitmap.Config config = Bitmap.Config.ARGB_8888;
@@ -157,13 +165,17 @@ public class asciiActivity extends AppCompatActivity {
         int h = processed[0].length;
         int loop = thinningProcessor.countLoop(processed, w, h);
         int component = thinningProcessor.getDifferentPart(processed, w, h);
-        int[] neighbors = thinningProcessor.countNeighbors(processed, w, h);
+        int[] endpoint = thinningProcessor.getTopBottomEndPoint(processed, w, h);
+        int[] simpang = thinningProcessor.getSimpang(processed, w, h);
         ArrayList<Integer> chainCode = imageProcessor.getChainCode(processed, w, h);
         double[] chainFrequencyDouble = imageProcessor.getChainFrequencyDouble(chainCode);
 
         features.add((double)loop);
-        for(int i = 1; i < 5; i++) {
-            if (i != 2) features.add((double) neighbors[i]);
+        for (int x : simpang) {
+            features.add((double)x);
+        }
+        for (int x : endpoint) {
+            features.add((double)x);
         }
 
         for (int i = 0; i < chainFrequencyDouble.length; i++) {

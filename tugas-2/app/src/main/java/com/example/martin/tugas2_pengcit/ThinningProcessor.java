@@ -167,8 +167,6 @@ public class ThinningProcessor {
             }
         }
 
-
-
         for(int i = 0; i < w; i++) {
             for (int j = 0; j < h; j++) {
                 if (replicateGivenImage[i][j] > 0 && !used[i][j]) {
@@ -180,7 +178,8 @@ public class ThinningProcessor {
                 }
             }
         }
-        return  replicateGivenImage;
+
+        return replicateGivenImage;
     }
 
     private int dfs(int[][] givenImage, int total, int w, int h, int x, int y) {
@@ -190,6 +189,18 @@ public class ThinningProcessor {
         ArrayList<Integer> arrLen = new ArrayList<>();
         visited[x][y] = true;
         used[x][y] = true;
+
+        for (int k = 0; k < dx.length; k++) {
+            if (givenImage[x + dx[k]][y + dy[k]] > 0) {
+                totalNeighbour += 1;
+            }
+        }
+
+        if (totalNeighbour <= 1) {
+            last.x = x;
+            last.y = y;
+        }
+
         for (int k = 0; k < dx.length; k++) {
             if (givenImage[x + dx[k]][y + dy[k]] > 0) {
                 if (!visited[x + dx[k]][y + dy[k]]) {
@@ -201,7 +212,6 @@ public class ThinningProcessor {
                     arrLen.add(len);
                     cnt += 1;
                 }
-                totalNeighbour += 1;
             }
         }
 
@@ -221,11 +231,6 @@ public class ThinningProcessor {
                     }
                 }
             }
-        }
-
-        if (totalNeighbour <= 1) {
-            last.x = x;
-            last.y = y;
         }
 
         visited[x][y] = false;
@@ -394,7 +399,7 @@ public class ThinningProcessor {
         return result;
     }
 
-    public ArrayList<Point> getSimpang(int [][]givenImage, int w, int h) {
+    public int[] getSimpang(int [][]givenImage, int w, int h) {
         ArrayList<Point> simpang = new ArrayList<>();
         used = new boolean[w][h];
         visited = new boolean[w][h];
@@ -430,7 +435,20 @@ public class ThinningProcessor {
             }
         }
 
-        return ans;
+        int[] topAndBottom = new int[2];
+        Arrays.fill(topAndBottom, 0);
+
+        Point firstBlack = getFirstBlack(givenImage, w, h);
+        Point lastBlack = getLastBlack(givenImage, w, h);
+        for (Point p: ans) {
+            if (p.manhattanDistance(firstBlack) < p.manhattanDistance(lastBlack)) {
+                topAndBottom[0] += 1;
+            } else {
+                topAndBottom[1] += 1;
+            }
+        }
+
+        return topAndBottom;
     }
 
     private ArrayList<Point> dfsSimpang(int[][] givenImage, int w, int h, int x, int y) {
