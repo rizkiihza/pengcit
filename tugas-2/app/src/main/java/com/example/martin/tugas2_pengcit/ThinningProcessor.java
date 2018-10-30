@@ -23,6 +23,9 @@ public class ThinningProcessor {
             this.y = y;
         }
 
+        public int manhattanDistance(Point p) {
+            return Math.abs(p.x-x) + Math.abs(p.y-y);
+        }
         @Override
         public String toString() {
             return "{" + x + ", " + y + "}";
@@ -287,6 +290,23 @@ public class ThinningProcessor {
             }
         }
         return new Point(lastx, lasty);
+    }
+
+    public int[] getTopBottomEndPoint(int[][] givenImage, int w, int h) {
+        int[] topAndBottom = new int[2];
+        Arrays.fill(topAndBottom, 0);
+        ArrayList<Point> arrPoint = getEndpoint(givenImage, w, h);
+        Point firstBlack = getFirstBlack(givenImage, w, h);
+        Point lastBlack = getLastBlack(givenImage,w, h);
+        for (Point p : arrPoint) {
+            if (p.manhattanDistance(firstBlack) < p.manhattanDistance(lastBlack)) {
+                topAndBottom[0] += 1;
+            } else {
+                topAndBottom[1] += 1;
+            }
+        }
+
+        return topAndBottom;
     }
 
     public ArrayList<Point> getEndpoint(int[][] givenImage, int w, int h) {
