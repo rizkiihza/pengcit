@@ -192,11 +192,7 @@ public class asciiActivity extends AppCompatActivity {
         for (int i = 0; i < code.length; i++) {
             err = 0;
             for (int j = 0; j < features.size(); j++) {
-                if (j == 1 || j == 2) {
-                    err += 0.25*(features.get(j) - code[i][j])*(features.get(j) - code[i][j]);
-                } else {
-                    err += (features.get(j) - code[i][j])*(features.get(j) - code[i][j]);
-                }
+                err += (features.get(j) - code[i][j])*(features.get(j) - code[i][j]);
             }
             if (minIndex < 0 || err < minError) {
                 minError = err;
