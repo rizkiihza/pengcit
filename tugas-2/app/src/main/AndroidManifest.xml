@@ -23,7 +23,8 @@
         <activity android:name=".TransformationAcitivty" />
         <activity android:name=".SpecificationActivity" />
         <activity android:name=".ChainActivity" />
-        <activity android:name=".asciiActivity"></activity>
+        <activity android:name=".asciiActivity" />
+        <activity android:name=".Convolution"></activity>
     </application>
 
 </manifest>

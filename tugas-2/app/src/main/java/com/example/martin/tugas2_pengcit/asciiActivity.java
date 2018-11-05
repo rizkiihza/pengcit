@@ -204,7 +204,7 @@ public class asciiActivity extends AppCompatActivity {
         for (int i = 0; i < code.length; i++) {
             err = 0;
             for (int j = 0; j < features.size(); j++) {
-                err += (features.get(j) - code[i][j])*(features.get(j) - code[i][j]);
+                err += Math.abs(features.get(j) - code[i][j]);
             }
             if (minIndex < 0 || err < minError) {
                 minError = err;

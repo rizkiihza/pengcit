@@ -81,7 +81,7 @@ public class MainActivity extends Activity {
         buttonSelected = "Histogram";
         Spinner choiceSpinner = findViewById(R.id.choiceSpinner);
 
-        buttonChoice = new String[] {"Histogram", "Transform", "Specification", "Number", "ASCII"};
+        buttonChoice = new String[] {"Histogram", "Transform", "Specification", "Number", "ASCII", "Convolution"};
         final ArrayAdapter<String> choiceList = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, buttonChoice);
         choiceSpinner.setAdapter(choiceList);
         choiceSpinner.setSelection(0);
@@ -103,7 +103,6 @@ public class MainActivity extends Activity {
         choiceButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.d("Bitmap_Size", Integer.toString(rawBitmap.getByteCount()));
                 Intent intent;
                 int request = 0;
                 if (buttonSelected.equals("Histogram")) {
@@ -116,8 +115,12 @@ public class MainActivity extends Activity {
                     request = SPECIFICATION_REQUEST;
                 } else if (buttonSelected.equals("Number")){
                     intent = new Intent(ctx, ChainActivity.class);
-                } else {
+                } else if (buttonSelected.equals("ASCII")){
                     intent = new Intent(ctx, asciiActivity.class);
+                } else if (buttonSelected.equals("Convolution")) {
+                    intent = new Intent(ctx, Convolution.class);
+                } else {
+                    intent = new Intent();
                 }
 
                 intent.putExtra("Image", rawBitmap);
