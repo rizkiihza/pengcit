@@ -147,6 +147,7 @@ public class MainActivity extends Activity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == CAMERA_REQUEST && resultCode == Activity.RESULT_OK) {
             rawBitmap = adjustOrientation((Bitmap) data.getExtras().get("data"));
+            rawBitmap = Bitmap.createScaledBitmap(rawBitmap, 300, 400, false);
 
             imageView.setImageBitmap(rawBitmap);
         }
@@ -156,6 +157,7 @@ public class MainActivity extends Activity {
             try {
                 InputStream stream = getContentResolver().openInputStream(uri);
                 rawBitmap = BitmapFactory.decodeStream(stream);
+                rawBitmap = adjustOrientation(rawBitmap);
                 rawBitmap = Bitmap.createScaledBitmap(rawBitmap, 300, 400, false);
                 imageView.setImageBitmap(rawBitmap);
             } catch (FileNotFoundException e) {
@@ -182,7 +184,7 @@ public class MainActivity extends Activity {
         int h = b.getHeight();
         if (w>h) {
             Matrix matrix = new Matrix();
-            matrix.postRotate(90);
+            matrix.postRotate(270);
             return Bitmap.createBitmap(b, 0, 0, w, h, matrix, true);
         }
         return b;

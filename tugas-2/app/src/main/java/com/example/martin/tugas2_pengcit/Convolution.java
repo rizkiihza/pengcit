@@ -39,7 +39,8 @@ public class Convolution extends AppCompatActivity {
         convoSelected = "Original";
         Spinner convoSpinner = this.findViewById(R.id.convoSpinner);
 
-        convoChoice = new String[] {"Original", "Smoothing", "Gradien", "Difference"};
+        convoChoice = new String[] {"Original", "Smoothing", "Gradien", "Difference", "Sobel",
+                "Prewitt", "Roberts", "Frei-Chen"};
         final ArrayAdapter<String> algorithmList = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, convoChoice);
         convoSpinner.setAdapter(algorithmList);
         convoSpinner.setSelection(0);
@@ -55,8 +56,8 @@ public class Convolution extends AppCompatActivity {
             }
         });
 
-        // setup transform button
-        Button transformButton = (Button)findViewById(R.id.convoTransformButton);
+        // setup convolution button
+        Button transformButton = findViewById(R.id.convoTransformButton);
         transformButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -66,7 +67,7 @@ public class Convolution extends AppCompatActivity {
         });
 
         // setup back button
-        Button backButton = (Button)findViewById(R.id.convoBackButton);
+        Button backButton = findViewById(R.id.convoBackButton);
         backButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -113,6 +114,22 @@ public class Convolution extends AppCompatActivity {
             r = convoProcessor.difference(r, w, h);
             g = convoProcessor.difference(g, w, h);
             b = convoProcessor.difference(b, w, h);
+        } else if ( convoName.equals("Sobel")) {
+            r = convoProcessor.sobel(r, w, h);
+            g = convoProcessor.sobel(g, w, h);
+            b = convoProcessor.sobel(b, w, h);
+        } else if ( convoName.equals("Prewitt")) {
+            r = convoProcessor.prewitt(r, w, h);
+            g = convoProcessor.prewitt(g, w, h);
+            b = convoProcessor.prewitt(b, w, h);
+        } else if( convoName.equals("Roberts")) {
+            r = convoProcessor.roberts(r, w, h);
+            g = convoProcessor.roberts(g, w, h);
+            b = convoProcessor.roberts(b, w, h);
+        } else if ( convoName.equals("Frei-Chen")) {
+            r = convoProcessor.frei_chen(r, w, h);
+            g = convoProcessor.frei_chen(g, w, h);
+            b = convoProcessor.frei_chen(b, w, h);
         }
 
         Bitmap.Config config = Bitmap.Config.ARGB_8888;
