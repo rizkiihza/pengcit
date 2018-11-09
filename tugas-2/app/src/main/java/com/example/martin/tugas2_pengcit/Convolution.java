@@ -10,6 +10,8 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.EditText;
+import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.Spinner;
 
@@ -40,7 +42,7 @@ public class Convolution extends AppCompatActivity {
         Spinner convoSpinner = this.findViewById(R.id.convoSpinner);
 
         convoChoice = new String[] {"Original", "Smoothing", "Gradien", "Difference", "Sobel",
-                "Prewitt", "Roberts", "Frei-Chen"};
+                "Prewitt", "Roberts", "Frei-Chen", "Custom"};
         final ArrayAdapter<String> algorithmList = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, convoChoice);
         convoSpinner.setAdapter(algorithmList);
         convoSpinner.setSelection(0);
@@ -77,7 +79,6 @@ public class Convolution extends AppCompatActivity {
                 finish();
             }
         });
-
     }
 
     private Bitmap transformBitmap(Bitmap bitmap, String convoName) {
@@ -130,6 +131,26 @@ public class Convolution extends AppCompatActivity {
             r = convoProcessor.frei_chen(r, w, h);
             g = convoProcessor.frei_chen(g, w, h);
             b = convoProcessor.frei_chen(b, w, h);
+        } else if (convoName.equals("Custom")) {
+            String[][] kernelStr = new String[3][3];
+            kernelStr[0][0] = ((EditText)findViewById(R.id.element00)).getText().toString();
+            kernelStr[0][1] = ((EditText)findViewById(R.id.element01)).getText().toString();
+            kernelStr[0][2] = ((EditText)findViewById(R.id.element02)).getText().toString();
+            kernelStr[1][0] = ((EditText)findViewById(R.id.element10)).getText().toString();
+            kernelStr[1][1] = ((EditText)findViewById(R.id.element11)).getText().toString();
+            kernelStr[1][2] = ((EditText)findViewById(R.id.element12)).getText().toString();
+            kernelStr[2][0] = ((EditText)findViewById(R.id.element20)).getText().toString();
+            kernelStr[2][1] = ((EditText)findViewById(R.id.element21)).getText().toString();
+            kernelStr[2][2] = ((EditText)findViewById(R.id.element22)).getText().toString();
+            int[][] kernel = new int[3][3];
+            for (int i = 0; i < 3; i++) {
+                for (int j = 0; j < 3; j++) {
+                    kernel[i][j] = Integer.parseInt(kernelStr[i][j]);
+                }
+            }
+            r = convoProcessor.custom(r, w, h, kernel);
+            g = convoProcessor.custom(g, w, h, kernel);
+            b = convoProcessor.custom(b, w, h, kernel);
         }
 
         Bitmap.Config config = Bitmap.Config.ARGB_8888;

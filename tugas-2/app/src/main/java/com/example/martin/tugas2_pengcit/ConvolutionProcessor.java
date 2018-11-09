@@ -228,4 +228,25 @@ public class ConvolutionProcessor {
 
         return new_matrix;
     }
+
+    public int[][] custom(int[][] givenImage, int w, int h, int[][] kernel) {
+        int[][] new_matrix = new int[w][h];
+
+        for (int i = 0; i < w; i++) {
+            for (int j = 0; j < h; j++) {
+                int total = 0;
+                for (int k = 0; k < kernel.length; k++) {
+                    for (int l = 0; l < kernel[0].length; l++) {
+                        if (isValid(i+k-1, j+l-1, w, h)) {
+                            int pixel = givenImage[i+k-1][j+l-1];
+                            total += pixel * kernel[k][l];
+                        }
+                    }
+                }
+                new_matrix[i][j] = Math.min(total, 255);
+            }
+        }
+
+        return new_matrix;
+    }
 }
