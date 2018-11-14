@@ -93,6 +93,7 @@ public class Convolution extends AppCompatActivity {
         int[][] r = new int[w][h];
         int[][] g = new int[w][h];
         int[][] b = new int[w][h];
+        int[][] gr = new int[w][h];
 
         for (int i = 0; i < w; i++) {
             for (int j = 0; j < h; j++) {
@@ -100,37 +101,29 @@ public class Convolution extends AppCompatActivity {
                 r[i][j] = Color.red(colour);
                 g[i][j] = Color.green(colour);
                 b[i][j] = Color.blue(colour);
+                gr[i][j] = (r[i][j] + g[i][j] + b[i][j]) / 3;
             }
         }
+
+        boolean gray = true;
 
         if (convoName.equals("Smoothing")) {
             r = convoProcessor.smoothing(r, w, h);
             g = convoProcessor.smoothing(g, w, h);
             b = convoProcessor.smoothing(b, w, h);
+            gray = false;
         } else if( convoName.equals("Gradien")) {
-            r = convoProcessor.gradien(r, w, h);
-            g = convoProcessor.gradien(g, w, h);
-            b = convoProcessor.gradien(b, w, h);
+            gr = convoProcessor.frei_chen(gr, w, h);
         } else if ( convoName.equals("Difference")) {
-            r = convoProcessor.difference(r, w, h);
-            g = convoProcessor.difference(g, w, h);
-            b = convoProcessor.difference(b, w, h);
+            gr = convoProcessor.frei_chen(gr, w, h);
         } else if ( convoName.equals("Sobel")) {
-            r = convoProcessor.sobel(r, w, h);
-            g = convoProcessor.sobel(g, w, h);
-            b = convoProcessor.sobel(b, w, h);
+            gr = convoProcessor.frei_chen(gr, w, h);
         } else if ( convoName.equals("Prewitt")) {
-            r = convoProcessor.prewitt(r, w, h);
-            g = convoProcessor.prewitt(g, w, h);
-            b = convoProcessor.prewitt(b, w, h);
+            gr = convoProcessor.frei_chen(gr, w, h);
         } else if( convoName.equals("Roberts")) {
-            r = convoProcessor.roberts(r, w, h);
-            g = convoProcessor.roberts(g, w, h);
-            b = convoProcessor.roberts(b, w, h);
+            gr = convoProcessor.frei_chen(gr, w, h);
         } else if ( convoName.equals("Frei-Chen")) {
-            r = convoProcessor.frei_chen(r, w, h);
-            g = convoProcessor.frei_chen(g, w, h);
-            b = convoProcessor.frei_chen(b, w, h);
+            gr = convoProcessor.frei_chen(gr, w, h);
         } else if (convoName.equals("Custom")) {
             String[][] kernelStr = new String[3][3];
             kernelStr[0][0] = ((EditText)findViewById(R.id.element00)).getText().toString();
@@ -148,9 +141,7 @@ public class Convolution extends AppCompatActivity {
                     kernel[i][j] = Integer.parseInt(kernelStr[i][j]);
                 }
             }
-            r = convoProcessor.custom(r, w, h, kernel);
-            g = convoProcessor.custom(g, w, h, kernel);
-            b = convoProcessor.custom(b, w, h, kernel);
+            gr = convoProcessor.frei_chen(gr, w, h);
         }
 
         Bitmap.Config config = Bitmap.Config.ARGB_8888;
@@ -158,7 +149,9 @@ public class Convolution extends AppCompatActivity {
 
         for (int i = 0; i < w; i++) {
             for (int j = 0; j < h; j++) {
-                int colour = Color.rgb(r[i][j], g[i][j], b[i][j]);
+                int colour;
+                if (gray) colour = Color.rgb(gr[i][j], gr[i][j], gr[i][j]);
+                else colour = Color.rgb(r[i][j], g[i][j], b[i][j]);
                 transformed_bitmap.setPixel(i, j, colour);
             }
         }
