@@ -24,7 +24,8 @@
         <activity android:name=".SpecificationActivity" />
         <activity android:name=".ChainActivity" />
         <activity android:name=".asciiActivity" />
-        <activity android:name=".Convolution"></activity>
+        <activity android:name=".Convolution" />
+        <activity android:name=".FaceRecognition"></activity>
     </application>
 
 </manifest>
