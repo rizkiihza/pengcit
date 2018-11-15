@@ -201,7 +201,7 @@ public class MainActivity extends Activity {
         int h = b.getHeight();
         if (w>h) {
             Matrix matrix = new Matrix();
-            matrix.postRotate(270);
+            matrix.postRotate(90);
             return Bitmap.createBitmap(b, 0, 0, w, h, matrix, true);
         }
         return b;

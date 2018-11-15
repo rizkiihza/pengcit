@@ -113,15 +113,15 @@ public class Convolution extends AppCompatActivity {
             b = convoProcessor.smoothing(b, w, h);
             gray = false;
         } else if( convoName.equals("Gradien")) {
-            gr = convoProcessor.frei_chen(gr, w, h);
+            gr = convoProcessor.gradien(gr, w, h);
         } else if ( convoName.equals("Difference")) {
-            gr = convoProcessor.frei_chen(gr, w, h);
+            gr = convoProcessor.difference(gr, w, h);
         } else if ( convoName.equals("Sobel")) {
-            gr = convoProcessor.frei_chen(gr, w, h);
+            gr = convoProcessor.sobel(gr, w, h);
         } else if ( convoName.equals("Prewitt")) {
-            gr = convoProcessor.frei_chen(gr, w, h);
+            gr = convoProcessor.prewitt(gr, w, h);
         } else if( convoName.equals("Roberts")) {
-            gr = convoProcessor.frei_chen(gr, w, h);
+            gr = convoProcessor.roberts(gr, w, h);
         } else if ( convoName.equals("Frei-Chen")) {
             gr = convoProcessor.frei_chen(gr, w, h);
         } else if (convoName.equals("Custom")) {
@@ -141,7 +141,7 @@ public class Convolution extends AppCompatActivity {
                     kernel[i][j] = Integer.parseInt(kernelStr[i][j]);
                 }
             }
-            gr = convoProcessor.frei_chen(gr, w, h);
+            gr = convoProcessor.custom(gr, w, h, kernel);
         }
 
         Bitmap.Config config = Bitmap.Config.ARGB_8888;

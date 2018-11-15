@@ -10,6 +10,8 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 
+import java.util.ArrayList;
+
 public class FaceRecognition extends AppCompatActivity {
 
     private Bitmap rawBitmap;
@@ -18,6 +20,7 @@ public class FaceRecognition extends AppCompatActivity {
     private Button searchButton;
     private Button backButton;
     private FaceDetector faceDetector;
+    private int[][] a,r,g,b,gr;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,6 +34,24 @@ public class FaceRecognition extends AppCompatActivity {
         rawBitmap = intent.getParcelableExtra("Image");
         curBitmap = rawBitmap;
 
+        int w = rawBitmap.getWidth();
+        int h = rawBitmap.getHeight();
+
+        a = new int[w][h];
+        r = new int[w][h];
+        g = new int[w][h];
+        b = new int[w][h];
+
+        for (int i = 0; i < w; i++) {
+            for (int j = 0; j < h; j++) {
+                int colour = rawBitmap.getPixel(i, j);
+                a[i][j] = Color.alpha(colour);
+                r[i][j] = Color.red(colour);
+                g[i][j] = Color.green(colour);
+                b[i][j] = Color.blue(colour);
+            }
+        }
+
         // initiate android element variable
         faceImageView = findViewById(R.id.faceImageView);
         faceImageView.setImageBitmap(rawBitmap);
@@ -41,7 +62,7 @@ public class FaceRecognition extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 getFace();
-                faceImageView.setImageBitmap(curBitmap);
+                //faceImageView.setImageBitmap(curBitmap);
             }
         });
 
@@ -59,33 +80,7 @@ public class FaceRecognition extends AppCompatActivity {
 
     }
 
-    void getFace() {
-        int w = rawBitmap.getWidth();
-        int h = rawBitmap.getHeight();
-
-        int[][] a = new int[w][h];
-        int[][] r = new int[w][h];
-        int[][] g = new int[w][h];
-        int[][] b = new int[w][h];
-
-        for (int i = 0; i < w; i++) {
-            for (int j = 0; j < h; j++) {
-                int colour = rawBitmap.getPixel(i, j);
-                a[i][j] = Color.alpha(colour);
-                r[i][j] = Color.red(colour);
-                g[i][j] = Color.green(colour);
-                b[i][j] = Color.blue(colour);
-            }
-        }
-
-        int[][] gr = faceDetector.getSkin(a, r, g, b, w, h);
-        gr = faceDetector.preprocess(gr, w, h);
-        int[] bound = faceDetector.getFace(gr, w, h);
-
-        int minx = bound[0], maxx = bound[1], miny = bound[2], maxy = bound[3];
-
-        int bColor = 255;
-
+    void createRectangle(int minx, int maxx, int miny, int maxy, int bColor) {
         for (int i = minx; i <= maxx; i++) {
             r[i][miny] = r[i][maxy] = bColor;
             g[i][miny] = g[i][maxy] = bColor;
@@ -97,6 +92,23 @@ public class FaceRecognition extends AppCompatActivity {
             g[minx][i] = g[maxx][i] = bColor;
             b[minx][i] = b[maxx][i] = bColor;
             gr[minx][i] = gr[maxx][i] = bColor;
+        }
+    }
+
+    void getFace() {
+        int w = rawBitmap.getWidth();
+        int h = rawBitmap.getHeight();
+
+        gr = faceDetector.getSkin(a, r, g, b, w, h);
+        gr = faceDetector.preprocess(gr, w, h);
+        int[] boundFace = faceDetector.getFace(gr, w, h);
+
+        int minx = boundFace[0], maxx = boundFace[1], miny = boundFace[2], maxy = boundFace[3];
+        createRectangle(minx, maxx, miny, maxy, 255);
+
+        ArrayList<int[]> bounds = faceDetector.getFeature(gr, minx, maxx, miny, maxy, w, h);
+        for (int[] bound : bounds) {
+            createRectangle(bound[0], bound[1], bound[2], bound[3], 255);
         }
 
         for (int i = 0; i < w; i++) {
