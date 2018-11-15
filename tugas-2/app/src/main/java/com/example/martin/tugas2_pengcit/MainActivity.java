@@ -34,6 +34,8 @@ public class MainActivity extends Activity {
     private static final int MY_CAMERA_PERMISSION_CODE = 0;
     private static final int SPECIFICATION_REQUEST = 1;
     private static final int TRANSFORMATION_REQUEST = 2;
+    private static final int CONVOLUTION_REQUEST = 321;
+    private static final int FACE_REQUEST = 123;
     private Bitmap rawBitmap;
     private ImageView imageView;
     private String buttonSelected;
@@ -81,7 +83,8 @@ public class MainActivity extends Activity {
         buttonSelected = "Histogram";
         Spinner choiceSpinner = findViewById(R.id.choiceSpinner);
 
-        buttonChoice = new String[] {"Histogram", "Transform", "Specification", "Number", "ASCII", "Convolution"};
+        buttonChoice = new String[] {"Histogram", "Transform", "Specification", "Number", "ASCII",
+                "Convolution", "Face"};
         final ArrayAdapter<String> choiceList = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, buttonChoice);
         choiceSpinner.setAdapter(choiceList);
         choiceSpinner.setSelection(0);
@@ -113,12 +116,16 @@ public class MainActivity extends Activity {
                 } else if (buttonSelected.equals("Specification")) {
                     intent = new Intent(ctx, SpecificationActivity.class);
                     request = SPECIFICATION_REQUEST;
-                } else if (buttonSelected.equals("Number")){
+                } else if (buttonSelected.equals("Number")) {
                     intent = new Intent(ctx, ChainActivity.class);
-                } else if (buttonSelected.equals("ASCII")){
+                } else if (buttonSelected.equals("ASCII")) {
                     intent = new Intent(ctx, asciiActivity.class);
                 } else if (buttonSelected.equals("Convolution")) {
                     intent = new Intent(ctx, Convolution.class);
+                    request = CONVOLUTION_REQUEST;
+                } else if (buttonSelected.equals("Face")) {
+                    intent = new Intent(ctx, FaceRecognition.class);
+                    request = FACE_REQUEST;
                 } else {
                     intent = new Intent();
                 }
@@ -171,6 +178,16 @@ public class MainActivity extends Activity {
         }
 
         else if (requestCode == TRANSFORMATION_REQUEST && resultCode == RESULT_OK) {
+            rawBitmap = data.getParcelableExtra("Image");
+            imageView.setImageBitmap(rawBitmap);
+        }
+
+        else if (requestCode == CONVOLUTION_REQUEST && resultCode == RESULT_OK) {
+            rawBitmap = data.getParcelableExtra("Image");
+            imageView.setImageBitmap(rawBitmap);
+        }
+
+        else if (requestCode == FACE_REQUEST && resultCode == RESULT_OK) {
             rawBitmap = data.getParcelableExtra("Image");
             imageView.setImageBitmap(rawBitmap);
         }
