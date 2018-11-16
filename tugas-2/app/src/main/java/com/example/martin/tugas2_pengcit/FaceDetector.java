@@ -202,6 +202,10 @@ public class FaceDetector {
                 visited[i][j] = false;
             }
         }
+        dfs(gr, cminx+1, cminy+1, w, h, 0);
+        dfs(gr, cminx+1, cmaxy-1, w, h, 0);
+        dfs(gr, cmaxx-1, cminy+1, w, h, 0);
+        dfs(gr, cmaxx-1, cmaxy-1, w, h, 0);
 
         ArrayList<int[]> result = new ArrayList<>();
 
@@ -242,7 +246,7 @@ public class FaceDetector {
                     }
                 }
 
-                if (size_left > 100 && size_right > 100 && size_left < 300 && size_right < 300) {
+                if (size_left > 100 && size_right > 100) {
                     found = true;
                 } else {
                     if (xleft != -1) {
