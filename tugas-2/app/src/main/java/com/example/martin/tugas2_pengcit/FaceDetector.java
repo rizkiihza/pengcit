@@ -154,32 +154,27 @@ public class FaceDetector {
         return sum;
     }
 
-    int[] getFace(int[][] gr, int w, int h) {
+    ArrayList<int[]> getFace(int[][] gr, int w, int h) {
         visited = new boolean[w][h];
         for (int i = 0; i < w; i++) {
             for (int j = 0; j < h; j++) {
                 visited[i][j] = false;
             }
         }
-        int curmaxx = -1, curmaxy = -1, curminx = -1, curminy = -1;
-        int tmp = -1;
+
+        ArrayList<int[]> candidate = new ArrayList<>();
         for (int i = 0; i < w; i++) {
             for (int j = 0; j < h; j++) {
                 if (gr[i][j]>0 && !visited[i][j]) { // putih
                     maxx = i; minx = i;
                     maxy = j; miny = j;
-                    int sum = dfs(gr, i, j, w, h, 255);
-                    if (tmp < sum) {
-                        tmp = sum;
-                        curmaxx = maxx; curmaxy = maxy;
-                        curminx = minx; curminy = miny;
-                    }
+                    dfs(gr, i, j, w, h, 255);
+                    int[] result = {minx, maxx, miny, maxy};
+                    candidate.add(result);
                 }
             }
         }
-        int[] result = {curminx, curmaxx, curminy, curmaxy};
-        Log.d("bound", Arrays.toString(result));
-        return result;
+        return candidate;
     }
 
     void resetOutside(int[][] gr, int w, int h) {
@@ -326,7 +321,7 @@ public class FaceDetector {
                 visited[i][j] = false;
             }
         }
-        //dfs(gr, cminx, cminy, w, h, 0);
+        //dfs(gr, cminx, cminy, w, h, 0);/;p0
 
         int midx = (cmaxx + cminx) / 2;
         for (int j = cminy; j <= cmaxy; j++) {
