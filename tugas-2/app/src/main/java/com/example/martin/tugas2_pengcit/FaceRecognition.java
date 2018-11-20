@@ -84,24 +84,19 @@ public class FaceRecognition extends AppCompatActivity {
                 finish();
             }
         });
-
     }
 
-    void createRectangle(int minx, int maxx, int miny, int maxy, int bColor) {
+    void createRectangle(int minx, int maxx, int miny, int maxy, int rr, int gg, int bb) {
         for (int i = minx; i <= maxx; i++) {
-            r[i][miny] = r[i][maxy] = bColor;
-            g[i][miny] = g[i][maxy] = bColor;
-            b[i][miny] = b[i][maxy] = bColor;
-            gr[i][miny] = gr[i][maxy] = bColor;
-            bw[i][miny] = bw[i][maxy] = bColor;
+            r[i][miny] = r[i][maxy] = rr;
+            g[i][miny] = g[i][maxy] = gg;
+            b[i][miny] = b[i][maxy] = bb;
         }
         int midx = (minx + maxx) / 2;
         for (int i = miny; i <= maxy; i++) {
-            r[minx][i] = r[maxx][i] = bColor;
-            g[minx][i] = g[maxx][i] = bColor;
-            b[minx][i] = b[maxx][i] = bColor;
-            gr[minx][i] = gr[maxx][i] = bColor;
-            bw[minx][i] = bw[maxx][i] = bColor;
+            r[minx][i] = r[maxx][i] = rr;
+            g[minx][i] = g[maxx][i] = gg;
+            b[minx][i] = b[maxx][i] = bb;
         }
     }
 
@@ -112,32 +107,17 @@ public class FaceRecognition extends AppCompatActivity {
         gr = faceDetector.getSkin(a, r, g, b, w, h);
         gr = faceDetector.preprocess(gr, w, h);
         ArrayList<int[]> boundFace = faceDetector.getFace(gr, w, h);
-        bw = faceDetector.convolute(r, g, b, w, h);
-        for (int i = 0; i < w; i++) {
-            for (int j = 0; j < h; j++) {
-                r[i][j] = bw[i][j];
-                g[i][j] = bw[i][j];
-                b[i][j] = bw[i][j];
-            }
-        }
+        bw = faceDetector.convolute(r, g, b, w, h, 80);
         for (int[] bound : boundFace) {
             int minx = bound[0], maxx = bound[1], miny = bound[2], maxy = bound[3];
-            createRectangle(minx, maxx, miny, maxy, 0);
             ArrayList<int[]> featureBound = faceDetector.getFeature(bw, minx, maxx, miny, maxy, w, h);
             if (featureBound.size() >= 2) {
                 for (int[] b : featureBound) {
-                    createRectangle(b[0], b[1], b[2], b[3], 0);
+                    createRectangle(b[0], b[1], b[2], b[3], 255, 0, 0);
                 }
-                createRectangle(minx, maxx, miny, maxy, 128);
-            } else {
-                createRectangle(minx, maxx, miny, maxy, 255);
+                createRectangle(minx, maxx, miny, maxy, 255, 0, 0);
             }
         }
-
-        /*ArrayList<int[]> bounds = faceDetector.getFeature(gr, minx, maxx, miny, maxy, w, h);
-        for (int[] bound : bounds) {
-            createRectangle(bound[0], bound[1], bound[2], bound[3], 255);
-        }*/
 
         for (int i = 0; i < w; i++) {
             for (int j = 0; j < h; j++) {

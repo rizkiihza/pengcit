@@ -103,13 +103,13 @@ public class FaceDetector {
         return processor.smoothing(gr, w, h);
     }
 
-    int[][] convolute(int[][] r, int[][] g, int[][] b, int w, int h) {
+    int[][] convolute(int[][] r, int[][] g, int[][] b, int w, int h, int th) {
         r = processor.sobel(r, w, h);
         g = processor.sobel(g, w, h);
         b = processor.sobel(b, w, h);
 
         ImageProcessor imageProcessor = new ImageProcessor();
-        int[][] bw = imageProcessor.convertToBW(r, g, b, w, h, 80);
+        int[][] bw = imageProcessor.convertToBW(r, g, b, w, h, th);
         for (int i = 0; i < w; i++) {
             for (int j = 0; j < h; j++) {
                 if (bw[i][j] > 0) {
@@ -249,124 +249,130 @@ public class FaceDetector {
         int eyemaxy = 0;
         int featureCount = 1;
         for (int j = cminy + 1; j < cmaxy; j++) {
-            if (featureCount > 2) {
-                break;
-            }
-            int xleft = -1, yleft = -1, xright = -1, yright = -1;
-            int lminx = -1, lmaxx = -1, lminy = -1, lmaxy = -1;
-            int rminx = -1, rmaxx = -1, rminy = -1, rmaxy = -1;
-            boolean found = false;
+            if (featureCount <= 2) {
+                int xleft = -1, yleft = -1, xright = -1, yright = -1;
+                int lminx = -1, lmaxx = -1, lminy = -1, lmaxy = -1;
+                int rminx = -1, rmaxx = -1, rminy = -1, rmaxy = -1;
+                boolean found = false;
 
-            // get right
-            int size_right = 0;
-            for (int i = cmidx; i <= cmaxx; i++) {
-                if (gr[i][j] == 0 && !visited[i][j]) {
-                    maxx = i; minx = i;
-                    miny = j; maxy = j;
-                    size_right = dfs(gr, i, j, w, h, 0);
-                    rminx = minx; rmaxx = maxx; rminy = miny; rmaxy = maxy;
-                    xright = i;
-                    yright = j;
-                    if (size_right > 50) {
-                        break;
-                    }
-                }
-            }
-
-            int size_left = 0;
-            // get left
-            for (int k = Math.max(cminy+1, j-5); k < Math.min(cmaxy-1, j+5); k++) {
-                for (int i = cmidx-1; i >= cminx; i--) {
-                    if (gr[i][k] == 0 && !visited[i][k]) {
-                        maxx = i; minx = i;
-                        miny = k; maxy = k;
-                        size_left = dfs(gr, i, k, w, h, 0);
-                        lminx = minx; lmaxx = maxx; lminy = miny; lmaxy = maxy;
-                        xleft = i;
-                        yleft = k;
-                        if (size_left > 50) {
+                // get right
+                int size_right = 0;
+                for (int i = cmidx; i <= cmaxx; i++) {
+                    if (gr[i][j] == 0 && !visited[i][j]) {
+                        maxx = i;
+                        minx = i;
+                        miny = j;
+                        maxy = j;
+                        size_right = dfs(gr, i, j, w, h, 0);
+                        rminx = minx;
+                        rmaxx = maxx;
+                        rminy = miny;
+                        rmaxy = maxy;
+                        xright = i;
+                        yright = j;
+                        if (size_right > 50) {
                             break;
                         }
                     }
                 }
-                if (size_left > 50) {
-                    break;
+
+                int size_left = 0;
+                // get left
+                for (int k = Math.max(cminy + 1, j - 5); k < Math.min(cmaxy - 1, j + 5); k++) {
+                    for (int i = cmidx - 1; i >= cminx; i--) {
+                        if (gr[i][k] == 0 && !visited[i][k]) {
+                            maxx = i;
+                            minx = i;
+                            miny = k;
+                            maxy = k;
+                            size_left = dfs(gr, i, k, w, h, 0);
+                            lminx = minx;
+                            lmaxx = maxx;
+                            lminy = miny;
+                            lmaxy = maxy;
+                            xleft = i;
+                            yleft = k;
+                            if (size_left > 50) {
+                                break;
+                            }
+                        }
+                    }
+                    if (size_left > 50) {
+                        break;
+                    }
+                }
+
+                Log.d("boundAlis", Integer.toString(j) + ' ' + Integer.toString(size_left) + ' ' + Integer.toString(size_right));
+                if (size_left > 50 && size_right > 50 && lmaxx < rminx && size_left * 2 > size_right && size_right * 2 > size_left) {
+                    found = true;
+                } else {
+                    if (xleft != -1) {
+                        dfsReset(gr, xleft, yleft, w, h, 0);
+                    }
+                    if (xright != -1) {
+                        dfsReset(gr, xright, yright, w, h, 0);
+                    }
+
+                }
+                if (found) {
+                    result.add(new int[]{lminx, lmaxx, lminy, lmaxy});
+                    result.add(new int[]{rminx, rmaxx, rminy, rmaxy});
+                    featureCount += 1;
+                    eyemaxy = Math.max(lmaxy, rmaxy);
+                    j = eyemaxy + 1;
                 }
             }
 
-            Log.d("boundAlis", Integer.toString(j) + ' '  + Integer.toString(size_left) + ' ' + Integer.toString(size_right));
-            if (size_left > 50 && size_right > 50 && lmaxx < rminx && size_left*2 > size_right && size_right*2 > size_left) {
-                found = true;
-            } else {
-                if (xleft != -1) {
-                    dfsReset(gr, xleft, yleft, w, h, 0);
-                }
-                if (xright != -1) {
-                    dfsReset(gr, xright, yright, w, h, 0);
+            else if (featureCount <= 4) {
+                boolean found = false;
+                int hminx = w+1, hminy = h+1, hmaxx = -1, hmaxy = -1;
+
+                // 3 = hidung
+                int xmkiri = (featureCount == 3)? result.get(2)[1]:result.get(2)[0];
+                int xmnkanan = (featureCount == 3)?result.get(3)[0]:result.get(3)[1];
+
+                int thresholdL = (featureCount == 3)? 100: 500;
+                int thresholdU = (featureCount == 3)? 120701: 120701;
+
+                ArrayList<int[]> points = new ArrayList<>();
+                for (int i = xmkiri; i <= xmnkanan; i++) {
+                    if (gr[i][j] == 0 && !visited[i][j]) {
+                        maxx = i; minx = i; maxy = j; miny = j;
+                        dfs(gr, i, j, w, h, 0);
+
+                        points.add(new int[]{i, j});
+                        hminx = Math.min(hminx, minx);
+                        hmaxx = Math.max(hmaxx, maxx);
+                        hminy = Math.min(hminy, miny);
+                        hmaxy = Math.max(hmaxy, maxy);
+                    }
                 }
 
-            }
-            if (found) {
-                result.add(new int[]{lminx, lmaxx, lminy, lmaxy});
-                result.add(new int[]{rminx, rmaxx, rminy, rmaxy});
-                featureCount += 1;
-                eyemaxy = Math.max(lmaxy, rmaxy);
-                j = eyemaxy + 1;
+                int luas = (hmaxx - hminx + 1) * (hmaxy - hminy + 1);
+                if (featureCount == 4) {
+                    Log.d("boundMulut", Integer.toString(luas));
+                }
+                if (luas > thresholdL && luas < thresholdU) {
+                    found = true;
+                } else {
+                    for (int[] p : points) {
+                        dfsReset(gr, p[0], p[1], w, h, 0);
+                    }
+                }
+
+                if (found) {
+                    if (featureCount == 3) {
+                        hmaxx += 5;
+                        hminx -= 5;
+                        hmaxy += 2;
+                        hminy -= 10;
+                    }
+                    result.add(new int[]{hminx, hmaxx, hminy, hmaxy});
+                    featureCount += 1;
+                    j = hmaxy + 1;
+                }
             }
         }
-        /*featureCount = 3;
-        for (int j = eyemaxy + 1; j < cmaxy; j++) {
-            if (featureCount > 4) {
-                break;
-            }
-            boolean found = false;
-            int hminx = w+1, hminy = h+1, hmaxx = -1, hmaxy = -1;
-
-            // 3 = hidung
-            int xmkiri = (featureCount == 3)? result.get(2)[1]:result.get(2)[0];
-            int xmnkanan = (featureCount == 3)?result.get(3)[0]:result.get(3)[1];
-
-            int thresholdL = (featureCount == 3)? 100: 500;
-            int thresholdU = (featureCount == 3)? 120701: 120701;
-
-            ArrayList<int[]> points = new ArrayList<>();
-            for (int i = xmkiri; i <= xmnkanan; i++) {
-                if (gr[i][j] == 0 && !visited[i][j]) {
-                    maxx = i; minx = i; maxy = j; miny = j;
-                    dfs(gr, i, j, w, h, 0);
-
-                    points.add(new int[]{i, j});
-                    hminx = Math.min(hminx, minx);
-                    hmaxx = Math.max(hmaxx, maxx);
-                    hminy = Math.min(hminy, miny);
-                    hmaxy = Math.max(hmaxy, maxy);
-                }
-            }
-
-            int luas = (hmaxx - hminx + 1) * (hmaxy - hminy + 1);
-            if (featureCount == 4) {
-                Log.d("boundMulut", Integer.toString(luas));
-            }
-            if (luas > thresholdL && luas < thresholdU) {
-                found = true;
-            } else {
-                for (int[] p : points) {
-                    dfsReset(gr, p[0], p[1], w, h, 0);
-                }
-            }
-
-            if (found) {
-                if (featureCount == 3) {
-                    hmaxx += 5;
-                    hminx -= 5;
-                    hmaxy += 2;
-                    hminy -= 10;
-                }
-                result.add(new int[]{hminx, hmaxx, hminy, hmaxy});
-                featureCount += 1;
-                j = hmaxy + 1;
-            }
-        }*/
         return result;
     }
 
