@@ -10,7 +10,7 @@ import java.util.Queue;
 
 public class FaceDetector {
 
-
+    private ConvolutionProcessor processor = new ConvolutionProcessor();
 
     double[][] getHSV(int[][] r, int[][] g, int[][] b, int w, int h, int index) {
         double[][] result = new double[w][h];
@@ -97,8 +97,14 @@ public class FaceDetector {
     }
 
     int[][] preprocess(int[][] gr, int w, int h) {
-        ConvolutionProcessor processor = new ConvolutionProcessor();
         return processor.smoothing(gr, w, h);
+    }
+
+    int[][] convolute(int[][] r, int[][] g, int[][] b, int w, int h) {
+        r = processor.sobel(r, w, h);
+        g = processor.sobel(g, w, h);
+        b = processor.sobel(b, w, h);
+
     }
 
     private boolean[][] visited;
@@ -268,11 +274,10 @@ public class FaceDetector {
                 boolean found = false;
                 int hminx = w+1, hminy = h+1, hmaxx = -1, hmaxy = -1;
 
-                // mata kiri
+                // 3 = hidung
                 int xmkiri = (featureCount == 3)? result.get(2)[1]:result.get(2)[0];
                 int xmnkanan = (featureCount == 3)?result.get(3)[0]:result.get(3)[1];
 
-                // hidung dan mulut
                 int thresholdL = (featureCount == 3)? 100: 200;
                 int thresholdU = (featureCount == 3)? 200: 800;
 
@@ -300,6 +305,12 @@ public class FaceDetector {
                 }
 
                 if (found) {
+                    if (featureCount == 3) {
+                        hmaxx += 5;
+                        hminx -= 5;
+                        hmaxy += 2;
+                        hminy -= 10;
+                    }
                     result.add(new int[]{hminx, hmaxx, hminy, hmaxy});
                     featureCount += 1;
                 }

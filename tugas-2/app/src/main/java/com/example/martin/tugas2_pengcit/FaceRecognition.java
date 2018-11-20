@@ -102,6 +102,7 @@ public class FaceRecognition extends AppCompatActivity {
         gr = faceDetector.getSkin(a, r, g, b, w, h);
         gr = faceDetector.preprocess(gr, w, h);
         int[] boundFace = faceDetector.getFace(gr, w, h);
+        bw = faceDetector.convolute(r, g, b, w, h);
 
         int minx = boundFace[0], maxx = boundFace[1], miny = boundFace[2], maxy = boundFace[3];
         createRectangle(minx, maxx, miny, maxy, 255);
@@ -113,7 +114,7 @@ public class FaceRecognition extends AppCompatActivity {
 
         for (int i = 0; i < w; i++) {
             for (int j = 0; j < h; j++) {
-                int colour = Color.rgb(r[i][j], g[i][j], b[i][j]);
+                int colour = Color.rgb(gr[i][j], gr[i][j], gr[i][j]);
                 curBitmap.setPixel(i, j, colour);
             }
         }
