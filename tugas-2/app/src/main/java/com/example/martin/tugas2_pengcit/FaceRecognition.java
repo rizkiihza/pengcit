@@ -10,6 +10,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 public class FaceRecognition extends AppCompatActivity {
@@ -20,7 +21,7 @@ public class FaceRecognition extends AppCompatActivity {
     private Button searchButton;
     private Button backButton;
     private FaceDetector faceDetector;
-    private int[][] a,r,g,b,gr;
+    private int[][] a,r,g,b,gr,bw;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -86,12 +87,14 @@ public class FaceRecognition extends AppCompatActivity {
             g[i][miny] = g[i][maxy] = bColor;
             b[i][miny] = b[i][maxy] = bColor;
             gr[i][miny] = gr[i][maxy] = bColor;
+            bw[i][miny] = bw[i][maxy] = bColor;
         }
         for (int i = miny; i <= maxy; i++) {
             r[minx][i] = r[maxx][i] = bColor;
             g[minx][i] = g[maxx][i] = bColor;
             b[minx][i] = b[maxx][i] = bColor;
             gr[minx][i] = gr[maxx][i] = bColor;
+            bw[minx][i] = bw[maxx][i] = bColor;
         }
     }
 
@@ -101,20 +104,20 @@ public class FaceRecognition extends AppCompatActivity {
 
         gr = faceDetector.getSkin(a, r, g, b, w, h);
         gr = faceDetector.preprocess(gr, w, h);
-        int[] boundFace = faceDetector.getFace(gr, w, h);
+        ArrayList<int[]> boundFace = faceDetector.getFace(gr, w, h);
         bw = faceDetector.convolute(r, g, b, w, h);
+        for (int[] bound : boundFace) {
+            createRectangle(bound[0], bound[1], bound[2], bound[3], 128);
+        }
 
-        int minx = boundFace[0], maxx = boundFace[1], miny = boundFace[2], maxy = boundFace[3];
-        createRectangle(minx, maxx, miny, maxy, 255);
-
-        ArrayList<int[]> bounds = faceDetector.getFeature(gr, minx, maxx, miny, maxy, w, h);
+        /*ArrayList<int[]> bounds = faceDetector.getFeature(gr, minx, maxx, miny, maxy, w, h);
         for (int[] bound : bounds) {
             createRectangle(bound[0], bound[1], bound[2], bound[3], 255);
-        }
+        }*/
 
         for (int i = 0; i < w; i++) {
             for (int j = 0; j < h; j++) {
-                int colour = Color.rgb(gr[i][j], gr[i][j], gr[i][j]);
+                int colour = Color.rgb(bw[i][j], bw[i][j], bw[i][j]);
                 curBitmap.setPixel(i, j, colour);
             }
         }

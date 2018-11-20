@@ -105,6 +105,18 @@ public class FaceDetector {
         g = processor.sobel(g, w, h);
         b = processor.sobel(b, w, h);
 
+        ImageProcessor imageProcessor = new ImageProcessor();
+        int[][] bw = imageProcessor.convertToBW(r, g, b, w, h, 100);
+        for (int i = 0; i < w; i++) {
+            for (int j = 0; j < h; j++) {
+                if (bw[i][j] > 0) {
+                    bw[i][j] = 0;
+                } else {
+                    bw[i][j] = 255;
+                }
+            }
+        }
+        return bw;
     }
 
     private boolean[][] visited;
