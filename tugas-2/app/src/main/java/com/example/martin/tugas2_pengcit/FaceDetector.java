@@ -215,11 +215,28 @@ public class FaceDetector {
                 visited[i][j] = false;
             }
         }
-        dfs(gr, cminx+1, cminy+1, w, h, 0);
-        dfs(gr, cminx+1, cmaxy-1, w, h, 0);
-        dfs(gr, cmaxx-1, cminy+1, w, h, 0);
-        dfs(gr, cmaxx-1, cmaxy-1, w, h, 0);
 
+        // traverse top and bottom
+        for (int i = cminx+1; i <= cmaxx-1; i++) {
+            if (gr[i][cminy+1] == 0 && !visited[i][cminy+1]) {
+                dfs(gr, i, cminy+1, w, h, 0);
+            }
+
+            if (gr[i][cmaxy-1] == 0 && !visited[i][cmaxy-1]) {
+                dfs(gr, i, cmaxy-1, w, h, 0);
+            }
+        }
+
+        // traverse left and right
+        for (int j = cminy+1; j <= cmaxy-1; j++) {
+            if (gr[cminx+1][j] == 0 && !visited[cminx+1][j]) {
+                dfs(gr, cminx+1, j, w, h, 0);
+            }
+
+            if (gr[cmaxx-1][j] == 0 && !visited[cmaxx-1][j]) {
+                dfs(gr, cmaxx-1, j, w, h, 0);
+            }
+        }
         ArrayList<int[]> result = new ArrayList<>();
 
         int cmidx = (cminx + cmaxx) / 2;
