@@ -31,31 +31,34 @@ public class FaceDetector {
 
         for (int i = 0; i < w; i++) {
             for (int j = 0; j < h; j++) {
-                y[i][j] = 0.299*r[i][j] + 0.287*g[i][j] + 0.11*b[i][j];
+                double rr = (double) r[i][j] / 255, bb = (double) b[i][j] / 255, gg = (double) g[i][j] / 255;
+                y[i][j] = 16 + 65.481*rr + 128.553*gg + 24.966*bb;
             }
         }
 
         return y;
     }
 
-    public double[][] getCr(int[][] r, double[][] y, int w, int h) {
+    public double[][] getCr(int[][] r, int[][] g, int[][] b, int w, int h) {
         double[][] result = new double[w][h];
 
         for (int i = 0; i < w; i++) {
             for (int j = 0; j < h; j++) {
-                result[i][j] = r[i][j] - y[i][j];
+                double rr = (double) r[i][j] / 255, bb = (double) b[i][j] / 255, gg = (double) g[i][j] / 255;
+                result[i][j] = 128 - 37.7745*rr - 74.1592*gg + 111.9337*bb;
             }
         }
 
         return result;
     }
 
-    public double[][] getCb(int[][] b, double[][] y, int w, int h) {
+    public double[][] getCb(int[][] r, int[][] g, int[][] b, int w, int h) {
         double[][] result = new double[w][h];
 
         for (int i = 0; i < w; i++) {
             for (int j = 0; j < h; j++) {
-                result[i][j] = b[i][j] - y[i][j];
+                double rr = (double) r[i][j] / 255, bb = (double) b[i][j] / 255, gg = (double) g[i][j] / 255;
+                result[i][j] = 128 + 111.9581*rr - 93.7509*gg - 18.2072*bb;
             }
         }
 
@@ -66,8 +69,8 @@ public class FaceDetector {
         double[][] hue = getHSV(r, g, b, w, h, 0);
         double[][] sat = getHSV(r, g, b, w, h, 1);
         double[][] yM = getY(r, g, b, w, h);
-        double[][] crM = getCr(r, yM, w, h);
-        double[][] cbM = getCb(b, yM, w, h);
+        double[][] crM = getCr(r, g, b, w, h);
+        double[][] cbM = getCb(r, g, b, w, h);
         
         int[][] gr = new int[w][h];
         double y,cb,cr;
@@ -110,9 +113,9 @@ public class FaceDetector {
         for (int i = 0; i < w; i++) {
             for (int j = 0; j < h; j++) {
                 if (bw[i][j] > 0) {
-                    bw[i][j] = 0;
-                } else {
                     bw[i][j] = 255;
+                } else {
+                    bw[i][j] = 0;
                 }
             }
         }
@@ -180,9 +183,11 @@ public class FaceDetector {
                 if (gr[i][j]>0 && !visited[i][j]) { // putih
                     maxx = i; minx = i;
                     maxy = j; miny = j;
-                    dfs(gr, i, j, w, h, 255);
-                    int[] result = {minx, maxx, miny, maxy};
-                    candidate.add(result);
+                    int sum = dfs(gr, i, j, w, h, 255);
+                    if (sum >= 100) {
+                        int[] result = {minx, maxx, miny, maxy};
+                        candidate.add(result);
+                    }
                 }
             }
         }
@@ -285,8 +290,8 @@ public class FaceDetector {
                 int xmkiri = (featureCount == 3)? result.get(2)[1]:result.get(2)[0];
                 int xmnkanan = (featureCount == 3)?result.get(3)[0]:result.get(3)[1];
 
-                int thresholdL = (featureCount == 3)? 100: 200;
-                int thresholdU = (featureCount == 3)? 200: 800;
+                int thresholdL = (featureCount == 3)? 100: 120701;
+                int thresholdU = (featureCount == 3)? 200: 120701;
 
                 ArrayList<int[]> points = new ArrayList<>();
                 for (int i = xmkiri; i <= xmnkanan; i++) {
@@ -303,6 +308,7 @@ public class FaceDetector {
                 }
 
                 int luas = (hmaxx - hminx + 1) * (hmaxy - hminy + 1);
+                Log.d("bound", Integer.toString(luas));
                 if (luas > thresholdL && luas < thresholdU) {
                     found = true;
                 } else {
@@ -310,6 +316,7 @@ public class FaceDetector {
                         dfsReset(gr, p[0], p[1], w, h, 0);
                     }
                 }
+                Log.d("boundFound", Boolean.toString(found));
 
                 if (found) {
                     if (featureCount == 3) {
