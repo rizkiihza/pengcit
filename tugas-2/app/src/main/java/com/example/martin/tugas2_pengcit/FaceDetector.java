@@ -210,8 +210,8 @@ public class FaceDetector {
     }
 
     ArrayList<int[]> getFeature(int[][] gr, int cminx, int cmaxx, int cminy, int cmaxy, int w, int h) {
-        for (int i = 0; i < w; i++) {
-            for (int j = 0; j < h; j++) {
+        for (int i = cminx; i <= cmaxx; i++) {
+            for (int j = cminy; j <= cmaxy; j++) {
                 visited[i][j] = false;
             }
         }
@@ -237,6 +237,7 @@ public class FaceDetector {
                 dfs(gr, cmaxx-1, j, w, h, 0);
             }
         }
+
         ArrayList<int[]> result = new ArrayList<>();
 
         int cmidx = (cminx + cmaxx) / 2;
