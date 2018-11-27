@@ -36,6 +36,7 @@ public class MainActivity extends Activity {
     private static final int TRANSFORMATION_REQUEST = 2;
     private static final int CONVOLUTION_REQUEST = 321;
     private static final int FACE_REQUEST = 123;
+    private static final int ASCII_REQUEST = 4312;
     private Bitmap rawBitmap;
     private ImageView imageView;
     private String buttonSelected;
@@ -80,11 +81,11 @@ public class MainActivity extends Activity {
             }
         });
 
-        buttonSelected = "Histogram";
+        buttonSelected = "Face";
         Spinner choiceSpinner = findViewById(R.id.choiceSpinner);
 
-        buttonChoice = new String[] {"Histogram", "Transform", "Specification", "Number", "ASCII",
-                "Convolution", "Face"};
+        buttonChoice = new String[] {"Face", "Histogram", "Transform", "Specification", "Number", "ASCII",
+                "Convolution"};
         final ArrayAdapter<String> choiceList = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, buttonChoice);
         choiceSpinner.setAdapter(choiceList);
         choiceSpinner.setSelection(0);
@@ -120,6 +121,7 @@ public class MainActivity extends Activity {
                     intent = new Intent(ctx, ChainActivity.class);
                 } else if (buttonSelected.equals("ASCII")) {
                     intent = new Intent(ctx, asciiActivity.class);
+                    request = ASCII_REQUEST;
                 } else if (buttonSelected.equals("Convolution")) {
                     intent = new Intent(ctx, Convolution.class);
                     request = CONVOLUTION_REQUEST;
@@ -188,6 +190,11 @@ public class MainActivity extends Activity {
         }
 
         else if (requestCode == FACE_REQUEST && resultCode == RESULT_OK) {
+            rawBitmap = data.getParcelableExtra("Image");
+            imageView.setImageBitmap(rawBitmap);
+        }
+
+        else if (requestCode == ASCII_REQUEST && resultCode == RESULT_OK) {
             rawBitmap = data.getParcelableExtra("Image");
             imageView.setImageBitmap(rawBitmap);
         }

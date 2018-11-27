@@ -91,12 +91,16 @@ public class FaceRecognition extends AppCompatActivity {
             r[i][miny] = r[i][maxy] = rr;
             g[i][miny] = g[i][maxy] = gg;
             b[i][miny] = b[i][maxy] = bb;
+            gr[i][miny] = gr[i][maxy] = 128;
+            bw[i][miny] = bw[i][maxy] = 128;
         }
         int midx = (minx + maxx) / 2;
         for (int i = miny; i <= maxy; i++) {
             r[minx][i] = r[maxx][i] = rr;
             g[minx][i] = g[maxx][i] = gg;
             b[minx][i] = b[maxx][i] = bb;
+            gr[minx][i] = gr[maxx][i] = 128;
+            bw[minx][i] = bw[maxx][i] = 128;
         }
     }
 
@@ -107,7 +111,8 @@ public class FaceRecognition extends AppCompatActivity {
         gr = faceDetector.getSkin(a, r, g, b, w, h);
         gr = faceDetector.preprocess(gr, w, h);
         ArrayList<int[]> boundFace = faceDetector.getFace(gr, w, h);
-        bw = faceDetector.convolute(r, g, b, w, h, 80);
+        bw = faceDetector.convolute(r, g, b, w, h, 90);
+        bw = faceDetector.preprocess(bw, w, h);
         for (int[] bound : boundFace) {
             int minx = bound[0], maxx = bound[1], miny = bound[2], maxy = bound[3];
             ArrayList<int[]> featureBound = faceDetector.getFeature(bw, minx, maxx, miny, maxy, w, h);
@@ -121,8 +126,9 @@ public class FaceRecognition extends AppCompatActivity {
 
         for (int i = 0; i < w; i++) {
             for (int j = 0; j < h; j++) {
-                int colour = Color.rgb(r[i][j], g[i][j], b[i][j]);
+                //int colour = Color.rgb(r[i][j], g[i][j], b[i][j]);
                 //int colour = Color.rgb(gr[i][j], gr[i][j], gr[i][j]);
+                int colour = Color.rgb(bw[i][j], bw[i][j], bw[i][j]);
                 curBitmap.setPixel(i, j, colour);
             }
         }

@@ -1,5 +1,6 @@
 package com.example.martin.tugas2_pengcit;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Color;
@@ -8,6 +9,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.TextView;
@@ -20,6 +22,7 @@ import uk.co.senab.photoview.PhotoViewAttacher;
 public class asciiActivity extends AppCompatActivity {
 
     private Bitmap rawBitmap;
+    private Bitmap transformed_bitmap;
     private int[][] r;
     private int[][] g;
     private int[][] b;
@@ -90,7 +93,7 @@ public class asciiActivity extends AppCompatActivity {
         }
 
         Bitmap.Config config = Bitmap.Config.ARGB_8888;
-        Bitmap transformed_bitmap = Bitmap.createBitmap(w, h, config);
+        transformed_bitmap = Bitmap.createBitmap(w, h, config);
 
         for (int i = 0; i < w; i++) {
             for (int j = 0; j < h; j++) {
@@ -100,6 +103,18 @@ public class asciiActivity extends AppCompatActivity {
         }
 
         imageView.setImageBitmap(transformed_bitmap);
+
+        // setup back button
+        Button backButton = findViewById(R.id.asciiBackButton);
+        backButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent resIntent = new Intent();
+                resIntent.putExtra("Image", transformed_bitmap);
+                setResult(Activity.RESULT_OK, resIntent);
+                finish();
+            }
+        });
     }
 
     public void convertBW(View target) {
@@ -116,7 +131,7 @@ public class asciiActivity extends AppCompatActivity {
         }
 
         Bitmap.Config config = Bitmap.Config.ARGB_8888;
-        Bitmap transformed_bitmap = Bitmap.createBitmap(w, h, config);
+        transformed_bitmap = Bitmap.createBitmap(w, h, config);
 
         for (int i = 0; i < w; i++) {
             for (int j = 0; j < h; j++) {
@@ -147,7 +162,7 @@ public class asciiActivity extends AppCompatActivity {
             thinningState = (thinningState + 1) % 2;
         }
         Bitmap.Config config = Bitmap.Config.ARGB_8888;
-        Bitmap transformed_bitmap = Bitmap.createBitmap(w, h, config);
+        transformed_bitmap = Bitmap.createBitmap(w, h, config);
 
         for (int i = 0; i < w; i++) {
             for (int j = 0; j < h; j++) {
