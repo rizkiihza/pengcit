@@ -116,7 +116,9 @@ public class FaceRecognition extends AppCompatActivity {
         for (int[] bound : boundFace) {
             int minx = bound[0], maxx = bound[1], miny = bound[2], maxy = bound[3];
             ArrayList<int[]> featureBound = faceDetector.getFeature(bw, minx, maxx, miny, maxy, w, h);
-            if (featureBound.size() >= 2) {
+            if (featureBound.size() >= 3) {
+                maxy = featureBound.get(featureBound.size() - 1)[0];
+                featureBound.remove(featureBound.size() - 1);
                 for (int[] b : featureBound) {
                     createRectangle(b[0], b[1], b[2], b[3], 255, 0, 0);
                 }

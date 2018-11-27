@@ -222,6 +222,7 @@ public class FaceDetector {
         }
 
         int tinggi = cmaxy-cminy+1;
+        int deltaMulut = 0;
 
         // traverse top and bottom
         for (int i = cminx+1; i <= cmaxx-1; i++) {
@@ -346,6 +347,9 @@ public class FaceDetector {
 
                 }
                 if (found) {
+                    if (featureCount == 2) {
+                        deltaMulut = ((lminy + rminy) / 2 - cminy) / 2;
+                    }
                     result.add(new int[]{lminx, lmaxx, lminy, lmaxy});
                     result.add(new int[]{rminx, rmaxx, rminy, rmaxy});
                     featureCount += 1;
@@ -405,18 +409,16 @@ public class FaceDetector {
                 }
 
                 if (found) {
-                    /*if (featureCount == 3) {
-                        hmaxx += 5;
-                        hminx -= 5;
-                        hmaxy += 2;
-                        hminy -= 2;
-                    }*/
+                    if (featureCount == 4) {
+                        deltaMulut += hmaxy;
+                    }
                     result.add(new int[]{hminx, hmaxx, hminy, hmaxy});
                     featureCount += 1;
                     j = hmaxy + 1;
                 }
             }
         }
+        result.add(new int[]{deltaMulut});
         return result;
     }
 }
