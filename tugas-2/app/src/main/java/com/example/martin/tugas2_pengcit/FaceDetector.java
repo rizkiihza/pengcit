@@ -313,7 +313,6 @@ public class FaceDetector {
                 boolean clear = false;
                 if (featureCount == 1) {
                     if (lmaxx >= 0 && lmaxy - lminy > (lmaxx - lminx) / 2 && size_left > thresholdL) {
-                        Log.d("boundHapusKiri", Integer.toString(lmaxx) + ' ' + Integer.toString(lminx) + ' ' + Integer.toString(lminy) + ' ' + Integer.toString(lmaxy));
                         int lmidy = lminy + (lmaxy - lminy) / 3;
                         for (int xx = lminx; xx <= lmaxx; xx++) {
                             gr[xx][lmidy] = 255;
@@ -322,12 +321,6 @@ public class FaceDetector {
                             }
                         }
                         clear = true;
-                    }
-                    if (clear) {
-                        Log.d("boundHapusKanan", Integer.toString(rmaxx) + ' ' + Integer.toString(rminx) + ' ' + Integer.toString(rminy) + ' ' + Integer.toString(rmaxy));
-                    }
-                    if (rmaxx >= 0) {
-                        Log.d("boundAlis", Integer.toString(rmaxx) + ' ' + Integer.toString(rminx) + ' ' + Integer.toString(rminy) + ' ' + Integer.toString(rmaxy));
                     }
                     if (rmaxx >= 0 && rmaxy - rminy > (rmaxx - rminx) / 2 && size_right > thresholdL) {
                         int rmidy = rminy + (rmaxy - rminy) / 3;
@@ -339,10 +332,7 @@ public class FaceDetector {
                         }
                         clear = true;
                     }
-                } else {
-                    Log.d("boundMata", Integer.toString(size_left) + ' ' + Integer.toString(size_right));
                 }
-                Log.d("boundMata", Integer.toString(size_left) + ' ' + Integer.toString(size_right));
 
                 if (!clear && size_left > thresholdL && size_right > thresholdL  && lmaxx < rminx && size_left * 4 > size_right && size_right * 4 > size_left) {
                     found = true;
@@ -391,9 +381,22 @@ public class FaceDetector {
 
                 int luas = (hmaxx - hminx + 1) * (hmaxy - hminy + 1);
                 int hmidx = (hmaxx + hminx) / 2;
-                if (featureCount == 4) {
+
+                boolean clear = false;
+                if (featureCount == 3) {
+                    if (hmaxx >= 0 && hmaxy - hminy > (hmaxx - hminx) * 9 / 10 && luas > thresholdL) {
+                        int hmidy = (hmaxy + hminy) / 2;
+                        for (int xx = hminx; xx <= hmaxx; xx++) {
+                            gr[xx][hmidy] = 255;
+                            if (gr[xx][hmidy+1] == 0 && visited[xx][hmidy+1]) {
+                                dfsReset(gr, xx, hmidy+1, w, h, 0);
+                            }
+                        }
+                        clear = true;
+                    }
                 }
-                if (luas > thresholdL && luas < thresholdU && hminx <= cmidx && hmaxx > cmidx && Math.abs(hmidx-cmidx) < 20) {
+
+                if (!clear && luas > thresholdL && luas < thresholdU && hminx <= cmidx && hmaxx > cmidx && Math.abs(hmidx-cmidx) < 20) {
                     found = true;
                 } else {
                     for (int[] p : points) {
