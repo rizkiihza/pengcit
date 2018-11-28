@@ -118,17 +118,17 @@ public class FaceRecognition extends AppCompatActivity {
             ArrayList<int[]> featureBound = faceDetector.getFeature(bw, minx, maxx, miny, maxy, w, h);
             if (featureBound.size() >= 2) {
                 for (int[] b : featureBound) {
-                    createRectangle(b[0], b[1], b[2], b[3], 255, 0, 0);
+                    createRectangle(b[0], b[1], b[2], b[3], 0, 255, 0);
                 }
-                createRectangle(minx, maxx, miny, maxy, 255, 0, 0);
+                createRectangle(minx, maxx, miny, maxy, 0, 255  , 0);
             }
         }
 
         for (int i = 0; i < w; i++) {
             for (int j = 0; j < h; j++) {
-                //int colour = Color.rgb(r[i][j], g[i][j], b[i][j]);
+                int colour = Color.rgb(r[i][j], g[i][j], b[i][j]);
                 //int colour = Color.rgb(gr[i][j], gr[i][j], gr[i][j]);
-                int colour = Color.rgb(bw[i][j], bw[i][j], bw[i][j]);
+                //int colour = Color.rgb(bw[i][j], bw[i][j], bw[i][j]);
                 curBitmap.setPixel(i, j, colour);
             }
         }
