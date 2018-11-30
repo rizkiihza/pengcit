@@ -37,6 +37,7 @@ public class MainActivity extends Activity {
     private static final int CONVOLUTION_REQUEST = 321;
     private static final int FACE_REQUEST = 123;
     private static final int ASCII_REQUEST = 4312;
+    private static final int FFT_REQUEST = 54321;
     private Bitmap rawBitmap;
     private ImageView imageView;
     private String buttonSelected;
@@ -81,11 +82,11 @@ public class MainActivity extends Activity {
             }
         });
 
-        buttonSelected = "Face";
+        buttonSelected = "FFT";
         Spinner choiceSpinner = findViewById(R.id.choiceSpinner);
 
-        buttonChoice = new String[] {"Face", "Histogram", "Transform", "Specification", "Number", "ASCII",
-                "Convolution"};
+        buttonChoice = new String[] {"FFT", "Histogram", "Transform", "Specification", "Number", "ASCII",
+                "Convolution", "Face"};
         final ArrayAdapter<String> choiceList = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, buttonChoice);
         choiceSpinner.setAdapter(choiceList);
         choiceSpinner.setSelection(0);
@@ -128,6 +129,9 @@ public class MainActivity extends Activity {
                 } else if (buttonSelected.equals("Face")) {
                     intent = new Intent(ctx, FaceRecognition.class);
                     request = FACE_REQUEST;
+                } else if (buttonSelected.equals("FFT")) {
+                    intent = new Intent(ctx, FFTActivity.class);
+                    request = FFT_REQUEST;
                 } else {
                     intent = new Intent();
                 }
@@ -195,6 +199,11 @@ public class MainActivity extends Activity {
         }
 
         else if (requestCode == ASCII_REQUEST && resultCode == RESULT_OK) {
+            rawBitmap = data.getParcelableExtra("Image");
+            imageView.setImageBitmap(rawBitmap);
+        }
+
+        else if (requestCode == FFT_REQUEST && resultCode == RESULT_OK) {
             rawBitmap = data.getParcelableExtra("Image");
             imageView.setImageBitmap(rawBitmap);
         }
