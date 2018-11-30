@@ -128,7 +128,7 @@ public class FaceRecognition extends AppCompatActivity {
             for (int j = 0; j < h; j++) {
                 int colour = Color.rgb(r[i][j], g[i][j], b[i][j]);
                 //int colour = Color.rgb(gr[i][j], gr[i][j], gr[i][j]);
-                //int colour = Color.rgb(bw[i][j], bw[i][j], bw[i][j]);
+//                int colour = Color.rgb(bw[i][j], bw[i][j], bw[i][j]);
                 curBitmap.setPixel(i, j, colour);
             }
         }

@@ -405,15 +405,11 @@ public class FaceDetector {
                 }
 
                 if (found) {
-                    /*if (featureCount == 3) {
-                        hmaxx += 5;
-                        hminx -= 5;
-                        hmaxy += 2;
-                        hminy -= 2;
-                    }*/
-                    result.add(new int[]{hminx, hmaxx, hminy, hmaxy});
-                    featureCount += 1;
-                    j = hmaxy + 1;
+                    if (featureCount != 4 || hminy >= result.get(result.size()-1)[3]) {
+                        result.add(new int[]{hminx, hmaxx, hminy, hmaxy});
+                        featureCount += 1;
+                        j = hmaxy + 1;
+                    }
                 }
             }
         }
