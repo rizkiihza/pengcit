@@ -290,4 +290,31 @@ public class FourierTransformer {
         }
         return result;
     }
+
+    public ComplexNumber[][] mask(ComplexNumber[][] data, int min, int maks) {
+        int w = data.length, h = data[0].length;
+        int hw = w / 2, hh = h / 2;
+
+        ComplexNumber[][] result = new ComplexNumber[w][h];
+        for (int i = 0; i < w; i++) {
+            int y = i - hw;
+
+            for (int j = 0; j < h; j++) {
+                int x = j - hh;
+                int d = (int) Math.sqrt(x * x + y * y);
+
+                if (d < min || d > maks) {
+                    result[i][j] = new ComplexNumber();
+                } else {
+                    result[i][j] = new ComplexNumber(data[i][j]);
+                }
+            }
+        }
+
+        return result;
+    }
+
+    public ComplexNumber[][] maskLPF(ComplexNumber[][] data, int r) {
+        return mask(data, 0, r);
+    }
 }

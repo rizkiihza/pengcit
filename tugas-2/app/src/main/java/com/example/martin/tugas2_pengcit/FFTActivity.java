@@ -19,7 +19,6 @@ public class FFTActivity extends AppCompatActivity {
     ComplexNumber[][] cr, cg, cb, cgr;
     int[][] r,g,b,gr;
     ImageView fftImageView;
-    Button goButton, backButton;
     boolean transformed;
 
     @Override
@@ -60,8 +59,8 @@ public class FFTActivity extends AppCompatActivity {
         PhotoViewAttacher photoViewAttacher = new PhotoViewAttacher(fftImageView);
         photoViewAttacher.update();
 
-        // setting search button
-        goButton = findViewById(R.id.fftGoButton);
+        // setting fft button
+        Button goButton = findViewById(R.id.fftGoButton);
         goButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -70,8 +69,18 @@ public class FFTActivity extends AppCompatActivity {
             }
         });
 
+        // setting lpf mask button
+        Button lpfButton = findViewById(R.id.fftLPFButton);
+        lpfButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                maskLPF();
+                fftImageView.setImageBitmap(curBitmap);
+            }
+        });
+
         // setup back button
-        backButton = findViewById(R.id.fftBackButton);
+        Button backButton = findViewById(R.id.fftBackButton);
         backButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -89,10 +98,10 @@ public class FFTActivity extends AppCompatActivity {
         int h = rawBitmap.getHeight();
         if (!transformed) {
             cr = fourierTransformer.fftImageForward(r, w, h);
-            int[][] tmp_r = fourierTransformer.convert(cr, w, h);
             cg = fourierTransformer.fftImageForward(g, w, h);
-            int[][] tmp_g = fourierTransformer.convert(cg, w, h);
             cb = fourierTransformer.fftImageForward(b, w, h);
+            int[][] tmp_r = fourierTransformer.convert(cr, w, h);
+            int[][] tmp_g = fourierTransformer.convert(cg, w, h);
             int[][] tmp_b = fourierTransformer.convert(cb, w, h);
             for (int i = 0; i < w; i++) {
                 for (int j = 0; j < h; j++) {
@@ -116,5 +125,29 @@ public class FFTActivity extends AppCompatActivity {
         }
 
         Log.d("fft", "done");
+    }
+
+    public void maskLPF() {
+        Log.d("fft", "start mask lpf");
+        if (transformed) {
+            int w = rawBitmap.getWidth();
+            int h = rawBitmap.getHeight();
+
+            cr = fourierTransformer.maskLPF(cr, 50);
+            cg = fourierTransformer.maskLPF(cg, 50);
+            cb = fourierTransformer.maskLPF(cb, 50);
+
+            int[][] tmp_r = fourierTransformer.convert(cr, w, h);
+            int[][] tmp_g = fourierTransformer.convert(cg, w, h);
+            int[][] tmp_b = fourierTransformer.convert(cb, w, h);
+
+            for (int i = 0; i < w; i++) {
+                for (int j = 0; j < h; j++) {
+                    int colour = Color.rgb(tmp_r[i][j], tmp_g[i][j], tmp_b[i][j]);
+                    curBitmap.setPixel(i, j, colour);
+                }
+            }
+        }
+        Log.d("fft", "done mask lpf");
     }
 }

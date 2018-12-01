@@ -13,6 +13,11 @@ public class ComplexNumber {
         this.imaginary = imaginary;
     }
 
+    public ComplexNumber(ComplexNumber c) {
+        this.real = c.real;
+        this.imaginary = c.imaginary;
+    }
+
     public double getMagnitude() {
         return Math.sqrt(real * real + imaginary * imaginary);
     }
