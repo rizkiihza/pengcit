@@ -22,6 +22,7 @@ import android.widget.Toast;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 import uk.co.senab.photoview.PhotoViewAttacher;
 
@@ -118,14 +119,21 @@ public class UASActivity extends AppCompatActivity {
     public void getComparation() {
         double delta = 0;
 
+        ArrayList<Double> alldelta = new ArrayList<>();
+        ArrayList<String> bodyParts = new ArrayList<>(Arrays.asList("Alis Kiri", "Alis Kanan", "Mata Kiri", "Mata Kanan", "Hidung", "Mulut"));
+
+        resultText.setText("");
         for (int i = 0; i < controlPoints1.size(); i++) {
             if (controlPoints2.size() > i) {
-                delta += faceDetector.compare(controlPoints1.get(i), controlPoints2.get(i));
+                double current_delta = faceDetector.compare(controlPoints1.get(i), controlPoints2.get(i));
+                delta += current_delta;
+                alldelta.add(current_delta);
+                Log.d("Compare", bodyParts.get(i) + " : " + Double.toString(current_delta));
+                resultText.append(bodyParts.get(i) + " : " + String.format("%.2f", current_delta) + "\n");
             }
         }
 
-        resultText.setText(Double.toString(delta));
-        resultText.setTextSize(TypedValue.COMPLEX_UNIT_SP, 60f);
+        resultText.setTextSize(TypedValue.COMPLEX_UNIT_SP, 20f);
         resultText.setTextColor(Color.BLACK);
     }
 

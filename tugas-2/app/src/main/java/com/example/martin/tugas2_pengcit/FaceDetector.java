@@ -635,18 +635,35 @@ public class FaceDetector {
     }
 
     double gradient(int[] p1, int[] p2) {
-        if (p1[0] == p2[0]) return Double.MAX_VALUE;
-        return (double)(p1[1] - p2[1])/(double)(p1[0] - p2[0]);
+        double g = Math.atan2(p1[1] - p2[1], p1[0] - p2[0]);
+        if (g < 0) {
+            g += 2 * Math.PI;
+        }
+        return g;
     }
     
     double compare(ArrayList<int[]> p1, ArrayList<int[]> p2) {
         double delta = 0;
 
-        Log.d("Compare", "compare yeay");
         for (int i = 1; i < p1.size(); i++) {
-            delta += Math.abs(Math.atan(gradient(p1.get(i), p1.get(i-1))) - Math.atan(gradient(p2.get(i), p2.get(i-1))));
+            double g1 = gradient(p1.get(i), p1.get(i-1));
+            double g2 = gradient(p2.get(i), p2.get(i-1));
+            if (g1 > g2) {
+                double temp = g1;
+                g1 = g2;
+                g2 = temp;
+            }
+            delta += Math.min(g2-g1, 2 * Math.PI - g2 + g1) * 180 / Math.PI;
         }
-        delta += Math.abs(Math.atan(gradient(p1.get(p1.size() - 1), p1.get(0))) - Math.atan(gradient(p2.get(p2.size() - 1), p2.get(0))));
+
+        double g1 = gradient(p1.get(p1.size() - 1), p1.get(0));
+        double g2 = gradient(p2.get(p2.size() - 1), p2.get(0));
+        if (g1 > g2) {
+            double temp = g1;
+            g1 = g2;
+            g2 = temp;
+        }
+        delta += Math.min(g2-g1, 2 * Math.PI - g2 + g1) * 180 / Math.PI;
         return delta;
     }
 }
