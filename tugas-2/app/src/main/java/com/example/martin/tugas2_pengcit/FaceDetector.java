@@ -411,7 +411,8 @@ public class FaceDetector {
                 if (found) {
                     if (featureCount != 4 || hminy >= result.get(result.size()-1)[3]) {
                         if (featureCount == 4) {
-                            deltaMulut += hmaxy;
+                            hmaxy += 5;
+                            deltaMulut += hmaxy - 5;
                         }
                         result.add(new int[]{hminx, hmaxx, hminy, hmaxy});
                         featureCount += 1;
@@ -421,24 +422,28 @@ public class FaceDetector {
             }
         }
 
-        for (int i = 0; i < 2; i++) {
-            int[] alis = result.get(i);
-            int[] mata = result.get(i+2);
 
-            int maxy_alis = alis[3];
-            int miny_mata = mata[2];
+        if (result.size() >= 4) {
+            for (int i = 0; i < 2; i++) {
+                int[] alis = result.get(i);
+                int[] mata = result.get(i + 2);
 
-            int result_maxy_alis = maxy_alis;
-            int result_miny_mata = miny_mata;
+                int maxy_alis = alis[3];
+                int miny_mata = mata[2];
 
-            if (maxy_alis > miny_mata) {
-                int midy = (maxy_alis + miny_mata) / 2;
-                result_maxy_alis = midy;
-                result_miny_mata = midy + 1;
+                int result_maxy_alis = maxy_alis;
+                int result_miny_mata = miny_mata;
+
+                if (maxy_alis > miny_mata) {
+                    int midy = (maxy_alis + miny_mata) / 2;
+                    result_maxy_alis = midy;
+                    result_miny_mata = midy + 1;
+                }
+                alis[3] = result_maxy_alis;
+                mata[2] = result_miny_mata;
             }
-            alis[3] = result_maxy_alis;
-            mata[2] = result_miny_mata;
         }
+
         result.add(new int[]{deltaMulut});
         return result;
     }
