@@ -420,17 +420,37 @@ public class FaceDetector {
                 }
             }
         }
+
+        for (int i = 0; i < 2; i++) {
+            int[] alis = result.get(i);
+            int[] mata = result.get(i+2);
+
+            int maxy_alis = alis[3];
+            int miny_mata = mata[2];
+
+            int result_maxy_alis = maxy_alis;
+            int result_miny_mata = miny_mata;
+
+            if (maxy_alis > miny_mata) {
+                int midy = (maxy_alis + miny_mata) / 2;
+                result_maxy_alis = midy;
+                result_miny_mata = midy + 1;
+            }
+            alis[3] = result_maxy_alis;
+            mata[2] = result_miny_mata;
+        }
         result.add(new int[]{deltaMulut});
         return result;
     }
 
-    ArrayList<int[]> getEyesControlPoints(int[][] gr, int[] bound, boolean from_bottom) {
+    ArrayList<int[]> getEyesControlPoints(int[][] gr, int[] bound, int k, boolean from_bottom) {
         int minx = bound[0] + 1;
         int maxx = bound[1] - 1;
         int miny = bound[2] + 1;
         int maxy = bound[3] - 1;
         int midx = (minx + maxx) / 2;
 
+        int middle_split = 1 + (k - 2) / 2;
         ArrayList<int[]> points = new ArrayList<>();
 
         // get left
@@ -454,40 +474,51 @@ public class FaceDetector {
             }
         }
 
-        // get top mid
-        int[] top = new int[2];
-        for (int j = miny; j <= maxy; j++) {
-            if (gr[midx][j] == 0) {
-                top[0] = midx;
-                top[1] = j;
-                break;
-            }
-        }
-
-        // get bottom mid
-        int[] bottom = new int[2];
-        if (from_bottom) {
-            for (int j = maxy; j >= miny; j--) {
-                if (gr[midx][j] == 0) {
-                    bottom[0] = midx;
-                    bottom[1] = j;
-                    break;
-                }
-            }
-        } else {
-            for (int j = top[1]; j <= maxy - 1; j++) {
-                if (gr[midx][j] == 0 && gr[midx][j + 1] == 255) {
-                    bottom[0] = midx;
-                    bottom[1] = j;
-                    break;
-                }
-            }
-        }
-
-        points.add(top);
+        // add left
         points.add(left);
+
+        int delta_x = (maxx - minx) / middle_split;
+        int current_x = minx;
+
+        for (int split = 1; split < middle_split; split++) {
+            current_x = current_x + delta_x;
+
+            // get top mid
+            int[] top = new int[2];
+            for (int j = miny; j <= maxy; j++) {
+                if (gr[current_x][j] == 0) {
+                    top[0] = current_x;
+                    top[1] = j;
+                    break;
+                }
+            }
+
+            // get bottom mid
+            int[] bottom = new int[2];
+            if (from_bottom) {
+                for (int j = maxy; j >= miny; j--) {
+                    if (gr[current_x][j] == 0) {
+                        bottom[0] = current_x;
+                        bottom[1] = j;
+                        break;
+                    }
+                }
+            } else {
+                for (int j = top[1]; j <= maxy - 1; j++) {
+                    if (gr[current_x][j] == 0 && gr[current_x][j + 1] == 255) {
+                        bottom[0] = current_x;
+                        bottom[1] = j;
+                        break;
+                    }
+                }
+            }
+
+            points.add(top);
+            points.add(bottom);
+        }
+
+        // add right
         points.add(right);
-        points.add(bottom);
         return points;
     }
 }

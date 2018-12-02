@@ -137,6 +137,9 @@ public class FaceRecognition extends AppCompatActivity {
                     createRectangle(b[0], b[1], b[2], b[3], 0, 255, 0);
                 }
                 createRectangle(minx, maxx, miny, maxy, 0, 255, 0);
+
+                int num_points = 10;
+
                 for (int i = 0; i < 4; i++) {
                     if (featureBound.size() > i) {
                         Log.d("controlpoint", "New Feature");
@@ -145,10 +148,10 @@ public class FaceRecognition extends AppCompatActivity {
 
                         if (i < 2) {
                             points = faceDetector.getEyesControlPoints(bw,
-                                    featureBound.get(i), false);
+                                    featureBound.get(i), num_points, false);
                         } else {
                             points = faceDetector.getEyesControlPoints(bw,
-                                    featureBound.get(i), true);
+                                    featureBound.get(i), num_points, true);
                         }
 
 
@@ -160,7 +163,7 @@ public class FaceRecognition extends AppCompatActivity {
                 }
                 if (featureBound.size() > 5) {
                     ArrayList<int[]> points = faceDetector.getEyesControlPoints(bw,
-                            featureBound.get(5), true);
+                            featureBound.get(5),num_points, true);
                     for (int[] point : points) {
                         createPoint(point[0], point[1], w, h, 0, 255, 0);
                     }
@@ -170,9 +173,9 @@ public class FaceRecognition extends AppCompatActivity {
 
         for (int i = 0; i < w; i++) {
             for (int j = 0; j < h; j++) {
-                //int colour = Color.rgb(r[i][j], g[i][j], b[i][j]);
+                int colour = Color.rgb(r[i][j], g[i][j], b[i][j]);
                 //int colour = Color.rgb(gr[i][j], gr[i][j], gr[i][j]);
-                int colour = Color.rgb(bw[i][j], bw[i][j], bw[i][j]);
+//                int colour = Color.rgb(bw[i][j], bw[i][j], bw[i][j]);
                 curBitmap.setPixel(i, j, colour);
             }
         }
