@@ -12,4 +12,6 @@
     <string name="back">Back</string>
     <string name="get_ascii">get ascii</string>
     <string name="search">Search</string>
+    <string name="compare">Compare</string>
+    <string name="get_picture">Get Picture</string>
 </resources>

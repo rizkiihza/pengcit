@@ -641,6 +641,7 @@ public class FaceDetector {
             delta += Math.abs(gradient(p1.get(i), p1.get(i-1)) - gradient(p2.get(i), p2.get(i-1)));
         }
 
+        delta += Math.abs(gradient(p1.get(p1.size() - 1), p1.get(0)) - gradient(p2.get(p2.size() - 1), p2.get(0)));
         return delta;
     }
 }
