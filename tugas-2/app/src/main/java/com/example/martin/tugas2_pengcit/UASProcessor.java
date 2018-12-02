@@ -30,8 +30,8 @@ public class UASProcessor {
     }
 
     void createPoint(int[][] r, int[][] g, int[][] b, int[][] gr, int[][] bw, int x, int y, int w, int h, int rr, int gg, int bb) {
-        for (int i = Math.max(0, x - 1); i <= Math.min(w - 1, x + 1); i++) {
-            for (int j = Math.max(0, y - 1); j <= Math.min(h - 1, y + 1); j++) {
+        for (int i = Math.max(0, x); i <= Math.min(w - 1, x); i++) {
+            for (int j = Math.max(0, y); j <= Math.min(h - 1, y); j++) {
                 r[i][j]  = rr;
                 g[i][j] = gg;
                 b[i][j] = bb;
@@ -77,7 +77,7 @@ public class UASProcessor {
 
                         for (int[] point : points) {
                             Log.d("controlpoint", Integer.toString(point[0]) + ' ' + Integer.toString(point[1]));
-                            createPoint(r, g, b, gr, bw, point[0], point[1], w, h, 0, 255, 0);
+                            createPoint(r, g, b, gr, bw, point[0], point[1], w, h, 255, 0, 0);
                         }
                     }
                 }
@@ -85,7 +85,7 @@ public class UASProcessor {
                     ArrayList<int[]> points = faceDetector.getNoseControlPoints(bw, featureBound.get(4));
                     allPoints.add(points);
                     for (int[] point: points) {
-                        createPoint(r, g, b, gr, bw, point[0], point[1], w, h, 0, 255, 0);
+                        createPoint(r, g, b, gr, bw, point[0], point[1], w, h, 255, 0, 0);
                     }
                 }
                 if (featureBound.size() > 5) {
@@ -94,7 +94,7 @@ public class UASProcessor {
                             featureBound.get(5),num_points, true);
                     allPoints.add(points);
                     for (int[] point : points) {
-                        createPoint(r, g, b, gr, bw, point[0], point[1], w, h, 0, 255, 0);
+                        createPoint(r, g, b, gr, bw, point[0], point[1], w, h, 255, 0, 0);
                     }
                 }
             }

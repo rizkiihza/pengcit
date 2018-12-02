@@ -580,6 +580,7 @@ public class FaceDetector {
         int current_x = minx;
         ArrayList<int[]> tops = new ArrayList<>();
         ArrayList<int[]> bottoms = new ArrayList<>();
+
         for (int split = 1; split < middle_split; split++) {
             current_x = current_x + delta_x;
 
@@ -611,6 +612,10 @@ public class FaceDetector {
                         break;
                     }
                 }
+                if (bottom[0] == 0 && bottom[1] == 0) {
+                    bottom[0] = current_x;
+                    bottom[1] = maxy;
+                }
             }
 
             tops.add(top);
@@ -637,11 +642,11 @@ public class FaceDetector {
     double compare(ArrayList<int[]> p1, ArrayList<int[]> p2) {
         double delta = 0;
 
+        Log.d("Compare", "compare yeay");
         for (int i = 1; i < p1.size(); i++) {
-            delta += Math.abs(gradient(p1.get(i), p1.get(i-1)) - gradient(p2.get(i), p2.get(i-1)));
+            delta += Math.abs(Math.atan(gradient(p1.get(i), p1.get(i-1))) - Math.atan(gradient(p2.get(i), p2.get(i-1))));
         }
-
-        delta += Math.abs(gradient(p1.get(p1.size() - 1), p1.get(0)) - gradient(p2.get(p2.size() - 1), p2.get(0)));
+        delta += Math.abs(Math.atan(gradient(p1.get(p1.size() - 1), p1.get(0))) - Math.atan(gradient(p2.get(p2.size() - 1), p2.get(0))));
         return delta;
     }
 }

@@ -208,7 +208,7 @@ public class UASActivity extends AppCompatActivity {
         }
     }
 
-    public void compareImage() {
+    public void inititateImage1() {
         // image 1
 
         gr1 = faceDetector.getSkin(a1, r1, g1, b1, w1, h1);
@@ -220,7 +220,9 @@ public class UASActivity extends AppCompatActivity {
         bw1 = faceDetector.preprocess(bw1, w1, h1);
 
         controlPoints1 = uasProcessor.processBounds(boundFace1, r1, g1, b1, gr1, bw1, w1, h1);
+    }
 
+    public void inititateImage2() {
         // image 2
 
         gr2 = faceDetector.getSkin(a2, r2, g2, b2, w2, h2);
@@ -232,6 +234,11 @@ public class UASActivity extends AppCompatActivity {
         bw2 = faceDetector.preprocess(bw2, w2, h2);
 
         controlPoints2 = uasProcessor.processBounds(boundFace2, r2, g2, b2, gr2, bw2, w2, h2);
+    }
+
+    public void compareImage() {
+        inititateImage1();
+        inititateImage2();
 
         draw1();
         draw2();
