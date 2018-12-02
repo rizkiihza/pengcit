@@ -435,23 +435,50 @@ public class FaceDetector {
 
         // get left
         int[] left = new int[2];
+        int[] left_top = new int[2];
+        int[] left_bottom = new int[2];
         for (int j = miny; j <= maxy; j++) {
             if (gr[minx][j] == 0) {
-                left[0] = minx;
-                left[1] = j;
+                left_top[0] = minx;
+                left_top[1] = j;
                 break;
             }
         }
 
-        // get right
-        int[] right = new int[2];
-        for (int j = miny; j <= maxy; j++) {
-            if (gr[maxx][j] == 0) {
-                left[0] = maxx;
-                left[1] = j;
+        for (int j = maxy; j >= miny; j--) {
+            if (gr[minx][j] == 0) {
+                left_bottom[0] = minx;
+                left_bottom[1] = j;
                 break;
             }
         }
+
+        left[0] = minx;
+        left[1] = (left_top[1] + left_bottom[1]) / 2;
+
+        // get right
+        int[] right = new int[2];
+        int[] right_top = new int[2];
+        int[] right_bottom = new int[2];
+
+        for (int j = miny; j <= maxy; j++) {
+            if (gr[maxx][j] == 0) {
+                right_top[0] = maxx;
+                right_top[1] = j;
+                break;
+            }
+        }
+
+        for (int j = maxy; j >= miny; j--) {
+            if (gr[maxx][j] == 0) {
+                right_bottom[0] = maxx;
+                right_bottom[1] = j;
+                break;
+            }
+        }
+
+        right[0] = maxx;
+        right[1] = (right_top[1] + right_bottom[1]) / 2;
 
         // get top mid
         int[] top = new int[2];
