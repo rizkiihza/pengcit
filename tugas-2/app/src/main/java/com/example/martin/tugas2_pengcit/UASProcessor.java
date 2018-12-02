@@ -1,10 +1,11 @@
 package com.example.martin.tugas2_pengcit;
 
+import android.util.Log;
+
 import java.util.ArrayList;
 
 public class UASProcessor {
     FaceDetector faceDetector;
-
 
     void createRectangle(int[][] r, int[][] g, int[][] b, int[][] gr, int[][] bw, int minx, int maxx, int miny, int maxy, int rr, int gg, int bb) {
         for (int i = minx; i <= maxx; i++) {
@@ -32,6 +33,63 @@ public class UASProcessor {
                 b[i][j] = bb;
                 gr[i][j] = 128;
                 bw[i][j] = 128;
+            }
+        }
+    }
+
+    void processBounds(ArrayList<int[]> boundFace, int[][] r, int[][] g, int[][] b, int[][] gr,
+                       int[][] bw, int w, int h) {
+        for (int[] bound : boundFace) {
+            int minx = bound[0], maxx = bound[1], miny = bound[2], maxy = bound[3];
+            ArrayList<int[]> featureBound = faceDetector.getFeature(bw, minx, maxx, miny, maxy, w, h);
+            if (featureBound.size() >= 3) {
+                if (featureBound.get(featureBound.size() - 1).length <= 1) {
+                    maxy = featureBound.get(featureBound.size() - 1)[0];
+                    featureBound.remove(featureBound.size() - 1);
+                }
+                for (int[] c : featureBound) {
+                    createRectangle(r, g, b, gr, bw, c[0], c[1], c[2], c[3], 0, 255, 0);
+                }
+                createRectangle(r, g, b, gr, bw, minx, maxx, miny, maxy, 0, 255, 0);
+
+                int num_points = 6;
+
+                for (int i = 0; i < 4; i++) {
+                    if (featureBound.size() > i) {
+                        Log.d("controlpoint", "New Feature");
+
+                        ArrayList<int[]> points;
+
+                        if (i < 2) {
+                            points = faceDetector.getEyesAndMouthControlPoints(bw,
+                                    featureBound.get(i), num_points, false);
+                        } else {
+                            faceDetector.fill(bw, featureBound.get(i));
+                            points = faceDetector.getEyesAndMouthControlPoints(bw,
+                                    featureBound.get(i), num_points, true);
+                        }
+
+
+                        for (int[] point : points) {
+                            Log.d("controlpoint", Integer.toString(point[0]) + ' ' + Integer.toString(point[1]));
+                            createPoint(r, g, b, gr, bw, point[0], point[1], w, h, 0, 255, 0);
+                        }
+                    }
+                }
+                if (featureBound.size() > 4) {
+                    ArrayList<int[]> points = faceDetector.getNoseControlPoints(bw, featureBound.get(4));
+                    for (int[] point: points) {
+                        createPoint(r, g, b, gr, bw, point[0], point[1], w, h, 0, 255, 0);
+                    }
+                }
+                if (featureBound.size() > 5) {
+                    faceDetector.fill(bw, featureBound.get(5));
+                    ArrayList<int[]> points = faceDetector.getEyesAndMouthControlPoints(bw,
+                            featureBound.get(5),num_points, true);
+                    for (int[] point : points) {
+                        createPoint(r, g, b, gr, bw, point[0], point[1], w, h, 0, 255, 0);
+                    }
+                }
             }
         }
     }

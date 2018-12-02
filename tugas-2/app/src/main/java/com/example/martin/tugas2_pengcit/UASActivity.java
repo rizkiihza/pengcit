@@ -29,6 +29,7 @@ public class UASActivity extends AppCompatActivity {
     private static final int GALLERY_REQUEST = 1887;
     private FourierTransformer fourierTransformer;
     private FaceDetector faceDetector;
+    private UASProcessor uasProcessor;
     private Bitmap rawBitmap1, rawBitmap2;
 
     private int[][] a1,r1,g1,b1,gr1,bw1;
@@ -46,6 +47,7 @@ public class UASActivity extends AppCompatActivity {
 
         fourierTransformer = new FourierTransformer();
         faceDetector = new FaceDetector();
+        uasProcessor = new UASProcessor();
         resultText = findViewById(R.id.deltaResultText);
 
         // read data from
@@ -101,7 +103,7 @@ public class UASActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 compareImage();
-                getComparation();
+                //getComparation();
                 imageView1.setImageBitmap(rawBitmap1);
                 imageView1.setImageBitmap(rawBitmap2);
             }
@@ -156,9 +158,6 @@ public class UASActivity extends AppCompatActivity {
                 e.printStackTrace();
             }
         }
-
-        Log.d("photosize", Integer.toString(rawBitmap1.getWidth()) + ' ' + Integer.toString(rawBitmap1.getHeight()));
-        Log.d("photosize", Integer.toString(rawBitmap2.getWidth()) + ' ' + Integer.toString(rawBitmap2.getHeight()));
     }
 
     private Bitmap adjustOrientation(Bitmap b) {
@@ -175,8 +174,6 @@ public class UASActivity extends AppCompatActivity {
         return b;
     }
 
-
-
     public void compareImage() {
         // image 1
         int w1 = rawBitmap1.getWidth();
@@ -190,6 +187,8 @@ public class UASActivity extends AppCompatActivity {
         bw1 = faceDetector.convolute(r1, g1, b1, w1, h1, 90);
         bw1 = faceDetector.preprocess(bw1, w1, h1);
 
+        uasProcessor.processBounds(boundFace1, r1, g1, b1, gr1, bw1, w1, h1);
+
         // image 2
         int w2 = rawBitmap2.getWidth();
         int h2 = rawBitmap2.getHeight();
@@ -202,6 +201,24 @@ public class UASActivity extends AppCompatActivity {
         bw2 = faceDetector.convolute(r2, g2, b2, w2, h2, 90);
         bw2 = faceDetector.preprocess(bw2, w2, h2);
 
+        uasProcessor.processBounds(boundFace2, r2, g2, b2, gr2, bw2, w2, h2);
+
+        for (int i = 0; i < w1; i++) {
+            for (int j = 0; j < h1; j++) {
+                int colour1 = Color.rgb(r1[i][j], g1[i][j], b1[i][j]);
+                //int colour1 = Color.rgb(gr1[i][j], gr1[i][j], gr1[i][j]);
+                //int colour1 = Color.rgb(bw1[i][j], bw1[i][j], bw1[i][j]);
+                rawBitmap1.setPixel(i, j, colour1);
+            }
+        }
+        for (int i = 0; i < w2; i++) {
+            for (int j = 0; j < h2; j++) {
+                int colour2 = Color.rgb(r2[i][j], g2[i][j], b2[i][j]);
+                //int colour2 = Color.rgb(gr2[i][j], gr2[i][j], gr2[i][j]);
+                //int colour2 = Color.rgb(bw2[i][j], bw2[i][j], bw2[i][j]);
+                rawBitmap2.setPixel(i, j, colour2);
+            }
+        }
 
         return;
     }
