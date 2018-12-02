@@ -29,6 +29,7 @@ public class UASActivity extends AppCompatActivity {
     private static final int GALLERY_REQUEST = 1887;
     private FourierTransformer fourierTransformer;
     private FaceDetector faceDetector;
+    private UASProcessor uasProcessor;
     private Bitmap rawBitmap1, rawBitmap2;
     private Bitmap curBitmap1, curBitmap2;
 
@@ -48,6 +49,7 @@ public class UASActivity extends AppCompatActivity {
 
         fourierTransformer = new FourierTransformer();
         faceDetector = new FaceDetector();
+        uasProcessor = new UASProcessor(faceDetector);
         resultText = findViewById(R.id.deltaResultText);
 
         // read data from
@@ -159,9 +161,6 @@ public class UASActivity extends AppCompatActivity {
                 e.printStackTrace();
             }
         }
-
-        Log.d("photosize", Integer.toString(rawBitmap1.getWidth()) + ' ' + Integer.toString(rawBitmap1.getHeight()));
-        Log.d("photosize", Integer.toString(rawBitmap2.getWidth()) + ' ' + Integer.toString(rawBitmap2.getHeight()));
     }
 
     private Bitmap adjustOrientation(Bitmap b) {
@@ -177,6 +176,7 @@ public class UASActivity extends AppCompatActivity {
         }
         return b;
     }
+
 
     public void draw1() {
         for (int i = 0; i < w1; i++) {
@@ -200,6 +200,7 @@ public class UASActivity extends AppCompatActivity {
         }
     }
 
+
     public void compareImage() {
         // image 1
 
@@ -211,6 +212,8 @@ public class UASActivity extends AppCompatActivity {
         bw1 = faceDetector.convolute(r1, g1, b1, w1, h1, 90);
         bw1 = faceDetector.preprocess(bw1, w1, h1);
 
+        uasProcessor.processBounds(boundFace1, r1, g1, b1, gr1, bw1, w1, h1);
+
         // image 2
 
         gr2 = faceDetector.getSkin(a2, r2, g2, b2, w2, h2);
@@ -221,8 +224,12 @@ public class UASActivity extends AppCompatActivity {
         bw2 = faceDetector.convolute(r2, g2, b2, w2, h2, 90);
         bw2 = faceDetector.preprocess(bw2, w2, h2);
 
+        uasProcessor.processBounds(boundFace2, r2, g2, b2, gr2, bw2, w2, h2);
+
         draw1();
         draw2();
+
+
     }
 
 }
