@@ -104,6 +104,18 @@ public class FaceRecognition extends AppCompatActivity {
         }
     }
 
+    void createPoint(int x, int y, int w, int h, int rr, int gg, int bb) {
+        for (int i = Math.max(0, x - 2); i <= Math.min(w - 1, x + 2); i++) {
+            for (int j = Math.max(0, y - 2); j <= Math.min(h - 1, y + 2); j++) {
+                r[i][j]  = rr;
+                g[i][j] = gg;
+                b[i][j] = bb;
+                gr[i][j] = 128;
+                bw[i][j] = 128;
+            }
+        }
+    }
+
     void getFace() {
         int w = rawBitmap.getWidth();
         int h = rawBitmap.getHeight();
@@ -117,12 +129,23 @@ public class FaceRecognition extends AppCompatActivity {
             int minx = bound[0], maxx = bound[1], miny = bound[2], maxy = bound[3];
             ArrayList<int[]> featureBound = faceDetector.getFeature(bw, minx, maxx, miny, maxy, w, h);
             if (featureBound.size() >= 3) {
-                maxy = featureBound.get(featureBound.size() - 1)[0];
-                featureBound.remove(featureBound.size() - 1);
+                if (featureBound.get(featureBound.size() - 1).length <= 1) {
+                    maxy = featureBound.get(featureBound.size() - 1)[0];
+                    featureBound.remove(featureBound.size() - 1);
+                }
                 for (int[] b : featureBound) {
                     createRectangle(b[0], b[1], b[2], b[3], 0, 255, 0);
                 }
                 createRectangle(minx, maxx, miny, maxy, 0, 255, 0);
+                for (int i = 0; i < 4; i++) {
+                    if (featureBound.size() > i) {
+                        ArrayList<int[]> points = faceDetector.getEyesControlPoints(bw,
+                                featureBound.get(i));
+                        for (int[] point : points) {
+                            createPoint(point[0], point[1], w, h, 0, 255, 0);
+                        }
+                    }
+                }
             }
         }
 

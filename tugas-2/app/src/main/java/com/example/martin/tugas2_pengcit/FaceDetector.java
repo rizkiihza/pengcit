@@ -424,7 +424,11 @@ public class FaceDetector {
         return result;
     }
 
-    ArrayList<int[]> getPoints(int[][] gr, int minx, int maxx, int miny, int maxy) {
+    ArrayList<int[]> getEyesControlPoints(int[][] gr, int[] bound) {
+        int minx = bound[0];
+        int maxx = bound[1];
+        int miny = bound[2];
+        int maxy = bound[3];
         int midx = (minx + maxx) / 2;
 
         ArrayList<int[]> points = new ArrayList<>();
