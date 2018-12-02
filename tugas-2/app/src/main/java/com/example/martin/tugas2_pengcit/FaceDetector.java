@@ -423,4 +423,55 @@ public class FaceDetector {
         result.add(new int[]{deltaMulut});
         return result;
     }
+
+    ArrayList<int[]> getPoints(int[][] gr, int minx, int maxx, int miny, int maxy) {
+        int midx = (minx + maxx) / 2;
+
+        ArrayList<int[]> points = new ArrayList<>();
+
+        // get left
+        int[] left = new int[2];
+        for (int j = miny; j <= maxy; j++) {
+            if (gr[minx][j] == 0) {
+                left[0] = minx;
+                left[1] = j;
+                break;
+            }
+        }
+
+        // get right
+        int[] right = new int[2];
+        for (int j = miny; j <= maxy; j++) {
+            if (gr[maxx][j] == 0) {
+                left[0] = maxx;
+                left[1] = j;
+                break;
+            }
+        }
+
+        // get top mid
+        int[] top = new int[2];
+        for (int j = miny; j <= maxy; j++) {
+            if (gr[midx][j] == 0) {
+                top[0] = midx;
+                top[1] = j;
+                break;
+            }
+        }
+        // get bottom mid
+        int[] bottom = new int[2];
+        for (int j = maxy; j >= miny; j--) {
+            if (gr[midx][j] == 0) {
+                bottom[0] = midx;
+                bottom[1] = j;
+                break;
+            }
+        }
+
+        points.add(top);
+        points.add(left);
+        points.add(right);
+        points.add(bottom);
+        return points;
+    }
 }

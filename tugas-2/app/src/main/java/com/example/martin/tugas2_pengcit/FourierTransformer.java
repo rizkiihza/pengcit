@@ -69,6 +69,7 @@ public class FourierTransformer {
         }
         double[] breal = new double[m];
         double[] bimag = new double[m];
+
         breal[0] = cosTable[0];
         bimag[0] = sinTable[0];
         for (int i = 1; i < n; i++) {

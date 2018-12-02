@@ -24,7 +24,7 @@ public class FaceRecognition extends AppCompatActivity {
     private Button searchButton;
     private Button backButton;
     private FaceDetector faceDetector;
-    private int[][] a,r,g,b,gr,bw;
+    private int[][] a, r, g, b, gr, bw;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -122,7 +122,7 @@ public class FaceRecognition extends AppCompatActivity {
                 for (int[] b : featureBound) {
                     createRectangle(b[0], b[1], b[2], b[3], 0, 255, 0);
                 }
-                createRectangle(minx, maxx, miny, maxy, 0, 255  , 0);
+                createRectangle(minx, maxx, miny, maxy, 0, 255, 0);
             }
         }
 
