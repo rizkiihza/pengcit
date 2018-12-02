@@ -155,7 +155,6 @@ public class FaceRecognition extends AppCompatActivity {
                                     featureBound.get(i), num_points, true);
                         }
 
-
                         for (int[] point : points) {
                             Log.d("controlpoint", Integer.toString(point[0]) + ' ' + Integer.toString(point[1]));
                             createPoint(point[0], point[1], w, h, 0, 255, 0);

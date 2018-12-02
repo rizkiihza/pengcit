@@ -41,8 +41,9 @@ public class UASProcessor {
         }
     }
 
-    void processBounds(ArrayList<int[]> boundFace, int[][] r, int[][] g, int[][] b, int[][] gr,
-                       int[][] bw, int w, int h) {
+    ArrayList<ArrayList<int[]>> processBounds(ArrayList<int[]> boundFace, int[][] r, int[][] g,
+                                              int[][] b, int[][] gr, int[][] bw, int w, int h) {
+        ArrayList<ArrayList<int[]>> allPoints = new ArrayList<>();
         for (int[] bound : boundFace) {
             int minx = bound[0], maxx = bound[1], miny = bound[2], maxy = bound[3];
             ArrayList<int[]> featureBound = faceDetector.getFeature(bw, minx, maxx, miny, maxy, w, h);
@@ -72,7 +73,7 @@ public class UASProcessor {
                             points = faceDetector.getEyesAndMouthControlPoints(bw,
                                     featureBound.get(i), num_points, true);
                         }
-
+                        allPoints.add(points);
 
                         for (int[] point : points) {
                             Log.d("controlpoint", Integer.toString(point[0]) + ' ' + Integer.toString(point[1]));
@@ -82,6 +83,7 @@ public class UASProcessor {
                 }
                 if (featureBound.size() > 4) {
                     ArrayList<int[]> points = faceDetector.getNoseControlPoints(bw, featureBound.get(4));
+                    allPoints.add(points);
                     for (int[] point: points) {
                         createPoint(r, g, b, gr, bw, point[0], point[1], w, h, 0, 255, 0);
                     }
@@ -90,12 +92,14 @@ public class UASProcessor {
                     faceDetector.fill(bw, featureBound.get(5));
                     ArrayList<int[]> points = faceDetector.getEyesAndMouthControlPoints(bw,
                             featureBound.get(5),num_points, true);
+                    allPoints.add(points);
                     for (int[] point : points) {
                         createPoint(r, g, b, gr, bw, point[0], point[1], w, h, 0, 255, 0);
                     }
                 }
             }
         }
+        return allPoints;
     }
 
 }

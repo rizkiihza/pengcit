@@ -32,6 +32,8 @@ public class UASActivity extends AppCompatActivity {
     private UASProcessor uasProcessor;
     private Bitmap rawBitmap1, rawBitmap2;
     private Bitmap curBitmap1, curBitmap2;
+    private ArrayList<int[]> boundFace1, boundFace2;
+    private ArrayList<ArrayList<int[]>> controlPoints1, controlPoints2;
 
     private int w1, h1, w2, h2;
     private int[][] a1,r1,g1,b1,gr1,bw1;
@@ -115,6 +117,12 @@ public class UASActivity extends AppCompatActivity {
 
     public void getComparation() {
         double delta = 0;
+
+        for (int i = 0; i < controlPoints1.size(); i++) {
+            if (controlPoints2.size() > i) {
+                delta += faceDetector.compare(controlPoints1.get(i), controlPoints2.get(i));
+            }
+        }
 
         resultText.setText(Double.toString(delta));
         resultText.setTextSize(TypedValue.COMPLEX_UNIT_SP, 60f);
@@ -207,24 +215,24 @@ public class UASActivity extends AppCompatActivity {
         gr1 = faceDetector.getSkin(a1, r1, g1, b1, w1, h1);
         gr1 = faceDetector.preprocess(gr1, w1, h1);
 
-        ArrayList<int[]> boundFace1 = faceDetector.getFace(gr1, w1, h1);
+        boundFace1 = faceDetector.getFace(gr1, w1, h1);
 
         bw1 = faceDetector.convolute(r1, g1, b1, w1, h1, 90);
         bw1 = faceDetector.preprocess(bw1, w1, h1);
 
-        uasProcessor.processBounds(boundFace1, r1, g1, b1, gr1, bw1, w1, h1);
+        controlPoints1 = uasProcessor.processBounds(boundFace1, r1, g1, b1, gr1, bw1, w1, h1);
 
         // image 2
 
         gr2 = faceDetector.getSkin(a2, r2, g2, b2, w2, h2);
         gr2 = faceDetector.preprocess(gr2, w2, h2);
 
-        ArrayList<int[]> boundFace2 = faceDetector.getFace(gr2, w2, h2);
+        boundFace2 = faceDetector.getFace(gr2, w2, h2);
 
         bw2 = faceDetector.convolute(r2, g2, b2, w2, h2, 90);
         bw2 = faceDetector.preprocess(bw2, w2, h2);
 
-        uasProcessor.processBounds(boundFace2, r2, g2, b2, gr2, bw2, w2, h2);
+        controlPoints2 = uasProcessor.processBounds(boundFace2, r2, g2, b2, gr2, bw2, w2, h2);
 
         draw1();
         draw2();
