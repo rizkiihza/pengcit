@@ -3,21 +3,27 @@ package com.example.martin.tugas2_pengcit;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.graphics.Matrix;
+import android.net.Uri;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import java.io.FileNotFoundException;
+import java.io.InputStream;
+
 import uk.co.senab.photoview.PhotoViewAttacher;
 
 public class UASActivity extends AppCompatActivity {
-    private static final int MY_CAMERA_PERMISSION_CODE = 0;
-    private static final int CAMERA_REQUEST = 1888;
+    private static final int GALLERY_REQUEST = 1887;
     private FourierTransformer fourierTransformer;
     private FaceDetector faceDetector;
     private Bitmap rawBitmap1, rawBitmap2;
@@ -73,12 +79,12 @@ public class UASActivity extends AppCompatActivity {
                         MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
                 intent.setType("image/*");
                 intent.putExtra("return-data", true);
-                startActivityForResult(intent, 200);
+                startActivityForResult(intent, GALLERY_REQUEST);
             }
         });
 
         // setting compare button
-        Button goButton = findViewById(R.id.fftGoButton);
+        Button goButton = findViewById(R.id.uasSearchButton);
         goButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -94,22 +100,37 @@ public class UASActivity extends AppCompatActivity {
     }
 
     @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if (requestCode == MY_CAMERA_PERMISSION_CODE) {
-            if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                Toast.makeText(this, "camera permission granted", Toast.LENGTH_LONG).show();
-                Intent cameraIntent = new
-                        Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
-                startActivityForResult(cameraIntent, CAMERA_REQUEST);
-            } else {
-                Toast.makeText(this, "camera permission denied", Toast.LENGTH_LONG).show();
-            }
-        }
-    }
-
-    @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == GALLERY_REQUEST && resultCode == RESULT_OK) {
+            Uri uri = data.getData();
+            try {
+                InputStream stream = getContentResolver().openInputStream(uri);
+                rawBitmap2 = BitmapFactory.decodeStream(stream);
+                rawBitmap2 = adjustOrientation(rawBitmap2);
+                rawBitmap2 = Bitmap.createScaledBitmap(rawBitmap2, 300, 400, false);
+                imageView2.setImageBitmap(rawBitmap2);
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            }
+        }
+
+        Log.d("photosize", Integer.toString(rawBitmap1.getWidth()) + ' ' + Integer.toString(rawBitmap1.getHeight()));
+        Log.d("photosize", Integer.toString(rawBitmap2.getWidth()) + ' ' + Integer.toString(rawBitmap2.getHeight()));
+    }
+
+    private Bitmap adjustOrientation(Bitmap b) {
+        if (b == null) {
+            return null;
+        }
+        int w = b.getWidth();
+        int h = b.getHeight();
+        if (w>h) {
+            Matrix matrix = new Matrix();
+            matrix.postRotate(90);
+            return Bitmap.createBitmap(b, 0, 0, w, h, matrix, true);
+        }
+        return b;
     }
 }
