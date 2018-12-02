@@ -107,7 +107,7 @@ public class UASActivity extends AppCompatActivity {
                 compareImage();
                 getComparation();
                 imageView1.setImageBitmap(curBitmap1);
-                imageView1.setImageBitmap(curBitmap2);
+                imageView2.setImageBitmap(curBitmap2);
             }
         });
     }
@@ -200,7 +200,6 @@ public class UASActivity extends AppCompatActivity {
         }
     }
 
-
     public void compareImage() {
         // image 1
 
@@ -228,8 +227,6 @@ public class UASActivity extends AppCompatActivity {
 
         draw1();
         draw2();
-
-
     }
 
 }
