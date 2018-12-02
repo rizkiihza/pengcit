@@ -628,4 +628,19 @@ public class FaceDetector {
 
         return points;
     }
+
+    double gradient(int[] p1, int[] p2) {
+        if (p1[0] == p2[0]) return Double.MAX_VALUE;
+        return (double)(p1[1] - p2[1])/(double)(p1[0] - p2[0]);
+    }
+    
+    double compare(ArrayList<int[]> p1, ArrayList<int[]> p2) {
+        double delta = 0;
+
+        for (int i = 1; i < p1.size(); i++) {
+            delta += Math.abs(gradient(p1.get(i), p1.get(i-1)) - gradient(p2.get(i), p2.get(i-1)));
+        }
+
+        return delta;
+    }
 }
