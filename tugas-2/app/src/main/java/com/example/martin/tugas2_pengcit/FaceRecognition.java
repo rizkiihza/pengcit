@@ -105,8 +105,8 @@ public class FaceRecognition extends AppCompatActivity {
     }
 
     void createPoint(int x, int y, int w, int h, int rr, int gg, int bb) {
-        for (int i = Math.max(0, x - 2); i <= Math.min(w - 1, x + 2); i++) {
-            for (int j = Math.max(0, y - 2); j <= Math.min(h - 1, y + 2); j++) {
+        for (int i = Math.max(0, x - 1); i <= Math.min(w - 1, x + 1); i++) {
+            for (int j = Math.max(0, y - 1); j <= Math.min(h - 1, y + 1); j++) {
                 r[i][j]  = rr;
                 g[i][j] = gg;
                 b[i][j] = bb;
@@ -142,8 +142,16 @@ public class FaceRecognition extends AppCompatActivity {
                         ArrayList<int[]> points = faceDetector.getEyesControlPoints(bw,
                                 featureBound.get(i));
                         for (int[] point : points) {
+                            Log.d("control", Integer.toString(point[0]) + ' ' + Integer.toString(point[1]));
                             createPoint(point[0], point[1], w, h, 0, 255, 0);
                         }
+                    }
+                }
+                if (featureBound.size() > 5) {
+                    ArrayList<int[]> points = faceDetector.getEyesControlPoints(bw,
+                            featureBound.get(6));
+                    for (int[] point : points) {
+                        createPoint(point[0], point[1], w, h, 0, 255, 0);
                     }
                 }
             }
@@ -151,9 +159,9 @@ public class FaceRecognition extends AppCompatActivity {
 
         for (int i = 0; i < w; i++) {
             for (int j = 0; j < h; j++) {
-                int colour = Color.rgb(r[i][j], g[i][j], b[i][j]);
+                //int colour = Color.rgb(r[i][j], g[i][j], b[i][j]);
                 //int colour = Color.rgb(gr[i][j], gr[i][j], gr[i][j]);
-//                int colour = Color.rgb(bw[i][j], bw[i][j], bw[i][j]);
+                int colour = Color.rgb(bw[i][j], bw[i][j], bw[i][j]);
                 curBitmap.setPixel(i, j, colour);
             }
         }

@@ -447,8 +447,8 @@ public class FaceDetector {
         int[] right = new int[2];
         for (int j = miny; j <= maxy; j++) {
             if (gr[maxx][j] == 0) {
-                left[0] = maxx;
-                left[1] = j;
+                right[0] = maxx;
+                right[1] = j;
                 break;
             }
         }
