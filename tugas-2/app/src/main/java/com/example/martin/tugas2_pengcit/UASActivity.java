@@ -12,9 +12,11 @@ import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.io.FileNotFoundException;
@@ -28,10 +30,14 @@ public class UASActivity extends AppCompatActivity {
     private FourierTransformer fourierTransformer;
     private FaceDetector faceDetector;
     private Bitmap rawBitmap1, rawBitmap2;
+
     private int[][] a1,r1,g1,b1,gr1,bw1;
     private int[][] a2,r2,g2,b2,gr2,bw2;
 
     ImageView imageView1, imageView2;
+
+    private TextView resultText;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,6 +46,7 @@ public class UASActivity extends AppCompatActivity {
 
         fourierTransformer = new FourierTransformer();
         faceDetector = new FaceDetector();
+        resultText = findViewById(R.id.deltaResultText);
 
         // read data from
         Intent intent = getIntent();
@@ -94,11 +101,23 @@ public class UASActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 compareImage();
+                getComparation();
                 imageView1.setImageBitmap(rawBitmap1);
                 imageView1.setImageBitmap(rawBitmap2);
             }
         });
     }
+    
+
+    public void getComparation() {
+        double delta = 0;
+
+
+        resultText.setText(Double.toString(delta));
+        resultText.setTextSize(TypedValue.COMPLEX_UNIT_SP, 60f);
+        resultText.setTextColor(Color.BLACK);
+    }
+
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
