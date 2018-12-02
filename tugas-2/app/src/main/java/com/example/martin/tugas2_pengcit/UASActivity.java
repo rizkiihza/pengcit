@@ -19,6 +19,7 @@ import android.widget.Toast;
 
 import java.io.FileNotFoundException;
 import java.io.InputStream;
+import java.util.ArrayList;
 
 import uk.co.senab.photoview.PhotoViewAttacher;
 
@@ -27,7 +28,9 @@ public class UASActivity extends AppCompatActivity {
     private FourierTransformer fourierTransformer;
     private FaceDetector faceDetector;
     private Bitmap rawBitmap1, rawBitmap2;
-    private int[][] r,g,b,gr,bw;
+    private int[][] a1,r1,g1,b1,gr1,bw1;
+    private int[][] a2,r2,g2,b2,gr2,bw2;
+
     ImageView imageView1, imageView2;
 
     @Override
@@ -45,18 +48,20 @@ public class UASActivity extends AppCompatActivity {
         int w = rawBitmap1.getWidth();
         int h = rawBitmap1.getHeight();
 
-        r = new int[w][h];
-        g = new int[w][h];
-        b = new int[w][h];
-        gr = new int[w][h];
+        a1 = new int[w][h];
+        r1 = new int[w][h];
+        g1 = new int[w][h];
+        b1 = new int[w][h];
+        gr1 = new int[w][h];
 
         for (int i = 0; i < w; i++) {
             for (int j = 0; j < h; j++) {
                 int colour = rawBitmap1.getPixel(i, j);
-                r[i][j] = Color.red(colour);
-                g[i][j] = Color.green(colour);
-                b[i][j] = Color.blue(colour);
-                gr[i][j] = (r[i][j] + g[i][j] + b[i][j]) / 3;
+                a1[i][j] = Color.alpha(colour);
+                r1[i][j] = Color.red(colour);
+                g1[i][j] = Color.green(colour);
+                b1[i][j] = Color.blue(colour);
+                gr1[i][j] = (r1[i][j] + g1[i][j] + b1[i][j]) / 3;
             }
         }
 
@@ -95,10 +100,6 @@ public class UASActivity extends AppCompatActivity {
         });
     }
 
-    public void compareImage() {
-        return;
-    }
-
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -110,6 +111,27 @@ public class UASActivity extends AppCompatActivity {
                 rawBitmap2 = BitmapFactory.decodeStream(stream);
                 rawBitmap2 = adjustOrientation(rawBitmap2);
                 rawBitmap2 = Bitmap.createScaledBitmap(rawBitmap2, 300, 400, false);
+
+                int w = rawBitmap2.getWidth();
+                int h = rawBitmap2.getHeight();
+
+                a2 = new int[w][h];
+                r2 = new int[w][h];
+                g2 = new int[w][h];
+                b2 = new int[w][h];
+                gr2 = new int[w][h];
+
+                for (int i = 0; i < w; i++) {
+                    for (int j = 0; j < h; j++) {
+                        int colour = rawBitmap2.getPixel(i, j);
+                        a2[i][j] = Color.alpha(colour);
+                        r2[i][j] = Color.red(colour);
+                        g2[i][j] = Color.green(colour);
+                        b2[i][j] = Color.blue(colour);
+                        gr2[i][j] = (r2[i][j] + g2[i][j] + b2[i][j]) / 3;
+                    }
+                }
+
                 imageView2.setImageBitmap(rawBitmap2);
             } catch (FileNotFoundException e) {
                 e.printStackTrace();
@@ -132,6 +154,37 @@ public class UASActivity extends AppCompatActivity {
             return Bitmap.createBitmap(b, 0, 0, w, h, matrix, true);
         }
         return b;
+    }
+
+
+
+    public void compareImage() {
+        // image 1
+        int w1 = rawBitmap1.getWidth();
+        int h1 = rawBitmap1.getHeight();
+
+        gr1 = faceDetector.getSkin(a1, r1, g1, b1, w1, h1);
+        gr1 = faceDetector.preprocess(gr1, w1, h1);
+
+        ArrayList<int[]> boundFace1 = faceDetector.getFace(gr1, w1, h1);
+
+        bw1 = faceDetector.convolute(r1, g1, b1, w1, h1, 90);
+        bw1 = faceDetector.preprocess(bw1, w1, h1);
+
+        // image 2
+        int w2 = rawBitmap2.getWidth();
+        int h2 = rawBitmap2.getHeight();
+
+        gr2 = faceDetector.getSkin(a2, r2, g2, b2, w2, h2);
+        gr2 = faceDetector.preprocess(gr2, w2, h2);
+
+        ArrayList<int[]> boundFace2 = faceDetector.getFace(gr2, w2, h2);
+
+        bw2 = faceDetector.convolute(r2, g2, b2, w2, h2, 90);
+        bw2 = faceDetector.preprocess(bw2, w2, h2);
+
+
+        return;
     }
 
 }
