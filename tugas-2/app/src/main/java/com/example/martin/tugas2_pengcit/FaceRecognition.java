@@ -69,7 +69,7 @@ public class FaceRecognition extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 getFace();
-                //faceImageView.setImageBitmap(curBitmap);
+                faceImageView.setImageBitmap(curBitmap);
             }
         });
 

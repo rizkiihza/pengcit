@@ -30,7 +30,9 @@ public class UASActivity extends AppCompatActivity {
     private FourierTransformer fourierTransformer;
     private FaceDetector faceDetector;
     private Bitmap rawBitmap1, rawBitmap2;
+    private Bitmap curBitmap1, curBitmap2;
 
+    private int w1, h1, w2, h2;
     private int[][] a1,r1,g1,b1,gr1,bw1;
     private int[][] a2,r2,g2,b2,gr2,bw2;
 
@@ -51,18 +53,18 @@ public class UASActivity extends AppCompatActivity {
         // read data from
         Intent intent = getIntent();
         rawBitmap1 = intent.getParcelableExtra("Image");
+        curBitmap1 = rawBitmap1;
+        w1 = rawBitmap1.getWidth();
+        h1 = rawBitmap1.getHeight();
 
-        int w = rawBitmap1.getWidth();
-        int h = rawBitmap1.getHeight();
+        a1 = new int[w1][h1];
+        r1 = new int[w1][h1];
+        g1 = new int[w1][h1];
+        b1 = new int[w1][h1];
+        gr1 = new int[w1][h1];
 
-        a1 = new int[w][h];
-        r1 = new int[w][h];
-        g1 = new int[w][h];
-        b1 = new int[w][h];
-        gr1 = new int[w][h];
-
-        for (int i = 0; i < w; i++) {
-            for (int j = 0; j < h; j++) {
+        for (int i = 0; i < w1; i++) {
+            for (int j = 0; j < h1; j++) {
                 int colour = rawBitmap1.getPixel(i, j);
                 a1[i][j] = Color.alpha(colour);
                 r1[i][j] = Color.red(colour);
@@ -102,16 +104,15 @@ public class UASActivity extends AppCompatActivity {
             public void onClick(View v) {
                 compareImage();
                 getComparation();
-                imageView1.setImageBitmap(rawBitmap1);
-                imageView1.setImageBitmap(rawBitmap2);
+                imageView1.setImageBitmap(curBitmap1);
+                imageView1.setImageBitmap(curBitmap2);
             }
         });
     }
-    
+
 
     public void getComparation() {
         double delta = 0;
-
 
         resultText.setText(Double.toString(delta));
         resultText.setTextSize(TypedValue.COMPLEX_UNIT_SP, 60f);
@@ -131,17 +132,19 @@ public class UASActivity extends AppCompatActivity {
                 rawBitmap2 = adjustOrientation(rawBitmap2);
                 rawBitmap2 = Bitmap.createScaledBitmap(rawBitmap2, 300, 400, false);
 
-                int w = rawBitmap2.getWidth();
-                int h = rawBitmap2.getHeight();
+                curBitmap2 = rawBitmap2;
 
-                a2 = new int[w][h];
-                r2 = new int[w][h];
-                g2 = new int[w][h];
-                b2 = new int[w][h];
-                gr2 = new int[w][h];
+                w2 = rawBitmap2.getWidth();
+                h2 = rawBitmap2.getHeight();
 
-                for (int i = 0; i < w; i++) {
-                    for (int j = 0; j < h; j++) {
+                a2 = new int[w2][h2];
+                r2 = new int[w2][h2];
+                g2 = new int[w2][h2];
+                b2 = new int[w2][h2];
+                gr2 = new int[w2][h2];
+
+                for (int i = 0; i < w2; i++) {
+                    for (int j = 0; j < h2; j++) {
                         int colour = rawBitmap2.getPixel(i, j);
                         a2[i][j] = Color.alpha(colour);
                         r2[i][j] = Color.red(colour);
@@ -175,12 +178,30 @@ public class UASActivity extends AppCompatActivity {
         return b;
     }
 
+    public void draw1() {
+        for (int i = 0; i < w1; i++) {
+            for (int j = 0; j < h1; j++) {
+                int colour = Color.rgb(r1[i][j], g1[i][j], b1[i][j]);
+                //int colour = Color.rgb(gr[i][j], gr[i][j], gr[i][j]);
+//                int colour = Color.rgb(bw[i][j], bw[i][j], bw[i][j]);
+                curBitmap1.setPixel(i, j, colour);
+            }
+        }
+    }
 
+    public void draw2() {
+        for (int i = 0; i < w2; i++) {
+            for (int j = 0; j < h2; j++) {
+                int colour = Color.rgb(r2[i][j], g2[i][j], b2[i][j]);
+                //int colour = Color.rgb(gr[i][j], gr[i][j], gr[i][j]);
+//                int colour = Color.rgb(bw[i][j], bw[i][j], bw[i][j]);
+                curBitmap2.setPixel(i, j, colour);
+            }
+        }
+    }
 
     public void compareImage() {
         // image 1
-        int w1 = rawBitmap1.getWidth();
-        int h1 = rawBitmap1.getHeight();
 
         gr1 = faceDetector.getSkin(a1, r1, g1, b1, w1, h1);
         gr1 = faceDetector.preprocess(gr1, w1, h1);
@@ -191,8 +212,6 @@ public class UASActivity extends AppCompatActivity {
         bw1 = faceDetector.preprocess(bw1, w1, h1);
 
         // image 2
-        int w2 = rawBitmap2.getWidth();
-        int h2 = rawBitmap2.getHeight();
 
         gr2 = faceDetector.getSkin(a2, r2, g2, b2, w2, h2);
         gr2 = faceDetector.preprocess(gr2, w2, h2);
@@ -202,8 +221,8 @@ public class UASActivity extends AppCompatActivity {
         bw2 = faceDetector.convolute(r2, g2, b2, w2, h2, 90);
         bw2 = faceDetector.preprocess(bw2, w2, h2);
 
-
-        return;
+        draw1();
+        draw2();
     }
 
 }
