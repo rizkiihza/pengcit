@@ -3,8 +3,11 @@ package com.example.martin.tugas2_pengcit;
 import android.graphics.Color;
 import android.util.Log;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Queue;
 
@@ -575,7 +578,8 @@ public class FaceDetector {
 
         int delta_x = (maxx - minx) / middle_split;
         int current_x = minx;
-
+        ArrayList<int[]> tops = new ArrayList<>();
+        ArrayList<int[]> bottoms = new ArrayList<>();
         for (int split = 1; split < middle_split; split++) {
             current_x = current_x + delta_x;
 
@@ -609,12 +613,19 @@ public class FaceDetector {
                 }
             }
 
-            points.add(top);
-            points.add(bottom);
+            tops.add(top);
+            bottoms.add(bottom);
         }
+
+        // add tops
+        points.addAll(tops);
 
         // add right
         points.add(right);
+
+        Collections.reverse(bottoms);
+        points.addAll(bottoms);
+
         return points;
     }
 }
