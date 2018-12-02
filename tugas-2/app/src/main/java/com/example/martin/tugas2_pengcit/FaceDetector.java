@@ -487,7 +487,57 @@ public class FaceDetector {
         }
     }
 
-    ArrayList<int[]> getEyesControlPoints(int[][] gr, int[] bound, int k, boolean from_bottom) {
+    ArrayList<int[]> getNoseControlPoints(int[][] gr, int[] bound) {
+        int minx = bound[0] + 1;
+        int maxx = bound[1] - 1;
+        int miny = bound[2] + 1;
+        int maxy = bound[3] - 1;
+
+        int[] left = new int[2];
+        int[] mid = new int[2];
+        int[] right = new int[2];
+
+        int range_x = maxx - minx;
+        int x_first = minx + range_x / 4;
+        int x_second = maxx - range_x / 4;
+        int x_mid= (x_first + x_second) / 2;
+
+        int y_first = maxy;
+        int y_second = maxy;
+
+        for (int j = maxy; j >= miny; j--) {
+            if (gr[x_first][j] == 0) {
+                y_first = j;
+                break;
+            }
+        }
+
+        for (int j = maxy; j >= miny; j--) {
+            if (gr[x_second][j] == 0) {
+                y_second = j;
+                break;
+            }
+        }
+
+        left[0] = x_first;
+        left[1] = y_first;
+
+        right[0] = x_second;
+        right[1] = y_second;
+
+        mid[0] = x_mid;
+        mid[1] = Math.min(maxy, 2 + (y_first + y_second) / 2);
+
+        ArrayList<int[]> result = new ArrayList<>();
+
+        result.add(left);
+        result.add(right);
+        result.add(mid);
+
+        return result;
+    }
+
+    ArrayList<int[]> getEyesAndMouthControlPoints(int[][] gr, int[] bound, int k, boolean from_bottom) {
         int minx = bound[0] + 1;
         int maxx = bound[1] - 1;
         int miny = bound[2] + 1;

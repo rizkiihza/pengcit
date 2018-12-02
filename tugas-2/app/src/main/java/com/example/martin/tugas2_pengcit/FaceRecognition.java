@@ -147,11 +147,11 @@ public class FaceRecognition extends AppCompatActivity {
                         ArrayList<int[]> points;
 
                         if (i < 2) {
-                            points = faceDetector.getEyesControlPoints(bw,
+                            points = faceDetector.getEyesAndMouthControlPoints(bw,
                                     featureBound.get(i), num_points, false);
                         } else {
                             faceDetector.fill(bw, featureBound.get(i));
-                            points = faceDetector.getEyesControlPoints(bw,
+                            points = faceDetector.getEyesAndMouthControlPoints(bw,
                                     featureBound.get(i), num_points, true);
                         }
 
@@ -162,9 +162,15 @@ public class FaceRecognition extends AppCompatActivity {
                         }
                     }
                 }
+                if (featureBound.size() > 4) {
+                    ArrayList<int[]> points = faceDetector.getNoseControlPoints(bw, featureBound.get(4));
+                    for (int[] point: points) {
+                        createPoint(point[0], point[1], w, h, 0, 255, 0);
+                    }
+                }
                 if (featureBound.size() > 5) {
                     faceDetector.fill(bw, featureBound.get(5));
-                    ArrayList<int[]> points = faceDetector.getEyesControlPoints(bw,
+                    ArrayList<int[]> points = faceDetector.getEyesAndMouthControlPoints(bw,
                             featureBound.get(5),num_points, true);
                     for (int[] point : points) {
                         createPoint(point[0], point[1], w, h, 0, 255, 0);
