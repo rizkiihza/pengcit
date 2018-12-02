@@ -424,61 +424,35 @@ public class FaceDetector {
         return result;
     }
 
-    ArrayList<int[]> getEyesControlPoints(int[][] gr, int[] bound) {
-        int minx = bound[0];
-        int maxx = bound[1];
-        int miny = bound[2];
-        int maxy = bound[3];
+    ArrayList<int[]> getEyesControlPoints(int[][] gr, int[] bound, boolean from_bottom) {
+        int minx = bound[0] + 1;
+        int maxx = bound[1] - 1;
+        int miny = bound[2] + 1;
+        int maxy = bound[3] - 1;
         int midx = (minx + maxx) / 2;
 
         ArrayList<int[]> points = new ArrayList<>();
 
         // get left
         int[] left = new int[2];
-        int[] left_top = new int[2];
-        int[] left_bottom = new int[2];
         for (int j = miny; j <= maxy; j++) {
             if (gr[minx][j] == 0) {
-                left_top[0] = minx;
-                left_top[1] = j;
+                left[0] = minx;
+                left[1] = j;
                 break;
             }
         }
-
-        for (int j = maxy; j >= miny; j--) {
-            if (gr[minx][j] == 0) {
-                left_bottom[0] = minx;
-                left_bottom[1] = j;
-                break;
-            }
-        }
-
-        left[0] = minx;
-        left[1] = (left_top[1] + left_bottom[1]) / 2;
 
         // get right
         int[] right = new int[2];
-        int[] right_top = new int[2];
-        int[] right_bottom = new int[2];
 
         for (int j = miny; j <= maxy; j++) {
             if (gr[maxx][j] == 0) {
-                right_top[0] = maxx;
-                right_top[1] = j;
+                right[0] = maxx;
+                right[1] = j;
                 break;
             }
         }
-
-        for (int j = maxy; j >= miny; j--) {
-            if (gr[maxx][j] == 0) {
-                right_bottom[0] = maxx;
-                right_bottom[1] = j;
-                break;
-            }
-        }
-
-        right[0] = maxx;
-        right[1] = (right_top[1] + right_bottom[1]) / 2;
 
         // get top mid
         int[] top = new int[2];
@@ -489,13 +463,24 @@ public class FaceDetector {
                 break;
             }
         }
+
         // get bottom mid
         int[] bottom = new int[2];
-        for (int j = maxy; j >= miny; j--) {
-            if (gr[midx][j] == 0) {
-                bottom[0] = midx;
-                bottom[1] = j;
-                break;
+        if (from_bottom) {
+            for (int j = maxy; j >= miny; j--) {
+                if (gr[midx][j] == 0) {
+                    bottom[0] = midx;
+                    bottom[1] = j;
+                    break;
+                }
+            }
+        } else {
+            for (int j = top[1]; j <= maxy - 1; j++) {
+                if (gr[midx][j] == 0 && gr[midx][j + 1] == 255) {
+                    bottom[0] = midx;
+                    bottom[1] = j;
+                    break;
+                }
             }
         }
 
