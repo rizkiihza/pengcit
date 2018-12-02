@@ -135,6 +135,7 @@ public class FaceRecognition extends AppCompatActivity {
                 }
                 for (int[] b : featureBound) {
                     createRectangle(b[0], b[1], b[2], b[3], 0, 255, 0);
+                    faceDetector.fill(bw, b);
                 }
                 createRectangle(minx, maxx, miny, maxy, 0, 255, 0);
 

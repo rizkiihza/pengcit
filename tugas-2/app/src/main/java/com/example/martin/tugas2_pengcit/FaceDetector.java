@@ -448,6 +448,29 @@ public class FaceDetector {
         return result;
     }
 
+    void fill(int[][] gr, int[] bound) {
+        int minx = bound[0] + 1;
+        int maxx = bound[1] - 1;
+        int miny = bound[2] + 1;
+        int maxy = bound[3] - 1;
+
+        int firstx, lastx;
+        for (int j = miny + 1; j < maxy; j++) {
+            firstx = lastx = -1;
+            for (int i = minx + 1; i < maxx; i++) {
+                if (gr[i][j] == 0) {
+                    lastx = i;
+                    if (firstx < 0) {
+                        firstx = i;
+                    }
+                }
+            }
+            for (int i = firstx; i <= lastx; i++) {
+                gr[i][j] = 0;
+            }
+        }
+    }
+
     ArrayList<int[]> getEyesControlPoints(int[][] gr, int[] bound, int k, boolean from_bottom) {
         int minx = bound[0] + 1;
         int maxx = bound[1] - 1;
