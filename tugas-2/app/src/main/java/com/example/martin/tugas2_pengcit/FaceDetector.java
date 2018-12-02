@@ -465,8 +465,10 @@ public class FaceDetector {
                     }
                 }
             }
-            for (int i = firstx; i <= lastx; i++) {
-                gr[i][j] = 0;
+            if (firstx > 0) {
+                for (int i = firstx; i <= lastx; i++) {
+                    gr[i][j] = 0;
+                }
             }
         }
     }

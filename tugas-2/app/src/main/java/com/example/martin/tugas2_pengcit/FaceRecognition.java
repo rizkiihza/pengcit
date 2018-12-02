@@ -150,6 +150,7 @@ public class FaceRecognition extends AppCompatActivity {
                             points = faceDetector.getEyesControlPoints(bw,
                                     featureBound.get(i), num_points, false);
                         } else {
+                            faceDetector.fill(bw, featureBound.get(i));
                             points = faceDetector.getEyesControlPoints(bw,
                                     featureBound.get(i), num_points, true);
                         }
