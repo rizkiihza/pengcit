@@ -135,7 +135,6 @@ public class FaceRecognition extends AppCompatActivity {
                 }
                 for (int[] b : featureBound) {
                     createRectangle(b[0], b[1], b[2], b[3], 0, 255, 0);
-                    faceDetector.fill(bw, b);
                 }
                 createRectangle(minx, maxx, miny, maxy, 0, 255, 0);
 
@@ -163,6 +162,7 @@ public class FaceRecognition extends AppCompatActivity {
                     }
                 }
                 if (featureBound.size() > 5) {
+                    faceDetector.fill(bw, featureBound.get(5));
                     ArrayList<int[]> points = faceDetector.getEyesControlPoints(bw,
                             featureBound.get(5),num_points, true);
                     for (int[] point : points) {
