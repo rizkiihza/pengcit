@@ -373,13 +373,15 @@ public class FaceDetector {
                 for (int i = xmkiri; i <= xmnkanan; i++) {
                     if (gr[i][j] == 0 && !visited[i][j]) {
                         maxx = i; minx = i; maxy = j; miny = j;
-                        dfs(gr, i, j, w, h,0);
+                        int size = dfs(gr, i, j, w, h,0);
 
-                        points.add(new int[]{i, j});
-                        hminx = Math.min(hminx, minx);
-                        hmaxx = Math.max(hmaxx, maxx);
-                        hminy = Math.min(hminy, miny);
-                        hmaxy = Math.max(hmaxy, maxy);
+                        if (size > 10) {
+                            points.add(new int[]{i, j});
+                            hminx = Math.min(hminx, minx);
+                            hmaxx = Math.max(hmaxx, maxx);
+                            hminy = Math.min(hminy, miny);
+                            hmaxy = Math.max(hmaxy, maxy);
+                        }
                     }
                 }
 
