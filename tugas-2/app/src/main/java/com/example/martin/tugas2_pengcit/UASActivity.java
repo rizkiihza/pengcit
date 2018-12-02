@@ -96,7 +96,7 @@ public class UASActivity extends AppCompatActivity {
     }
 
     public void compareImage() {
-        // compare image
+        return;
     }
 
     @Override
@@ -133,4 +133,5 @@ public class UASActivity extends AppCompatActivity {
         }
         return b;
     }
+
 }
