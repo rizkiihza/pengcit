@@ -121,7 +121,7 @@ public class UASActivity extends AppCompatActivity {
 
         ArrayList<Double> alldelta = new ArrayList<>();
         ArrayList<String> bodyParts = new ArrayList<>(Arrays.asList("Alis Kiri", "Alis Kanan", "Mata Kiri", "Mata Kanan", "Hidung", "Mulut"));
-
+        ArrayList<Double> threshold = new ArrayList<>(Arrays.asList(50.0, 50.0, 60.0, 60.0, 40.0, 60.0));
         resultText.setText("");
         for (int i = 0; i < controlPoints1.size(); i++) {
             if (controlPoints2.size() > i) {
@@ -129,7 +129,14 @@ public class UASActivity extends AppCompatActivity {
                 delta += current_delta;
                 alldelta.add(current_delta);
                 Log.d("Compare", bodyParts.get(i) + " : " + Double.toString(current_delta));
-                resultText.append(bodyParts.get(i) + " : " + String.format("%.2f", current_delta) + "\n");
+
+                String hasil_perbandingan = "";
+                if (current_delta < threshold.get(i)) {
+                    hasil_perbandingan = "mirip";
+                } else {
+                    hasil_perbandingan = "tidak _mirip";
+                }
+                resultText.append(bodyParts.get(i) + " : " + hasil_perbandingan + "\n");
             }
         }
 
