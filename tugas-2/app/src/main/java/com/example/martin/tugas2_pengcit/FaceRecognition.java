@@ -128,6 +128,7 @@ public class FaceRecognition extends AppCompatActivity {
         for (int[] bound : boundFace) {
             int minx = bound[0], maxx = bound[1], miny = bound[2], maxy = bound[3];
             ArrayList<int[]> featureBound = faceDetector.getFeature(bw, minx, maxx, miny, maxy, w, h);
+            Log.d("faceFeature", Integer.toString(featureBound.size()));
             if (featureBound.size() >= 3) {
                 if (featureBound.get(featureBound.size() - 1).length <= 1) {
                     maxy = featureBound.get(featureBound.size() - 1)[0];

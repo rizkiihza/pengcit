@@ -424,6 +424,7 @@ public class FaceDetector {
                                     hmaxx = Math.max(hmaxx, maxx);
                                     hminy = Math.min(hminy, miny);
                                     hmaxy = Math.max(hmaxy, maxy);
+                                    
                                 }
                             }
                         }
@@ -434,6 +435,9 @@ public class FaceDetector {
                             deltaMulut += hmaxy - 5;
                         }
                         result.add(new int[]{hminx, hmaxx, hminy, hmaxy});
+                        if (featureCount == 4) {
+                            result.add(new int[]{deltaMulut});
+                        }
                         featureCount += 1;
                         j = hmaxy + 1;
                     }
@@ -462,8 +466,6 @@ public class FaceDetector {
                 mata[2] = result_miny_mata;
             }
         }
-
-        result.add(new int[]{deltaMulut});
         return result;
     }
 
