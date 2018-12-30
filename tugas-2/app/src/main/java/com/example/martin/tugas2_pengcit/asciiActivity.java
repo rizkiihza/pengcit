@@ -103,18 +103,6 @@ public class asciiActivity extends AppCompatActivity {
         }
 
         imageView.setImageBitmap(transformed_bitmap);
-
-        // setup back button
-        Button backButton = findViewById(R.id.asciiBackButton);
-        backButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent resIntent = new Intent();
-                resIntent.putExtra("Image", transformed_bitmap);
-                setResult(Activity.RESULT_OK, resIntent);
-                finish();
-            }
-        });
     }
 
     public void convertBW(View target) {
